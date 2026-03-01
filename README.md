@@ -26,7 +26,7 @@ pingpong-web/
 - **后端**: Spring Boot 2.7.14 + Spring Data JPA + MySQL
 - **前端**: 原生 HTML + CSS + JavaScript + Element UI
 - **构建工具**: Maven
-- **Java版本**: JDK 11
+- **Java版本**: JDK 1.8
 
 ## 功能模块
 
