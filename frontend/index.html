@@ -2501,7 +2501,7 @@
         // ========== 赛事详情：比赛轮次信息 ===========
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-            const roundOrder = ['小组赛', '1/16', '1/8', '1/4', '四分之一', '半决', '决', '铜牌'];
+            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2515,8 +2515,17 @@
                 if (!grouped[cat]) return;
                 const catData = grouped[cat];
                 const roundKeys = Object.keys(catData).sort((a, b) => {
-                    const ia = roundOrder.findIndex(k => a.includes(k)); const ib = roundOrder.findIndex(k => b.includes(k));
-                    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+                    const ia = roundOrder.findIndex(k => a.includes(k));
+                    const ib = roundOrder.findIndex(k => b.includes(k));
+                    if (ia !== -1 && ib !== -1) return ia - ib;
+                    if (ia !== -1) return 1;
+                    if (ib !== -1) return -1;
+                    const numA = parseInt(a);
+                    const numB = parseInt(b);
+                    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                    if (!isNaN(numA)) return 1;
+                    if (!isNaN(numB)) return -1;
+                    return a.localeCompare(b, 'zh');
                 });
                 if (roundKeys.length === 0) return;
                 html += `<div class="round-cat">`;
@@ -2646,6 +2655,9 @@
 
             const eliminationRounds = matches.filter(m => {
                 const rn = String(m.roundNumber || '');
+                if (rn.includes('小组')) return false;
+                if (rn.includes('组')) return false;
+                if (rn.includes('第一轮') || rn.includes('第二轮') || rn.includes('第三轮') || rn.includes('第四轮')) return false;
                 return rn.includes('决') || rn.includes('半') || rn.includes('1/') || rn.includes('四') || !rn.match(/^\d+$/);
             });
 
@@ -2654,10 +2666,16 @@
                 return;
             }
 
-            const roundOrder = ['决', '半', '四', '1/2', '1/4', '1/8', '1/16'];
+            const roundOrder = ['1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
             eliminationRounds.sort((a, b) => {
                 const ra = String(a.roundNumber || '');
                 const rb = String(b.roundNumber || '');
+                const isBronzeA = ra.includes('铜');
+                const isBronzeB = rb.includes('铜');
+                const isFinalA = ra.includes('决');
+                const isFinalB = rb.includes('决');
+                if (isBronzeA && isFinalB) return 1;
+                if (isBronzeB && isFinalA) return -1;
                 const ia = roundOrder.findIndex(r => ra.includes(r));
                 const ib = roundOrder.findIndex(r => rb.includes(r));
                 if (ia !== -1 && ib !== -1) return ia - ib;
@@ -2668,7 +2686,8 @@
 
             const rounds = {};
             eliminationRounds.forEach(m => {
-                const rn = m.roundNumber || '其他';
+                let rn = m.roundNumber || '其他';
+                if (rn.includes('铜')) rn = '决赛';
                 if (!rounds[rn]) rounds[rn] = [];
                 rounds[rn].push(m);
             });
@@ -2678,6 +2697,12 @@
             });
 
             const sortedRoundKeys = Object.keys(rounds).sort((a, b) => {
+                const isBronzeA = a.includes('铜');
+                const isBronzeB = b.includes('铜');
+                const isFinalA = a.includes('决');
+                const isFinalB = b.includes('决');
+                if (isBronzeA && isFinalB) return 1;
+                if (isBronzeB && isFinalA) return -1;
                 const ia = roundOrder.findIndex(r => a.includes(r));
                 const ib = roundOrder.findIndex(r => b.includes(r));
                 if (ia !== -1 && ib !== -1) return ia - ib;
@@ -2744,6 +2769,12 @@
             });
 
             const sortedRoundKeysFinal = Object.keys(rounds).sort((a, b) => {
+                const isBronzeA = a.includes('铜');
+                const isBronzeB = b.includes('铜');
+                const isFinalA = a.includes('决');
+                const isFinalB = b.includes('决');
+                if (isBronzeA && isFinalB) return 1;
+                if (isBronzeB && isFinalA) return -1;
                 const ia = roundOrder.findIndex(r => a.includes(r));
                 const ib = roundOrder.findIndex(r => b.includes(r));
                 if (ia !== -1 && ib !== -1) return ia - ib;
@@ -2800,6 +2831,8 @@
                 const nextKey = sortedRoundKeysFinal[r + 1];
                 const currentPos = roundPositions[currentKey];
                 const nextPos = roundPositions[nextKey];
+
+                if (currentKey.includes('小组赛') || nextKey.includes('小组赛')) continue;
 
                 for (let i = 0; i < currentPos.length; i++) {
                     const match = currentPos[i];
