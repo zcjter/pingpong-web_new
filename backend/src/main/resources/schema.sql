@@ -77,3 +77,15 @@ CREATE TABLE IF NOT EXISTS player_rankings (
     ranking_year INT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 参赛名单表 (和比赛地点、年度关联)
+CREATE TABLE IF NOT EXISTS competition_roster (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    venue VARCHAR(200) NOT NULL,
+    year INT NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    player_name VARCHAR(100) NOT NULL,
+    country VARCHAR(50),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

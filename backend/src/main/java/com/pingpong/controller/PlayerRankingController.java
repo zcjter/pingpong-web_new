@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rankings")
-@CrossOrigin(origins = "*")
 public class PlayerRankingController {
     
     @Autowired

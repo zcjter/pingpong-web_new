@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/competitions")
-@CrossOrigin(origins = "*")
 public class CompetitionController {
     
     @Autowired

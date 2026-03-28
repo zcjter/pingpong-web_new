@@ -7,8 +7,10 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>乒乓球比赛管理系统</title>
+    <title>乒乓球比赛管理系统?v=6</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/marked/marked.min.js"></script>
     <style>
         * {
@@ -18,14 +20,28 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background: #f5f7fa;
+            font-family: var(--font-body, 'Lato', sans-serif);
+            background: #e8f0fb;
+            color: #333;
         }
 
         .header {
-            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            background: linear-gradient(135deg, #0057a8 0%, #0077b6 50%, #0096c7 100%);
             color: white;
-            padding: 20px 40px;
+            padding: 24px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
         }
 
         .header h1 {
@@ -33,23 +49,38 @@
         }
 
         .nav {
-            background: white;
-            padding: 0 40px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: #1a1a2e;
+            padding: 12px 40px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
         .nav-item {
             display: inline-block;
-            padding: 15px 20px;
+            padding: 10px 18px;
             cursor: pointer;
-            color: #333;
-            transition: all 0.3s;
+            color: rgba(255, 255, 255, .75);
+            font-family: var(--font-header);
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 8px;
+            transition: all .25s;
         }
 
-        .nav-item:hover,
+        .nav-item:hover {
+            color: #ffd700;
+            background: rgba(255, 255, 255, .08);
+        }
+
         .nav-item.active {
-            color: #1a73e8;
-            border-bottom: 3px solid #1a73e8;
+            color: #ffd700;
+            background: rgba(255, 215, 0, .12);
+            box-shadow: inset 0 -2px 0 0 rgba(255, 215, 0, .5);
         }
 
         .container {
@@ -59,18 +90,20 @@
         }
 
         .card {
-            background: white;
-            border-radius: 8px;
+            background: #fff;
+            border-radius: var(--radius);
             padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+            color: #1c2a3a;
         }
 
         .card-title {
+            font-family: var(--font-header);
             font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #0b1c2b;
         }
 
         .ranking-table {
@@ -378,7 +411,9 @@
             color: #333;
         }
 
-        #detail-intro h1, #detail-intro h2, #detail-intro h3 {
+        #detail-intro h1,
+        #detail-intro h2,
+        #detail-intro h3 {
             margin: 10px 0 5px;
             color: #1a73e8;
         }
@@ -387,7 +422,8 @@
             margin: 8px 0;
         }
 
-        #detail-intro ul, #detail-intro ol {
+        #detail-intro ul,
+        #detail-intro ol {
             margin: 8px 0;
             padding-left: 20px;
         }
@@ -509,6 +545,21 @@
             color: #1557b0;
         }
 
+        /* ===== NEW DESIGN TOKENS AND COMPONENT STYLES ===== */
+        :root {
+            --color-bg: #e8f0fb;
+            --color-card: #ffffff;
+            --color-primary: #1a1a2e;
+            --color-accent: #ffd700;
+            --color-blue: #0077b6;
+            --color-dark: #1a1a2e;
+            --radius: 14px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, .08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, .06);
+            --font-header: 'Poppins', sans-serif;
+            --font-body: 'Lato', sans-serif;
+        }
+
         .score-input-row {
             display: flex;
             align-items: center;
@@ -523,6 +574,1223 @@
 
         .score-input-row span {
             font-weight: bold;
+        }
+
+        /* =====================================================
+           MATCH ROUND INFO STYLES (参考图2风格)
+           ===================================================== */
+        .rounds-wrap {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .round-cat {
+            margin-bottom: 20px;
+        }
+
+        .round-cat-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #0077b6;
+            display: inline-block;
+        }
+
+        .round-section {
+            margin-bottom: 14px;
+        }
+
+        .round-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #0077b6;
+            background: #e3f2fd;
+            border-left: 3px solid #0077b6;
+            padding: 5px 10px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 8px;
+        }
+
+        .round-header-dot {
+            width: 6px;
+            height: 6px;
+            background: #0077b6;
+            border-radius: 50%;
+        }
+
+        .round-table-wrap {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+        }
+
+        .round-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .round-table thead th {
+            background: #0077b6;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 9px 12px;
+            text-align: center;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .round-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .round-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .round-row td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #333;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .round-row:last-child td {
+            border-bottom: none;
+        }
+
+        .round-row:nth-child(even) td {
+            background: #fafcff;
+        }
+
+        .round-row--winner td {
+            background: transparent !important;
+        }
+
+        .rt-player {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .rt-flag img {
+            width: 20px;
+            height: 14px;
+            border-radius: 2px;
+            vertical-align: middle;
+            background: #e3f2fd;
+            padding: 1px;
+        }
+
+        .rt-name--win {
+            font-weight: 700;
+            color: #43a047;
+        }
+
+        .rt-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+
+        .rs-game {
+            display: inline-block;
+            font-size: 10px;
+            padding: 1px 4px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            color: #555;
+            margin: 0 1px;
+        }
+
+        .rt-total {
+            font-size: 14px;
+            font-weight: 800;
+            color: #b0bec5;
+            min-width: 14px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .rt-total--win {
+            color: #43a047;
+        }
+
+        .rt-sep {
+            font-weight: 800;
+            color: #ccc;
+            margin: 0 2px;
+            font-size: 14px;
+        }
+
+        .rt-venue {
+            color: #888;
+            font-size: 11px;
+        }
+
+        .rt-status-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .rt-status--completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .rt-status--ongoing {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .rt-status--scheduled {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .rt-status--cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* =====================================================
+           HOME RANKING (with flags)
+           ===================================================== */
+        .home-ranking-cat {
+            margin-bottom: 20px;
+        }
+
+        .home-ranking-cat-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0077b6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ranking-table--clean {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e8e8e8;
+        }
+
+        .ranking-table--clean thead th {
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 9px 14px;
+            text-align: center;
+        }
+
+        .ranking-table--clean tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #333;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .ranking-table--clean tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .ranking-table--clean tbody tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        .ranking-table--clean .rank-1 td {
+            background: #fffde7 !important;
+        }
+
+        .ranking-table--clean .rank-2 td {
+            background: #f5f5f5 !important;
+        }
+
+        .ranking-table--clean .rank-3 td {
+            background: #fff3e0 !important;
+        }
+
+        .player-flag {
+            font-size: 15px;
+            margin-right: 4px;
+        }
+
+        .player-flag img {
+            background: #e3f2fd;
+            padding: 1px;
+        }
+
+        .country-cell {
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           CHAMPION PODIUM STYLES
+           ===================================================== */
+        .champion-podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 16px;
+            padding: 24px 16px 8px;
+        }
+
+        .champion-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px 20px;
+            border-radius: 16px;
+            min-width: 120px;
+            min-height: 140px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .champion-slot:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+        }
+
+        .champion-slot--1 {
+            background: linear-gradient(160deg, #ffd700 0%, #ffb300 100%);
+        }
+
+        .champion-slot--2 {
+            background: linear-gradient(160deg, #e0e0e0 0%, #bdbdbd 100%);
+        }
+
+        .champion-slot--3 {
+            background: linear-gradient(160deg, #ffcc80 0%, #ff8f00 100%);
+        }
+
+        .champion-medal {
+            font-size: 40px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .champion-slot--1 .champion-medal {
+            font-size: 52px;
+        }
+
+        .champion-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1a1a2e;
+            text-align: center;
+            word-break: keep-all;
+            margin-bottom: 4px;
+        }
+
+        .champion-label {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.7;
+            color: #333;
+            text-align: center;
+        }
+
+        .champion-cat-section {
+            margin-bottom: 28px;
+        }
+
+        .champion-cat-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #ffd700;
+            display: inline-block;
+        }
+
+        /* =====================================================
+           ENHANCED CARD & OVERALL STYLES
+           ===================================================== */
+        .card {
+            border-radius: 16px !important;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, .08) !important;
+            border: 1px solid rgba(0, 0, 0, .06) !important;
+            overflow: hidden;
+            transition: box-shadow 0.25s;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, .12) !important;
+        }
+
+        .card-title {
+            font-size: 17px !important;
+            font-weight: 700 !important;
+            color: #1a1a2e !important;
+            margin-bottom: 14px !important;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn {
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            transition: all 0.2s !important;
+            border: none !important;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+        }
+
+        .btn-primary {
+            background: #0077b6 !important;
+        }
+
+        .btn-primary:hover {
+            background: #005f92 !important;
+        }
+
+        .btn-success {
+            background: #43a047 !important;
+        }
+
+        .btn-danger {
+            background: #e53935 !important;
+        }
+
+        .btn-warning {
+            background: #fb8c00 !important;
+            color: #fff !important;
+        }
+
+        .btn-info {
+            background: #039be5 !important;
+        }
+
+        .rank-num {
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rank-num--1 {
+            background: #ffd700;
+        }
+
+        .rank-num--2 {
+            background: #bdbdbd;
+        }
+
+        .rank-num--3 {
+            background: #ff8f00;
+            color: #fff;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0077b6 50%, #1a1a2e 100%) !important;
+            padding: 24px 40px !important;
+        }
+
+        .header h1 {
+            font-size: 26px !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.5px;
+        }
+
+        .announcement-item {
+            border-left: 4px solid #0077b6 !important;
+            background: #f8f9fb !important;
+            border-radius: 8px !important;
+            padding: 14px 16px !important;
+            margin-bottom: 8px !important;
+        }
+
+        .announcement-item:hover {
+            background: #e3f2fd !important;
+            transform: translateX(4px) !important;
+        }
+
+        .player-card {
+            border-radius: 14px !important;
+            border: 1px solid #e8e8e8 !important;
+        }
+
+        .player-card:hover {
+            border-color: #0077b6 !important;
+        }
+
+        .competition-card {
+            border-radius: 10px !important;
+            border: 1.5px solid #e8e8e8 !important;
+            margin-bottom: 10px !important;
+        }
+
+        .competition-card:hover {
+            border-color: #0077b6 !important;
+            background: #f0f7ff !important;
+        }
+
+        .stat-box {
+            border-radius: 12px !important;
+            background: #f8f9fb !important;
+        }
+
+        .stat-value {
+            color: #0077b6 !important;
+        }
+
+        .back-btn {
+            color: #0077b6 !important;
+            font-weight: 600 !important;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #0077b6 !important;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 119, 182, .15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            border: 1.5px solid #e0e0e0 !important;
+            border-radius: 8px !important;
+            padding: 9px 14px !important;
+            font-size: 13px !important;
+        }
+
+        .search-box input:focus {
+            border-color: #0077b6 !important;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 119, 182, .15);
+        }
+
+        .modal-content {
+            border-radius: 16px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .25) !important;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+
+        .modal-header h3 {
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .ranking-table .winner {
+            color: #43a047 !important;
+            background: transparent !important;
+        }
+
+        /* =====================================================
+           TOURNAMENT BRACKET STYLES
+           ===================================================== */
+        .bracket-svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .bracket-match-box {
+            fill: #fff;
+            stroke: #0077b6;
+            stroke-width: 1.5;
+            rx: 8;
+            ry: 8;
+        }
+
+        .bracket-match-box:hover {
+            fill: #f0f7ff;
+            stroke: #005f92;
+        }
+
+        .bracket-match-box--winner {
+            fill: #e8f5e9;
+            stroke: #43a047;
+        }
+
+        .bracket-match-line {
+            fill: none;
+            stroke: #0077b6;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .bracket-player-text {
+            font-family: 'Lato', sans-serif;
+            font-size: 12px;
+            fill: #333;
+        }
+
+        .bracket-player-text--winner {
+            font-weight: 700;
+            fill: #43a047;
+        }
+
+        .bracket-player-text--tbd {
+            fill: #aaa;
+            font-style: italic;
+        }
+
+        .bracket-score-text {
+            font-family: 'Lato', sans-serif;
+            font-size: 11px;
+            fill: #666;
+        }
+
+        .bracket-score-text--winner {
+            font-weight: 700;
+            fill: #43a047;
+        }
+
+        .bracket-round-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            fill: #1a1a2e;
+        }
+
+        .bracket-champion-box {
+            fill: linear-gradient(160deg, #ffd700 0%, #ffb300 100%);
+        }
+
+        .bracket-champion-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            fill: #1a1a2e;
+        }
+
+        .btn-view-active {
+            background: #0077b6 !important;
+            color: #fff !important;
+        }
+
+        #btn-view-table, #btn-view-bracket {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .ranking-table .loser {
+            color: #aaa !important;
+        }
+
+        .game-score {
+            background: #e8e8e8 !important;
+            border-radius: 5px !important;
+        }
+
+        /* =====================================================
+           MODAL STYLES
+           ===================================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .55);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, .25);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* =====================================================
+           UTILITY CLASSES
+           ===================================================== */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #0077b6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 119, 182, .15);
+        }
+
+        .search-box {
+            margin-bottom: 16px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 9px 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .search-box input:focus {
+            border-color: #0077b6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 119, 182, .15);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 14px;
+            color: #0077b6;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .announcement-detail h2 {
+            margin: 0 0 10px;
+            color: #1a1a2e;
+        }
+
+        .announcement-detail {
+            padding: 0;
+        }
+
+        .announcement-meta {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .announcement-content {
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+        }
+
+        .btn-primary {
+            background: #0077b6;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #005f92;
+        }
+
+        .btn-success {
+            background: #43a047;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #e53935;
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: #fb8c00;
+            color: #fff;
+        }
+
+        .btn-info {
+            background: #039be5;
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #0077b6;
+            color: #0077b6;
+            padding: 8px 16px;
+        }
+
+        .btn-outline:hover {
+            background: #0077b6;
+            color: #fff;
+        }
+
+        .btn-outline.active {
+            background: #0077b6;
+            color: #fff;
+        }
+
+        .btn+.btn {
+            margin-left: 6px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* =====================================================
+           ANNOUNCEMENT & CARD ITEMS
+           ===================================================== */
+        .announcement-item {
+            padding: 12px 14px;
+            border-left: 4px solid #0077b6;
+            background: #f8f9fb;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .announcement-item:hover {
+            background: #e3f2fd;
+            transform: translateX(4px);
+            border-left-color: #ffd700;
+        }
+
+        .announcement-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .announcement-date {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .announcement-item>div:nth-child(2) {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .competition-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .competition-card:hover {
+            border-color: #0077b6;
+            background: #f0f7ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+        }
+
+        .competition-info h4 {
+            margin: 0 0 4px;
+            font-size: 15px;
+            color: #1a1a2e;
+        }
+
+        .competition-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .player-card {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .player-card:hover {
+            border-color: #0077b6;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+            transform: translateY(-2px);
+        }
+
+        .player-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0077b6, #0096c7);
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .player-country {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .player-detail-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .player-detail-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0077b6, #0096c7);
+            color: #fff;
+            font-size: 36px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .player-detail-info h2 {
+            margin: 0 0 6px;
+            color: #1a1a2e;
+        }
+
+        .player-detail-info p {
+            margin: 0 0 4px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .player-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            background: #f5f7fa;
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+            min-width: 90px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0077b6;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .rank-num {
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #fff;
+            font-weight: 700;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rank-num--1 {
+            background: #ffd700;
+        }
+
+        .rank-num--2 {
+            background: #bdbdbd;
+        }
+
+        .rank-num--3 {
+            background: #ff8f00;
+            color: #fff;
+        }
+
+        .points {
+            font-weight: 700;
+            color: #0077b6;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .ranking-table th,
+        .ranking-table td {
+            padding: 9px 12px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .ranking-table th {
+            background: #f5f7fa;
+            font-weight: 600;
+            color: #555;
+            font-size: 12px;
+        }
+
+        .ranking-table tr:hover td {
+            background: #f8f9fb;
+        }
+
+        .ranking-table .winner {
+            color: #43a047;
+            font-weight: 600;
+        }
+
+        /* ===== TOURNAMENT BRACKET STYLES ===== */
+        .bracket-toggle-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .bracket-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 12px;
+            min-height: 400px;
+            width: 100%;
+        }
+
+        .bracket-svg {
+            display: block;
+        }
+
+        .bracket-match-box {
+            fill: #fff;
+            stroke: #ddd;
+            stroke-width: 1;
+        }
+
+        .bracket-match-box:hover {
+            fill: #f0f7ff;
+            stroke: #0077b6;
+        }
+
+        .bracket-match-line {
+            fill: none;
+            stroke: #666;
+            stroke-width: 1.5;
+        }
+
+        .bracket-player-name {
+            font-size: 12px;
+            fill: #333;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .bracket-player-name--winner {
+            font-weight: 700;
+            fill: #43a047;
+        }
+
+        .bracket-player-name--empty {
+            fill: #bbb;
+            font-style: italic;
+        }
+
+        .bracket-divider {
+            stroke: #eee;
+            stroke-width: 1;
+        }
+
+        .bracket-round-label {
+            font-size: 14px;
+            font-weight: 700;
+            fill: #1a1a2e;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bracket-category-tab {
+            display: inline-block;
+            padding: 6px 14px;
+            margin-right: 6px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            background: #e8e8e8;
+            color: #555;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .bracket-category-tab:hover {
+            background: #d0d0d0;
+        }
+
+        .bracket-category-tab.active {
+            background: #0077b6;
+            color: #fff;
+        }
+
+        .bracket-no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -552,17 +1820,7 @@
             </div>
             <div class="card">
                 <div class="card-title">🏆 实时排名 TOP 3</div>
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>排名</th>
-                            <th>姓名</th>
-                            <th>国家</th>
-                            <th>积分</th>
-                        </tr>
-                    </thead>
-                    <tbody id="home-ranking"></tbody>
-                </table>
+                <div id="home-ranking"></div>
             </div>
         </div>
 
@@ -639,12 +1897,35 @@
             </div>
             <div id="competition-detail-view" style="display:none;">
                 <span class="back-btn" onclick="showCompetitionsList()">← 返回赛事列表</span>
-                <div class="card">
+                <div class="card" style="margin-bottom:16px;">
                     <div class="actions">
                         <div class="card-title" id="competition-title"></div>
-                        <button class="btn btn-primary" onclick="showMatchModal()">+ 添加比赛</button>
+                        <div class="action-btns">
+                            <button class="btn btn-outline" id="btn-toggle-roster" onclick="toggleRoster()">👥 参赛名单</button>
+                            <button class="btn btn-primary" onclick="showMatchModal()">+ 添加比赛</button>
+                        </div>
                     </div>
-                    <div id="competition-matches"></div>
+                </div>
+                <div class="card" id="roster-card">
+                    <div class="actions">
+                        <div class="card-title">👥 参赛名单</div>
+                        <button class="btn btn-success" onclick="showRosterFormModal()">+ 添加运动员</button>
+                    </div>
+                    <div id="roster-list-content"></div>
+                </div>
+                <div class="card">
+                    <div class="actions">
+                        <div class="card-title">📋 比赛信息</div>
+                        <div class="action-btns">
+                            <button class="btn btn-outline active" id="btn-view-table" onclick="switchMatchView('table')">📊 列表</button>
+                            <button class="btn btn-outline" id="btn-view-bracket" onclick="switchMatchView('bracket')">🌳 对阵图</button>
+                        </div>
+                    </div>
+                    <div id="detail-rounds-content"></div>
+                    <div id="bracket-view" style="display:none;">
+                        <div class="bracket-toggle-btns" id="bracket-categories"></div>
+                        <div class="bracket-container" id="bracket-container"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -958,12 +2239,160 @@
         </div>
     </div>
 
+    <!-- 参赛名单模态框 -->
+    <div id="roster-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="roster-modal-title">添加参赛运动员</h3>
+                <button class="close-btn" onclick="closeModal('roster-modal')">&times;</button>
+            </div>
+            <form id="roster-form">
+                <input type="hidden" id="roster-id">
+                <div class="form-group">
+                    <label>比赛地点 *</label>
+                    <input type="text" id="roster-venue" required placeholder="输入比赛地点">
+                </div>
+                <div class="form-group">
+                    <label>年份 *</label>
+                    <input type="number" id="roster-year" required placeholder="输入年份" value="2026">
+                </div>
+                <div class="form-group">
+                    <label>项目类别 *</label>
+                    <select id="roster-category" required>
+                        <option value="男单">男单</option>
+                        <option value="女单">女单</option>
+                        <option value="男双">男双</option>
+                        <option value="女双">女双</option>
+                        <option value="混双">混双</option>
+                        <option value="男团">男团</option>
+                        <option value="女团">女团</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>运动员姓名 *</label>
+                    <input type="text" id="roster-player-name" required placeholder="输入运动员姓名">
+                </div>
+                <div class="form-group">
+                    <label>国家</label>
+                    <input type="text" id="roster-country" placeholder="输入国家名称">
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+                <button type="button" class="btn" onclick="closeModal('roster-modal')">取消</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const API_BASE = 'http://localhost:8090/api';
         let currentPlayerId = null;
         let currentCompetitionId = null;
         let currentAnnouncementId = null;
         let allPlayers = [];
+
+        // ========== GLOBAL FLAG MAPPING (country name → flagcdn alpha-2 code) ==========
+        const GLOBAL_FLAG_MAP = {
+            // 亚洲
+            '中国': 'cn', '中国内地': 'cn', '内地': 'cn',
+            '中国台北': 'TPE', '中华台北': 'TPE', '台湾': 'TPE', '台北': 'TPE',
+            '中国香港': 'hk', '香港': 'hk', '澳門': 'hk',
+            '澳门': 'mo', '澳門': 'mo',
+            '日本': 'jp', '韩国': 'kr', '朝鲜': 'kp', '北朝鲜': 'kp',
+            '蒙古': 'mn', '新加坡': 'sg', '马来西亚': 'my', '泰国': 'th', '越南': 'vn',
+            '印度尼西亚': 'id', '菲律宾': 'ph', '文莱': 'bn', '东帝汶': 'tl', ' Timor': 'tl',
+            '印度': 'in', '巴基斯坦': 'pk', '孟加拉': 'bd', '孟加拉国': 'bd', '巴基斯坦': 'pk',
+            '斯里兰卡': 'lk', '尼泊尔': 'np', '不丹': 'bt', '马尔代夫': 'mv',
+            '哈萨克斯坦': 'kz', '乌兹别克斯坦': 'uz', '土库曼斯坦': 'tm',
+            '吉尔吉斯斯坦': 'kg', '塔吉克斯坦': 'tj', '阿富汗': 'af',
+            '伊朗': 'ir', '伊拉克': 'iq', '沙特阿拉伯': 'sa', '也门': 'ye',
+            '卡塔尔': 'qa', '阿联酋': 'ae', '阿曼': 'om', '科威特': 'kw',
+            '巴林': 'bh', '约旦': 'jo', '黎巴嫩': 'lb', '叙利亚': 'sy',
+            '以色列': 'il', '巴勒斯坦': 'ps', '土耳其': 'tr', '塞浦路斯': 'cy',
+            '缅甸': 'mm', '老挝': 'la',
+            // 欧洲
+            '斯诺文尼亚': 'si', '英国': 'gb', '英國': 'gb', '英格兰': 'gb-eng', '苏格兰': 'gb-sct',
+            '威尔士': 'gb-wls', '北爱尔兰': 'gb-nir',
+            '法国': 'fr', '法國': 'fr', '德国': 'de', '德國': 'de',
+            '意大利': 'it', '西班牙': 'es',
+            '葡萄牙': 'pt', '荷兰': 'nl', '比利時': 'be', '卢森堡': 'lu',
+            '瑞士': 'ch', '奥地利': 'at', '列支敦士登': 'li',
+            '瑞典': 'se', '挪威': 'no', '丹麦': 'dk', '芬蘭': 'fi', '冰岛': 'is',
+            '爱沙尼亚': 'ee', '拉脱维亚': 'lv', '立陶宛': 'lt',
+            '波兰': 'pl', '捷克': 'cz', '斯洛伐克': 'sk', '匈牙利': 'hu',
+            '罗马尼亚': 'ro', '保加利亚': 'bg', '希腊': 'gr',
+            '克罗地亚': 'hr', '斯洛文尼亚': 'si', '塞尔维亚': 'rs',
+            '黑山': 'me', '波黑': 'ba', '北马其顿': 'mk', '阿尔巴尼亚': 'al',
+            '白俄罗斯': 'by', '乌克兰': 'ua', '摩尔多瓦': 'md', '俄罗斯': 'ru',
+            '爱尔兰': 'ie', '马耳他': 'mt', '安道尔': 'ad', '摩纳哥': 'mc',
+            '圣马力诺': 'sm', '梵蒂冈': 'va',
+            // 美洲
+            '美国': 'us', '美國': 'us', '加拿大': 'ca', '墨西哥': 'mx',
+            '阿根廷': 'ar', '巴西': 'br', '智利': 'cl', '哥伦比亚': 'co',
+            '秘鲁': 'pe', '厄瓜多尔': 'ec', '委内瑞拉': 've', '玻利维亚': 'bo',
+            '巴拉圭': 'py', '乌拉圭': 'uy', '圭亚那': 'gy', '苏里南': 'sr',
+            '法属圭亚那': 'gf',
+            '牙买加': 'jm', '特立尼达和多巴哥': 'tt', '巴巴多斯': 'bb',
+            '巴哈马': 'bs', '古巴': 'cu', '海地': 'ht', '多米尼加': 'do',
+            '波多黎各': 'pr', '波多里各': 'pr',
+            '哥斯达黎加': 'cr', '巴拿马': 'pa', '洪都拉斯': 'hn',
+            '尼加拉瓜': 'ni', '萨尔瓦多': 'sv', '危地马拉': 'gt', '伯利兹': 'bz',
+            '多米尼克': 'dm', '圣卢西亚': 'lc', '圣文森特和格林纳丁斯': 'vc',
+            '格林纳达': 'gd', '圣基茨和尼维斯': 'kn', '安提瓜和巴布达': 'ag',
+            // 非洲
+            '埃及': 'eg', '南非': 'za', '摩洛哥': 'ma', '突尼斯': 'tn',
+            '阿尔及利亚': 'dz', '利比亚': 'ly', '苏丹': 'sd', '埃塞俄比亚': 'et',
+            '肯尼亚': 'ke', '坦桑尼亚': 'tz', '乌干达': 'ug', '加纳': 'gh',
+            '尼日利亚': 'ng', '喀麦隆': 'cm', '科特迪瓦': 'ci', '塞内加尔': 'sn',
+            '马里': 'ml', '布基纳法索': 'bf', '尼日尔': 'ne', '乍得': 'td',
+            '刚果': 'cd', '刚果民主共和国': 'cd', '民主刚果': 'cd',
+            '安哥拉': 'ao', '莫桑比克': 'mz', '赞比亚': 'zm', '津巴布韦': 'zw',
+            '博茨瓦纳': 'bw', '纳米比亚': 'na', '莱索托': 'ls', '斯威士兰': 'sz',
+            '马达加斯加': 'mg', '毛里求斯': 'mu', '塞舌尔': 'sc',
+            '卢旺达': 'rw', '布隆迪': 'bi', '索马里': 'so', '吉布提': 'dj',
+            '赤道几内亚': 'gq', '加蓬': 'ga', '圣多美和普林西比': 'st',
+            '佛得角': 'cv', '几内亚': 'gn', '几内亚比绍': 'gw',
+            '冈比亚': 'gm', '塞拉利昂': 'sl', '利比里亚': 'lr',
+            '多哥': 'tg', '贝宁': 'bj', '毛里塔尼亚': 'mr',
+            '尼日尼亚': 'ng',
+            // 大洋洲
+            '澳大利亚': 'au', '新西兰': 'nz', '巴布亚新几内亚': 'pg',
+            '斐济': 'fj', '萨摩亚': 'ws', '汤加': 'to', '瓦努阿图': 'vu',
+            '密克罗尼西亚': 'fm', '帕劳': 'pw', '基里巴斯': 'ki',
+            '图瓦卢': 'tv', '瑙鲁': 'nr', '马绍尔群岛': 'mh',
+            '所罗门群岛': 'sb', '新喀里多尼亚': 'nc',
+            // 其他
+            '格陵兰': 'gl', '法罗群岛': 'fo'
+        };
+
+        function getFlag(country) {
+            if (!country) return '';
+            const name = country.trim();
+
+            // 1. 特殊处理：中华台北/中国台北 (梅花旗)
+            // 使用专用的静态图片链接
+            const TPE_FLAG = "https://picx.zhimg.com/80/v2-0c2290da259b563d9269af076b1e0ca9_1440w.webp?source=1def8aca";
+            const taipeiVariants = ["中华台北", "中国台北", "Chinese Taipei", "TPE"];
+            if (taipeiVariants.some(v => name.includes(v))) {
+                return `<img src="${TPE_FLAG}" width="24" height="16" style="border-radius:2px;vertical-align:middle;border:1px solid #eee;background:#e3f2fd;padding:1px;" alt="${name}">`;
+            }
+
+            // 2. 精确匹配 GLOBAL_FLAG_MAP
+            const code = GLOBAL_FLAG_MAP[name];
+            if (code) {
+                return `<img src="https://flagcdn.com/w40/${code}.png" width="24" height="16" style="border-radius:2px;vertical-align:middle;background:#e3f2fd;padding:1px;" alt="${name}">`;
+            }
+
+            // 3. 模糊匹配
+            for (const [key, val] of Object.entries(GLOBAL_FLAG_MAP)) {
+                if (name.includes(key) || key.includes(name)) {
+                    // 如果模糊匹配中包含"台北"，依然返回梅花旗
+                    if (name.includes("台北") || key.includes("台北")) {
+                        return `<img src="${TPE_FLAG}" width="24" height="16" style="border-radius:2px;vertical-align:middle;border:1px solid #eee;background:#e3f2fd;padding:1px;" alt="${name}">`;
+                    }
+                    return `<img src="https://flagcdn.com/w40/${val}.png" width="24" height="16" style="border-radius:2px;vertical-align:middle;background:#e3f2fd;padding:1px;" alt="${name}">`;
+                }
+            }
+            return '';
+        }
 
         // 导航
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -999,88 +2428,441 @@
             }
         }
 
-        // 首页数据
+        // ========== 首页数据 ==========
         async function loadHomeData() {
             try {
-                const [annRes, playersRes, rankRes] = await Promise.all([
-                    fetch(`${API_BASE}/announcements/published`),
-                    fetch(`${API_BASE}/players`),
-                    fetch(`${API_BASE}/players/ranking`)
-                ]);
+                const annRes = await fetch(`${API_BASE}/announcements/published`);
                 const announcements = await annRes.json();
-                const players = await playersRes.json();
-                const ranking = await rankRes.json();
 
+                // --- 公告列表 ---
                 const annHtml = announcements.length ? announcements.map(a => `
                     <div class="announcement-item" onclick="showAnnouncementDetail(${a.id})">
                         <div class="announcement-title">${a.title}</div>
                         <div>${a.content.substring(0, 100)}${a.content.length > 100 ? '...' : ''}</div>
                         <div class="announcement-date">${a.updatedAt ? new Date(a.updatedAt).toLocaleDateString() : (a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-')}</div>
                     </div>
-                `).join('') : '<div class="empty-state">暂无公告</div>';
+                    `).join('') : '<div class="empty-state">暂无公告</div>';
                 document.getElementById('announcements-list').innerHTML = annHtml;
 
-                // 获取当前年份的排名数据，按项目分组显示每项的前3名
-                const currentYear = new Date().getFullYear();
-                let rankHtml = '';
-
-                try {
-                    const rankRes2 = await fetch(`${API_BASE}/rankings/year/${currentYear}`);
-                    const rankings = await rankRes2.json();
-
-                    if (rankings.length > 0) {
-                        // 按项目分组
-                        const grouped = {};
-                        rankings.forEach(r => {
-                            const cat = r.category || '其他';
-                            if (!grouped[cat]) grouped[cat] = [];
-                            grouped[cat].push(r);
-                        });
-
-                        // 按项目显示
-                        const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-                        categories.forEach(cat => {
-                            if (grouped[cat] && grouped[cat].length > 0) {
-                                const top3 = grouped[cat].slice(0, 3).sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
-                                rankHtml += `
-                                    <div style="margin-bottom: 20px;">
-                                        <h4 style="margin-bottom: 10px; color: #1a73e8;">${cat} TOP 3</h4>
-                                        <table class="ranking-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>排名</th>
-                                                    <th>姓名</th>
-                                                    <th>国家</th>
-                                                    <th>积分</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${top3.map((p, i) => `
-                                                    <tr class="rank-${i + 1}">
-                                                        <td><span class="rank-num">${p.ranking || i + 1}</span></td>
-                                                        <td>${p.playerName}</td>
-                                                        <td>${p.country || '-'}</td>
-                                                        <td class="points">${p.points}</td>
-                                                    </tr>
-                                                `).join('')}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                `;
-                            }
-                        });
-                    } else {
-                        rankHtml = '<div class="empty-state">暂无排名数据</div>';
-                    }
-                } catch (e) {
-                    console.error(e);
-                    rankHtml = '<div class="empty-state">暂无排名数据</div>';
-                }
-
-                document.getElementById('home-ranking').innerHTML = rankHtml;
+                // --- 加载实时排名 TOP 3（带国旗）---
+                await loadHomeRanking();
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        // 实时排名 TOP 3（带国旗）
+        async function loadHomeRanking() {
+            const currentYear = new Date().getFullYear();
+            let rankHtml = '';
+            try {
+                const res = await fetch(`${API_BASE}/rankings/year/${currentYear}`);
+                const rankings = await res.json();
+                if (!rankings || rankings.length === 0) {
+                    rankHtml = '<div class="empty-state">暂无排名数据</div>';
+                } else {
+                    const grouped = {};
+                    rankings.forEach(r => {
+                        const cat = r.category || '其他';
+                        if (!grouped[cat]) grouped[cat] = [];
+                        grouped[cat].push(r);
+                    });
+                    const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                    categories.forEach(cat => {
+                        if (grouped[cat] && grouped[cat].length > 0) {
+                            const top3 = grouped[cat].slice(0, 3).sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
+                            rankHtml += `
+                    <div class="home-ranking-cat">
+                        <h4 class="home-ranking-cat-title">${cat} TOP 3</h4>
+                        <table class="ranking-table ranking-table--clean">
+                            <tbody>
+                                ${top3.map((p, i) => `
+                                                <tr class="rank-${i + 1}">
+                                                    <td><span class="rank-num rank-num--${i + 1}">${p.ranking || i + 1}</span></td>
+                                                    <td><span class="player-flag">${getFlag(p.country)}</span>${p.playerName}</td>
+                                                    <td class="country-cell">${p.country || '-'}</td>
+                                                    <td class="points">${p.points}</td>
+                                                </tr>
+                                            `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    `;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                rankHtml = '<div class="empty-state">暂无排名数据</div>';
+            }
+            document.getElementById('home-ranking').innerHTML = rankHtml;
+        }
+
+        // ========== 赛事详情：比赛轮次信息 ===========
+        function renderDetailRounds(container, matches) {
+            const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const roundOrder = ['小组赛', '1/16', '1/8', '1/4', '四分之一', '半决', '决', '铜牌'];
+            const grouped = {};
+            matches.forEach(m => {
+                const cat = m.category || '其他';
+                if (!grouped[cat]) grouped[cat] = {};
+                const key = m.roundNumber || '其他';
+                if (!grouped[cat][key]) grouped[cat][key] = [];
+                grouped[cat][key].push(m);
+            });
+            let html = '<div class="rounds-wrap">';
+            categories.forEach(cat => {
+                if (!grouped[cat]) return;
+                const catData = grouped[cat];
+                const roundKeys = Object.keys(catData).sort((a, b) => {
+                    const ia = roundOrder.findIndex(k => a.includes(k)); const ib = roundOrder.findIndex(k => b.includes(k));
+                    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+                });
+                if (roundKeys.length === 0) return;
+                html += `<div class="round-cat">`;
+                html += `<div class="round-cat-title">${cat}</div>`;
+                roundKeys.forEach(key => {
+                    const roundMatches = catData[key];
+                    html += `<div class="round-section">`;
+                    html += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
+                    html += `<div class="round-table-wrap"><table class="round-table">`;
+                    html += `<thead><tr><th>选手1</th><th>比分</th><th>选手2</th><th>场馆</th><th>状态</th><th>操作</th></tr></thead>`;
+                    html += `<tbody>`;
+                    roundMatches.forEach(m => {
+                        let scores = [];
+                        let p1Total = 0, p2Total = 0;
+                        try { if (m.scores) { scores = JSON.parse(m.scores); scores.forEach(s => { if (s.p1 > s.p2) p1Total++; else if (s.p2 > s.p1) p2Total++; }); } } catch (e) { }
+                        const p1Name = m.player1Name || '-';
+                        const p2Name = m.player2Name || '-';
+                        const p1Country = m.player1Country || '';
+                        const p2Country = m.player2Country || '';
+                        const p1Won = p1Total > p2Total && p1Total > 0;
+                        const p2Won = p2Total > p1Total && p2Total > 0;
+                        const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
+                        const validScores2 = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
+                        const scoresCell = validScores2.length > 0
+                            ? validScores2.map(s => {
+                                const p1Win = s.p1 > s.p2;
+                                const p1Score = `<span style="color:${p1Win ? '#1565c0' : '#b0bec5'};font-weight:700;">${s.p1}</span>`;
+                                const p2Score = `<span style="color:${!p1Win ? '#1565c0' : '#b0bec5'};font-weight:700;">${s.p2}</span>`;
+                                return `<span class="rs-game">${p1Score}:${p2Score}</span>`;
+                            }).join('')
+                            : '';
+                        const totalHtml = (p1Total > 0 || p2Total > 0)
+                            ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
+                            : '';
+                        html += `
+                                    <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
+                                        <td class="rt-player"><span class="rt-flag">${getFlag(p1Country)}</span><span class="${p1Won ? 'rt-name--win' : ''}">${p1Name}</span></td>
+                                        <td class="rt-score">${scoresCell}${totalHtml}</td>
+                                        <td class="rt-player"><span class="rt-flag">${getFlag(p2Country)}</span><span class="${p2Won ? 'rt-name--win' : ''}">${p2Name}</span></td>
+                                        <td class="rt-venue">${m.venue || '-'}</td>
+                                        <td class="rt-status"><span class="rt-status-badge rt-status--${m.status}">${statusMap[m.status] || m.status}</span></td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
+                                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
+                                        </td>
+                                    </tr>
+                                    `;
+                    });
+                    html += `</tbody></table></div></div>`;
+                });
+                html += `</div>`;
+            });
+            html += '</div>';
+            if (html === '<div class="rounds-wrap"></div>') {
+                container.innerHTML = '<div class="empty-state" style="background:#f5f5f5;color:#999;">暂无比赛记录</div>';
+                return;
+            }
+            container.innerHTML = html;
+        }
+
+        // ========== 对阵图视图切换 ==========
+        let currentMatchView = 'table';
+        let currentBracketCategory = '';
+
+        function switchMatchView(view) {
+            currentMatchView = view;
+            document.getElementById('btn-view-table').classList.toggle('active', view === 'table');
+            document.getElementById('btn-view-bracket').classList.toggle('active', view === 'bracket');
+            document.getElementById('detail-rounds-content').style.display = view === 'table' ? 'block' : 'none';
+            document.getElementById('bracket-view').style.display = view === 'bracket' ? 'block' : 'none';
+
+            if (view === 'bracket' && currentCompetitionMatches && currentCompetitionMatches.length > 0) {
+                initBracketView(currentCompetitionMatches);
+            }
+        }
+
+        function initBracketView(matches) {
+            const categories = ['男单', '女单', '男双', '女双', '混双'];
+            const categoryMatches = {};
+            matches.forEach(m => {
+                const cat = m.category || '其他';
+                if (!categoryMatches[cat]) categoryMatches[cat] = [];
+                categoryMatches[cat].push(m);
+            });
+
+            const availableCategories = categories.filter(cat => categoryMatches[cat] && categoryMatches[cat].length > 0);
+
+            if (availableCategories.length === 0) {
+                document.getElementById('bracket-container').innerHTML = '<div class="bracket-no-data">暂无淘汰赛数据</div>';
+                document.getElementById('bracket-categories').innerHTML = '';
+                return;
+            }
+
+            if (!currentBracketCategory || !availableCategories.includes(currentBracketCategory)) {
+                currentBracketCategory = availableCategories[0];
+            }
+
+            let tabsHtml = '';
+            availableCategories.forEach(cat => {
+                tabsHtml += `<button class="bracket-category-tab ${cat === currentBracketCategory ? 'active' : ''}" onclick="selectBracketCategory('${cat}')">${cat}</button>`;
+            });
+            document.getElementById('bracket-categories').innerHTML = tabsHtml;
+
+            renderBracket(categoryMatches[currentBracketCategory], currentBracketCategory);
+        }
+
+        function selectBracketCategory(category) {
+            currentBracketCategory = category;
+            document.querySelectorAll('.bracket-category-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === category);
+            });
+            const categories = ['男单', '女单', '男双', '女双', '混双'];
+            const categoryMatches = {};
+            currentCompetitionMatches.forEach(m => {
+                const cat = m.category || '其他';
+                if (!categoryMatches[cat]) categoryMatches[cat] = [];
+                categoryMatches[cat].push(m);
+            });
+            renderBracket(categoryMatches[category], category);
+        }
+
+        function renderBracket(matches, category) {
+            if (!matches || matches.length === 0) {
+                document.getElementById('bracket-container').innerHTML = '<div class="bracket-no-data">暂无比赛数据</div>';
+                return;
+            }
+
+            const eliminationRounds = matches.filter(m => {
+                const rn = String(m.roundNumber || '');
+                return rn.includes('决') || rn.includes('半') || rn.includes('1/') || rn.includes('四') || !rn.match(/^\d+$/);
+            });
+
+            if (eliminationRounds.length === 0) {
+                document.getElementById('bracket-container').innerHTML = '<div class="bracket-no-data">暂无淘汰赛数据</div>';
+                return;
+            }
+
+            const roundOrder = ['决', '半', '四', '1/2', '1/4', '1/8', '1/16'];
+            eliminationRounds.sort((a, b) => {
+                const ra = String(a.roundNumber || '');
+                const rb = String(b.roundNumber || '');
+                const ia = roundOrder.findIndex(r => ra.includes(r));
+                const ib = roundOrder.findIndex(r => rb.includes(r));
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return ra.localeCompare(rb);
+            });
+
+            const rounds = {};
+            eliminationRounds.forEach(m => {
+                const rn = m.roundNumber || '其他';
+                if (!rounds[rn]) rounds[rn] = [];
+                rounds[rn].push(m);
+            });
+
+            Object.keys(rounds).forEach(key => {
+                rounds[key].sort((a, b) => (a.id || 0) - (b.id || 0));
+            });
+
+            const sortedRoundKeys = Object.keys(rounds).sort((a, b) => {
+                const ia = roundOrder.findIndex(r => a.includes(r));
+                const ib = roundOrder.findIndex(r => b.includes(r));
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b, 'zh');
+            });
+
+            console.log('=== 原始数据 ===');
+            sortedRoundKeys.forEach(key => {
+                console.log(`轮次 ${key} (${rounds[key].length}场):`, rounds[key].map(m => `${m.id}:${m.player1Name} vs ${m.player2Name}`).join(', '));
+            });
+
+            for (let i = sortedRoundKeys.length - 2; i >= 0; i--) {
+                const currKey = sortedRoundKeys[i];
+                const nextKey = sortedRoundKeys[i + 1];
+                const currMatches = rounds[currKey];
+                const nextMatches = rounds[nextKey];
+                
+                if (!currMatches || !nextMatches || currMatches.length < 2) continue;
+                
+                const newOrder = new Array(currMatches.length);
+                let used = new Array(currMatches.length).fill(false);
+                
+                for (let j = 0; j < nextMatches.length; j++) {
+                    const nextMatch = nextMatches[j];
+                    const p1Name = nextMatch.player1Name;
+                    const p2Name = nextMatch.player2Name;
+                    
+                    let p1Idx = -1, p2Idx = -1;
+                    
+                    for (let k = 0; k < currMatches.length; k++) {
+                        if (used[k]) continue;
+                        const m = currMatches[k];
+                        if (m.player1Name === p1Name || m.player2Name === p1Name) p1Idx = k;
+                        if (m.player1Name === p2Name || m.player2Name === p2Name) p2Idx = k;
+                    }
+                    
+                    if (p1Idx >= 0 && p2Idx >= 0) {
+                        newOrder[j * 2] = currMatches[p1Idx];
+                        newOrder[j * 2 + 1] = currMatches[p2Idx];
+                        used[p1Idx] = true;
+                        used[p2Idx] = true;
+                    }
+                }
+                
+                let remaining = [];
+                for (let k = 0; k < currMatches.length; k++) {
+                    if (!used[k]) remaining.push(currMatches[k]);
+                }
+                let ri = 0;
+                for (let k = 0; k < newOrder.length; k++) {
+                    if (!newOrder[k] && remaining[ri]) {
+                        newOrder[k] = remaining[ri++];
+                    }
+                }
+                
+                rounds[currKey] = newOrder.filter(m => m);
+            }
+
+            console.log('=== 重排后数据 ===');
+            Object.keys(rounds).forEach(key => {
+                console.log(`轮次 ${key} (${rounds[key].length}场):`, rounds[key].map(m => `${m.id}:${m.player1Name} vs ${m.player2Name}`).join(', '));
+            });
+
+            const sortedRoundKeysFinal = Object.keys(rounds).sort((a, b) => {
+                const ia = roundOrder.findIndex(r => a.includes(r));
+                const ib = roundOrder.findIndex(r => b.includes(r));
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b, 'zh');
+            });
+
+            const roundCount = sortedRoundKeysFinal.length;
+            const matchBoxWidth = 150;
+            const matchBoxHeight = 45;
+            const roundGap = 80;
+            const padding = 30;
+            const headerHeight = 30;
+            const baseSpacing = 60;
+
+            const maxMatches = rounds[sortedRoundKeysFinal[0]].length;
+            const svgHeight = padding * 2 + headerHeight + maxMatches * baseSpacing + 30;
+            const svgWidth = padding * 2 + roundCount * (matchBoxWidth + roundGap);
+
+            const roundPositions = {};
+            
+            for (let roundIdx = 0; roundIdx < roundCount; roundIdx++) {
+                const key = sortedRoundKeysFinal[roundIdx];
+                const roundMatches = rounds[key];
+                const matchesInRound = roundMatches.length;
+                const unit = maxMatches / matchesInRound;
+                
+                roundPositions[key] = [];
+                roundMatches.forEach((m, matchIdx) => {
+                    const unitHeight = maxMatches * baseSpacing / matchesInRound;
+                    const y = padding + headerHeight + matchIdx * unitHeight + (unitHeight - matchBoxHeight) / 2;
+                    
+                    roundPositions[key].push({
+                        match: m,
+                        x: padding + roundIdx * (matchBoxWidth + roundGap),
+                        y: y
+                    });
+                });
+            }
+
+            let svg = `<svg class="bracket-svg" width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
+
+            svg += `<text x="${svgWidth/2}" y="18" text-anchor="middle" class="bracket-round-label" style="font-size:13px;font-weight:700;">${category}</text>`;
+
+            sortedRoundKeysFinal.forEach((key, roundIdx) => {
+                const roundLabel = key;
+                const roundX = padding + roundIdx * (matchBoxWidth + roundGap) + matchBoxWidth / 2;
+                svg += `<text x="${roundX}" y="${headerHeight - 2}" text-anchor="middle" class="bracket-round-label" style="font-size:9px;font-weight:600;fill:#0077b6;">${roundLabel}</text>`;
+            });
+
+            for (let r = 0; r < sortedRoundKeysFinal.length - 1; r++) {
+                const currentKey = sortedRoundKeysFinal[r];
+                const nextKey = sortedRoundKeysFinal[r + 1];
+                const currentPos = roundPositions[currentKey];
+                const nextPos = roundPositions[nextKey];
+
+                for (let i = 0; i < currentPos.length; i++) {
+                    const match = currentPos[i];
+                    const matchIdx = Math.floor(i / 2);
+                    const targetMatch = nextPos[matchIdx];
+                    if (!targetMatch) continue;
+
+                    const y1 = match.y + matchBoxHeight / 2;
+                    const y2 = targetMatch.y + matchBoxHeight / 2;
+                    const x1 = match.x + matchBoxWidth;
+                    const x2 = targetMatch.x;
+                    const midX = (x1 + x2) / 2;
+
+                    svg += `<line x1="${x1}" y1="${y1}" x2="${midX}" y2="${y1}" stroke="#0077b6" stroke-width="1.5"/>`;
+                    svg += `<line x1="${midX}" y1="${y1}" x2="${midX}" y2="${y2}" stroke="#0077b6" stroke-width="1.5"/>`;
+                    svg += `<line x1="${midX}" y1="${y2}" x2="${x2}" y2="${y2}" stroke="#0077b6" stroke-width="1.5"/>`;
+                }
+            }
+
+            sortedRoundKeysFinal.forEach(key => {
+                roundPositions[key].forEach(pos => {
+                    const m = pos.match;
+                    const p1 = m.player1Name || '';
+                    const p2 = m.player2Name || '';
+
+                    let p1Score = m.player1Total || 0;
+                    let p2Score = m.player2Total || 0;
+                    
+                    if (!p1Score && !p2Score) {
+                        try {
+                            if (m.scores) {
+                                const scores = JSON.parse(m.scores);
+                                scores.forEach(s => {
+                                    if (s.p1 > s.p2) p1Score++;
+                                    else if (s.p2 > s.p1) p2Score++;
+                                });
+                            }
+                        } catch (e) {}
+                    }
+
+                    const p1Class = p1Score > p2Score && p1Score > 0 ? 'bracket-player-name--winner' : (p1 ? '' : 'bracket-player-name--empty');
+                    const p2Class = p2Score > p1Score && p2Score > 0 ? 'bracket-player-name--winner' : (p2 ? '' : 'bracket-player-name--empty');
+                    
+                    const truncateName = (name, maxLen) => {
+                        if (!name) return '待定';
+                        return name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
+                    };
+                    
+                    const p1Display = truncateName(p1, 12);
+                    const p2Display = truncateName(p2, 12);
+                    const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
+
+                    svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
+                    svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight/2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight/2}" class="bracket-divider"/>`;
+                    svg += `<text x="${pos.x + 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text>`;
+                    svg += `<text x="${pos.x + matchBoxWidth - 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
+                    svg += `<text x="${pos.x + 6}" y="${pos.y + 32}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text>`;
+                    svg += `<text x="${pos.x + matchBoxWidth - 6}" y="${pos.y + 32}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
+                });
+            });
+
+            svg += '</svg>';
+            document.getElementById('bracket-container').innerHTML = svg;
         }
 
         // 公告详情
@@ -1121,7 +2903,7 @@
                         <button class="btn btn-sm btn-danger" onclick="deletePlayer(${p.id})">删除</button>
                     </div>
                 </div>
-            `).join('');
+                `).join('');
             document.getElementById('players-grid').innerHTML = html || '<div class="empty-state">暂无运动员</div>';
         }
 
@@ -1135,7 +2917,7 @@
                 document.getElementById('detail-name').textContent = p.name;
                 document.getElementById('detail-country').textContent = p.country || '-';
                 let introHtml = p.introduction || '暂无简介';
-                
+
                 function parseMarkdown(text) {
                     if (!text) return text;
                     let html = text;
@@ -1150,7 +2932,7 @@
                     html = html.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
                     html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
                     html = html.replace(/^---$/gm, '<hr>');
-                    
+
                     const tableRegex = /(\|.+\|\n)+/g;
                     html = html.replace(tableRegex, (match) => {
                         const rows = match.trim().split('\n').filter(row => !row.match(/^\|[\s\-:|]+\|$/));
@@ -1167,13 +2949,13 @@
                         tableHtml += '</table>';
                         return tableHtml;
                     });
-                    
+
                     html = html.replace(/\n\n/g, '</p><p>');
                     html = '<p>' + html + '</p>';
                     html = html.replace(/<p><\/p>/g, '');
                     return html;
                 }
-                
+
                 try {
                     const m = window.marked;
                     if (m && typeof m.parse === 'function') {
@@ -1318,6 +3100,13 @@
 
             let html = '';
             Object.keys(grouped).sort((a, b) => b - a).forEach(year => {
+                // 每年份内按开始日期降序（最近的最先）
+                grouped[year].sort((a, b) => {
+                    const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+                    const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+                    return dateB - dateA;
+                });
+                
                 html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
                 grouped[year].forEach(c => {
                     html += `
@@ -1338,6 +3127,8 @@
             document.getElementById('competitions-list').innerHTML = html || '<div class="empty-state">暂无赛事</div>';
         }
 
+        let currentCompetitionMatches = null; // 存储当前赛事比赛数据
+
         async function showCompetitionDetail(id) {
             currentCompetitionId = id;
             try {
@@ -1347,23 +3138,7 @@
                 ]);
                 const comp = await compRes.json();
                 const matches = await matchRes.json();
-
-                const playersRes = await fetch(`${API_BASE}/players`);
-                const players = await playersRes.json();
-                const playerMap = {};
-                const playerCountryMap = {};
-                const countryFlagMap = {
-                    '中国': '🇨🇳', '日本': '🇯🇵', '韩国': '🇰🇷', '德国': '🇩🇪',
-                    '瑞典': '🇸🇪', '美国': '🇺🇸', '法国': '🇫🇷', '英国': '🇬🇧',
-                    '巴西': '🇧🇷', '印度': '🇮🇳'
-                };
-                function getFlag(country) {
-                    return countryFlagMap[country] || '🌍';
-                }
-                players.forEach(p => {
-                    playerMap[p.id] = p.name;
-                    playerCountryMap[p.id] = p.country || '';
-                });
+                currentCompetitionMatches = matches;
 
                 const dateRange = comp.startDate && comp.endDate
                     ? `${new Date(comp.startDate).toLocaleDateString()} - ${new Date(comp.endDate).toLocaleDateString()}`
@@ -1372,201 +3147,188 @@
                         : '';
 
                 const yearStr = comp.competitionYear ? `${comp.competitionYear}年 ` : '';
-                document.getElementById('competition-title').textContent = yearStr + comp.name + (dateRange ? ` (${dateRange})` : '');
+                document.getElementById('competition-title').innerHTML = yearStr + comp.name + (dateRange ? ` <span style="font-weight:400;font-size:14px;color:#666;">${dateRange}</span>` : '');
 
-                const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
-                const roundMap = { 1: '1/4决赛', 2: '半决赛', 3: '决赛' };
+                // 重置参赛名单按钮状态（默认展开）
+                document.getElementById('btn-toggle-roster').classList.add('active');
+                document.getElementById('roster-card').style.display = 'block';
 
-                function getScoreDisplay(m, p1Total, p2Total, scores) {
-                    if (m.category === '男团' || m.category === '女团') {
-                        return `<span style="font-weight:bold; font-size:16px;">${p1Total}-${p2Total}</span>`;
-                    }
-                    return scores.length > 0
-                        ? scores.map(s => `<span class="game-score">${s.p1}-${s.p2}</span>`).join('')
-                        : `${m.player1Total || 0}-${m.player2Total || 0}`;
-                }
+                // 重置对阵图视图为表格模式
+                currentMatchView = 'table';
+                document.getElementById('detail-rounds-content').style.display = 'block';
+                document.getElementById('bracket-view').style.display = 'none';
+                document.getElementById('btn-view-table').classList.add('btn-view-active');
+                document.getElementById('btn-view-bracket').classList.remove('btn-view-active');
 
-                function getMatchTableHtml(matches, isTeam) {
-                    const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
-                    return `
-                        <table class="score-table">
-                            <thead>
-                                <tr>
-                                    <th>轮次</th>
-                                    <th>选手1</th>
-                                    <th>国家</th>
-                                    <th>${isTeam ? '大比分' : '比分'}</th>
-                                    <th>选手2</th>
-                                    <th>国家</th>
-                                    <th>场馆</th>
-                                    <th>日期</th>
-                                    <th>状态</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${matches.map(m => {
-                        let scores = [];
-                        let p1Total = 0, p2Total = 0;
-                        try {
-                            if (m.scores) {
-                                scores = JSON.parse(m.scores);
-                                scores.forEach(s => {
-                                    if (s.p1 > s.p2) p1Total++;
-                                    else if (s.p2 > s.p1) p2Total++;
-                                });
-                            }
-                        } catch (e) { }
+                // 比赛信息（默认显示）
+                renderDetailRounds(document.getElementById('detail-rounds-content'), matches);
 
-                        const p1Name = m.player1Name || playerMap[m.player1Id] || '-';
-                        const p2Name = m.player2Name || playerMap[m.player2Id] || '-';
-                        const p1Country = m.player1Country || playerCountryMap[m.player1Id] || '-';
-                        const p2Country = m.player2Country || playerCountryMap[m.player2Id] || '-';
-
-                        return `
-                                        <tr>
-                                            <td>${m.roundNumber || '-'}</td>
-                                            <td class="${p1Total > p2Total ? 'winner' : ''}">${p1Name}</td>
-                                            <td>${p1Country}</td>
-                                            <td>${getScoreDisplay(m, p1Total, p2Total, scores)}</td>
-                                            <td class="${p2Total > p1Total ? 'winner' : ''}">${p2Name}</td>
-                                            <td>${p2Country}</td>
-                                            <td>${m.venue || '-'}</td>
-                                            <td>${formatDateTime(m.matchDate)}</td>
-                                            <td>${statusMap[m.status] || m.status}</td>
-                                            <td>
-                                                <button class="btn btn-warning" onclick="editMatch(${m.id})">编辑</button>
-                                                <button class="btn btn-danger" onclick="deleteMatch(${m.id})">删除</button>
-                                            </td>
-                                        </tr>
-                                    `;
-                    }).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-
-                let html = '';
-                if (matches.length === 0) {
-                    html = '<div class="empty-state">暂无比赛记录</div>';
+                // 加载参赛名单（使用比赛地点和年份）
+                const venue = comp.location || '';
+                const year = comp.competitionYear;
+                if (venue && year) {
+                    loadRosterByVenueAndYear(venue, year);
+                } else if (venue) {
+                    loadRosterByVenue(venue);
                 } else {
-                    // 按项目分组
-                    const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-                    const grouped = {};
-                    matches.forEach(m => {
-                        const cat = m.category || '其他';
-                        if (!grouped[cat]) grouped[cat] = [];
-                        grouped[cat].push(m);
-                    });
-
-                    // 排序函数
-                    function sortByRound(matches) {
-                        const order = {
-                            '小组赛': 1, '1/8': 2, '1/4': 3, '四分之一': 3,
-                            '半决': 4, '决赛': 5, '铜牌': 6, '三四名': 6
-                        };
-                        const groupNumbers = Array.from({ length: 20 }, (_, i) => i + 1);
-                        return matches.sort((a, b) => {
-                            const ra = a.roundNumber || '';
-                            const rb = b.roundNumber || '';
-                            // 先按轮次排序
-                            let orderA = 999, orderB = 999;
-                            for (const [key, val] of Object.entries(order)) {
-                                if (ra.includes(key)) orderA = val;
-                                if (rb.includes(key)) orderB = val;
-                            }
-                            // 小组赛按组号排序
-                            if (orderA === 1) {
-                                for (const num of groupNumbers) {
-                                    if (ra.includes(num + '组') || ra.includes('组' + num)) {
-                                        orderA = 1 + num * 0.01;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (orderB === 1) {
-                                for (const num of groupNumbers) {
-                                    if (rb.includes(num + '组') || rb.includes('组' + num)) {
-                                        orderB = 1 + num * 0.01;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (orderA !== orderB) return orderA - orderB;
-                            // 同轮次按日期排序
-                            return new Date(a.matchDate || 0) - new Date(b.matchDate || 0);
-                        });
-                    }
-
-                    categories.forEach(cat => {
-                        if (grouped[cat] && grouped[cat].length > 0) {
-                            const isTeam = (cat === '男团' || cat === '女团');
-                            const sortedMatches = sortByRound([...grouped[cat]]);
-
-                            // 检查是否有小组赛（包含1-20数字的）
-                            const groupNumbers = Array.from({ length: 20 }, (_, i) => String(i + 1));
-                            const hasGroupStage = sortedMatches.some(m => {
-                                const round = m.roundNumber || '';
-                                return groupNumbers.some(n => round.includes(n + '组') || round.includes('组' + n));
-                            });
-
-                            html += `
-                                <div style="margin-bottom: 30px;">
-                                    <h4 style="margin-bottom: 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${cat}</h4>`;
-
-                            if (hasGroupStage) {
-                                // 按小组分组显示
-                                const groups = {};
-                                sortedMatches.forEach(m => {
-                                    const round = m.roundNumber || '';
-                                    let group = '其他';
-                                    for (const num of groupNumbers) {
-                                        if (round.includes(num + '组') || round.includes('组' + num)) {
-                                            group = num;
-                                            break;
-                                        }
-                                    }
-                                    if (!groups[group]) groups[group] = [];
-                                    groups[group].push(m);
-                                });
-
-                                // 按小组顺序显示
-                                groupNumbers.forEach(n => {
-                                    if (groups[n]) {
-                                        html += `<h5 style="margin: 15px 0 10px; color: #666;">🏅 第${n}组</h5>`;
-                                        html += getMatchTableHtml(groups[n], isTeam);
-                                    }
-                                });
-                                // 其他
-                                if (groups['其他']) {
-                                    html += `<h5 style="margin: 15px 0 10px; color: #666;">其他</h5>`;
-                                    html += getMatchTableHtml(groups['其他'], isTeam);
-                                }
-                            } else {
-                                html += getMatchTableHtml(sortedMatches, isTeam);
-                            }
-
-                            html += `</div>`;
-                        }
-                    });
-
-                    // 其他项目
-                    if (grouped['其他'] && grouped['其他'].length > 0) {
-                        const sortedMatches = sortByRound([...grouped['其他']]);
-                        html += `
-                            <div style="margin-bottom: 30px;">
-                                <h4 style="margin-bottom: 10px; color: #666;">其他</h4>
-                                ${getMatchTableHtml(sortedMatches, false)}
-                            </div>
-                        `;
-                    }
+                    document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">请先为赛事设置比赛地点和年份</div>';
                 }
 
-                document.getElementById('competition-matches').innerHTML = html;
                 document.getElementById('competitions-list-view').style.display = 'none';
                 document.getElementById('competition-detail-view').style.display = 'block';
             } catch (e) {
                 console.error(e);
+            }
+        }
+
+        function toggleRoster() {
+            const card = document.getElementById('roster-card');
+            const btn = document.getElementById('btn-toggle-roster');
+            if (card.style.display === 'none') {
+                card.style.display = 'block';
+                btn.classList.add('active');
+            } else {
+                card.style.display = 'none';
+                btn.classList.remove('active');
+            }
+        }
+
+        // ========== 参赛名单相关函数 ==========
+        let currentRosterVenue = '';
+        let currentRosterYear = null;
+
+        async function loadRosterByVenue(venue) {
+            currentRosterVenue = venue;
+            currentRosterYear = null;
+            try {
+                const res = await fetch(`${API_BASE}/roster/venue/${encodeURIComponent(venue)}`);
+                const rosters = await res.json();
+                renderRosterList(rosters);
+            } catch (e) {
+                console.error('Error loading roster:', e);
+                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">加载参赛名单失败</div>';
+            }
+        }
+
+        async function loadRosterByVenueAndYear(venue, year) {
+            currentRosterVenue = venue;
+            currentRosterYear = year;
+            try {
+                const res = await fetch(`${API_BASE}/roster/venue/${encodeURIComponent(venue)}/year/${year}`);
+                const rosters = await res.json();
+                renderRosterList(rosters);
+            } catch (e) {
+                console.error('Error loading roster:', e);
+                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">加载参赛名单失败</div>';
+            }
+        }
+
+        function renderRosterList(rosters) {
+            if (!rosters || rosters.length === 0) {
+                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">暂无参赛名单</div>';
+                return;
+            }
+
+            const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const grouped = {};
+            rosters.forEach(r => {
+                const cat = r.category || '其他';
+                if (!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push(r);
+            });
+
+            let html = '';
+            categories.forEach(cat => {
+                if (!grouped[cat]) return;
+                html += `<div class="round-cat">`;
+                html += `<div class="round-cat-title">${cat}</div>`;
+                html += `<div class="round-table-wrap"><table class="round-table">`;
+                html += `<thead><tr><th>运动员</th><th>国家</th><th>操作</th></tr></thead>`;
+                html += `<tbody>`;
+                grouped[cat].forEach(r => {
+                    html += `
+                        <tr class="round-row">
+                            <td>${r.playerName}</td>
+                            <td><span class="rt-flag">${getFlag(r.country)}</span> ${r.country || '-'}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editRoster(${r.id})">编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRoster(${r.id})">删除</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += `</tbody></table></div></div>`;
+            });
+
+            if (!html) {
+                html = '<div class="empty-state">暂无参赛名单</div>';
+            }
+            document.getElementById('roster-list-content').innerHTML = html;
+        }
+
+        function showRosterFormModal(id = null) {
+            document.getElementById('roster-modal').classList.add('show');
+            document.getElementById('roster-modal-title').textContent = id ? '编辑参赛运动员' : '添加参赛运动员';
+            document.getElementById('roster-form').reset();
+            document.getElementById('roster-id').value = id || '';
+            
+            // 设置比赛地点和年份为当前比赛的
+            document.getElementById('roster-venue').value = currentRosterVenue;
+            document.getElementById('roster-year').value = currentRosterYear || new Date().getFullYear();
+            
+            if (id) {
+                fetch(`${API_BASE}/roster/${id}`).then(r => r.json()).then(r => {
+                    document.getElementById('roster-venue').value = r.venue || '';
+                    document.getElementById('roster-year').value = r.year || new Date().getFullYear();
+                    document.getElementById('roster-category').value = r.category || '男单';
+                    document.getElementById('roster-player-name').value = r.playerName || '';
+                    document.getElementById('roster-country').value = r.country || '';
+                });
+            }
+        }
+
+        document.getElementById('roster-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('roster-id').value;
+            const roster = {
+                venue: document.getElementById('roster-venue').value,
+                year: parseInt(document.getElementById('roster-year').value),
+                category: document.getElementById('roster-category').value,
+                playerName: document.getElementById('roster-player-name').value,
+                country: document.getElementById('roster-country').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE}/roster/${id}` : `${API_BASE}/roster`;
+
+            try {
+                await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(roster)
+                });
+                closeModal('roster-modal');
+                if (currentRosterYear) {
+                    loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
+                } else {
+                    loadRosterByVenue(currentRosterVenue);
+                }
+            } catch (error) {
+                console.error('Error saving roster:', error);
+                alert('保存失败');
+            }
+        });
+
+        async function editRoster(id) { showRosterFormModal(id); }
+
+        async function deleteRoster(id) {
+            if (confirm('确定要删除这个运动员吗？')) {
+                await fetch(`${API_BASE}/roster/${id}`, { method: 'DELETE' });
+                if (currentRosterYear) {
+                    loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
+                } else {
+                    loadRosterByVenue(currentRosterVenue);
+                }
             }
         }
 
@@ -1903,8 +3665,8 @@
                     if (grouped[cat] && grouped[cat].length > 0) {
                         html += `
                             <div style="margin-bottom: 30px;">
-                                <h4 style="margin-bottom: 10px; color: #1a73e8;">${cat}</h4>
-                                <table class="ranking-table">
+                                <h4 style="margin-bottom: 10px; color: #0077b6; font-weight: 700;">${cat}</h4>
+                                <table class="ranking-table ranking-table--clean">
                                     <thead>
                                         <tr>
                                             <th>排名</th>
@@ -1917,13 +3679,13 @@
                                     <tbody>
                                         ${grouped[cat].map((r, i) => `
                                             <tr class="rank-${i + 1}">
-                                                <td><span class="rank-num">${r.ranking || i + 1}</span></td>
+                                                <td><span class="rank-num rank-num--${i + 1}">${r.ranking || i + 1}</span></td>
                                                 <td>${r.playerName}</td>
-                                                <td>${r.country || '-'}</td>
+                                                <td><span class="player-flag">${getFlag(r.country)}</span>${r.country || '-'}</td>
                                                 <td class="points">${r.points || 0}</td>
                                                 <td>
-                                                    <button class="btn btn-warning" onclick="editRanking(${r.id})">编辑</button>
-                                                    <button class="btn btn-danger" onclick="deleteRanking(${r.id})">删除</button>
+                                                    <button class="btn btn-warning btn-sm" onclick="editRanking(${r.id})">编辑</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteRanking(${r.id})">删除</button>
                                                 </td>
                                             </tr>
                                         `).join('')}
@@ -2063,6 +3825,78 @@
             showPage('champions');
         }
 
+        // 带国旗的冠军渲染
+        function renderChampionCard(cat, r, isMain) {
+            const bg = isMain
+                ? 'background: linear-gradient(135deg, #1a1a2e 0%, #0077b6 100%)'
+                : 'background: #f0f4ff; border: 1px solid #e0e0e0';
+            const textColor = isMain ? '#fff' : '#1a1a2e';
+            const labelColor = isMain ? 'rgba(255,255,255,0.75)' : '#888';
+            const medalStyle = isMain ? 'font-size:48px' : 'font-size:36px';
+            const nameStyle = isMain ? 'font-size:16px;font-weight:800;color:#fff' : 'font-size:14px;font-weight:700;color:#1a1a2e';
+            const labelStyle = isMain ? 'font-size:11px;opacity:0.75;color:#fff' : 'font-size:11px;color:#888';
+            const thirdNameStyle = isMain ? 'font-size:13px;font-weight:700;color:#fff' : 'font-size:13px;font-weight:700;color:#1a1a2e';
+            const thirdLabelStyle = isMain ? 'font-size:10px;opacity:0.7;color:#fff' : 'font-size:10px;color:#999';
+            const thNameStyle = isMain ? 'font-size:15px;font-weight:800;color:#fff' : 'font-size:14px;font-weight:700;color:#1a1a2e';
+
+            // 并列季军：每个国家单独显示国旗+名字
+            const thirdCountries = Array.isArray(r.thirdCountries) ? r.thirdCountries : [];
+            const thirdNames = Array.isArray(r.thirdPlaces) ? r.thirdPlaces : [r.thirdPlace].filter(Boolean);
+            const third3Label = thirdNames.length > 1 ? '季军(并列)' : '季军';
+
+            let thirdContent = '';
+            if (thirdNames.length > 0) {
+                thirdContent = thirdNames.map((name, i) => {
+                    const flag = thirdCountries[i] ? getFlag(thirdCountries[i]) : '';
+                    return `<div class="champion-name" style="${thirdNameStyle}">${flag}${name}</div>`;
+                }).join('');
+            } else {
+                thirdContent = `<div class="champion-name" style="${thirdNameStyle}">-</div>`;
+            }
+
+            return `
+                <div class="champion-cat-section">
+                    <div class="champion-cat-title">${cat}</div>
+                    <div class="champion-podium" style="${bg}; border-radius: 16px;">
+                        <div class="champion-slot champion-slot--1">
+                            <div class="champion-medal">🥇</div>
+                            <div class="champion-name" style="${nameStyle}">${getFlag(r.championCountry)}${r.champion || '-'}</div>
+                            <div class="champion-label" style="${labelStyle}"> 冠军</div>
+                        </div>
+                        <div class="champion-slot champion-slot--2">
+                            <div class="champion-medal" style="${medalStyle}">🥈</div>
+                            <div class="champion-name" style="${thNameStyle}">${getFlag(r.runnerUpCountry)}${r.runnerUp || '-'}</div>
+                            <div class="champion-label" style="${labelStyle}"> 亚军</div>
+                        </div>
+                        <div class="champion-slot champion-slot--3">
+                            <div class="champion-medal" style="${medalStyle}">🥉</div>
+                            ${thirdContent}
+                            <div class="champion-label" style="${thirdLabelStyle}"> ${third3Label}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMedalWinnersWithFlags(matches, category) {
+            const base = getMedalWinners(matches, category);
+            if (!base) return null;
+            const matchByName = {};
+            matches.forEach(m => {
+                if (m.player1Name) matchByName[m.player1Name] = m.player1Country || '';
+                if (m.player2Name) matchByName[m.player2Name] = m.player2Country || '';
+            });
+            const thirdCountries = Array.isArray(base.thirdPlaces)
+                ? base.thirdPlaces.map(name => matchByName[name] || '')
+                : [(matchByName[base.thirdPlace] || '')];
+            return {
+                ...base,
+                championCountry: matchByName[base.champion] || '',
+                runnerUpCountry: matchByName[base.runnerUp] || '',
+                thirdCountries: thirdCountries
+            };
+        }
+
         async function showCompetitionChampions(competitionId) {
             try {
                 const compRes = await fetch(`${API_BASE}/competitions/${competitionId}`);
@@ -2091,33 +3925,12 @@
 
                 let html = `<p style="color:#666; margin-bottom:20px;">📅 ${dateRange} | 📍 ${comp.location || '-'}</p>`;
 
-                // 只显示冠亚季军
+                // 只显示冠亚季军（带国旗）
                 categories.forEach(cat => {
                     if (grouped[cat] && grouped[cat].length > 0) {
-                        const results = getMedalWinners(grouped[cat], cat);
+                        const results = getMedalWinnersWithFlags(grouped[cat], cat);
                         if (results) {
-                            html += `
-                                <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
-                                    <h3 style="margin-bottom: 15px; text-align:center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px;">${cat}</h3>
-                                    <div style="display:flex; justify-content:center; align-items:flex-end; gap: 30px; text-align:center;">
-                                        <div style="order: 2;">
-                                            <div style="font-size: 40px;">🥇</div>
-                                            <div style="font-size: 18px; font-weight: bold;">${results.champion || '-'}</div>
-                                            <div style="font-size: 12px; opacity: 0.8;">冠军</div>
-                                        </div>
-                                        <div style="order: 1;">
-                                            <div style="font-size: 30px;">🥈</div>
-                                            <div style="font-size: 16px; font-weight: bold;">${results.runnerUp || '-'}</div>
-                                            <div style="font-size: 12px; opacity: 0.8;">亚军</div>
-                                        </div>
-                                    <div style="order: 3;">
-                                                <div style="font-size: 30px;">🥉</div>
-                                                <div style="font-size: 16px; font-weight: bold;">${Array.isArray(results.thirdPlaces) ? results.thirdPlaces.join('、') : results.thirdPlace || '-'}</div>
-                                                <div style="font-size: 12px; opacity: 0.8;">${Array.isArray(results.thirdPlaces) && results.thirdPlaces.length > 1 ? '季军(并列)' : '季军'}</div>
-                                            </div>
-                                    </div>
-                                </div>
-                            `;
+                            html += renderChampionCard(cat, results, true);
                         }
                     }
                 });
@@ -2129,30 +3942,9 @@
                 // 其他项目
                 Object.keys(grouped).forEach(cat => {
                     if (!categories.includes(cat)) {
-                        const results = getMedalWinners(grouped[cat], cat);
+                        const results = getMedalWinnersWithFlags(grouped[cat], cat);
                         if (results) {
-                            html += `
-                                <div style="margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 10px;">
-                                    <h3 style="margin-bottom: 15px; text-align:center;">${cat}</h3>
-                                    <div style="display:flex; justify-content:center; align-items:flex-end; gap: 30px; text-align:center;">
-                                        <div>
-                                            <div style="font-size: 40px;">🥇</div>
-                                            <div style="font-size: 18px; font-weight: bold;">${results.champion || '-'}</div>
-                                            <div style="font-size: 12px; color: #666;">冠军</div>
-                                        </div>
-                                        <div>
-                                            <div style="font-size: 30px;">🥈</div>
-                                            <div style="font-size: 16px; font-weight: bold;">${results.runnerUp || '-'}</div>
-                                            <div style="font-size: 12px; color: #666;">亚军</div>
-                                        </div>
-                                        <div>
-                                            <div style="font-size: 30px;">🥉</div>
-                                            <div style="font-size: 16px; font-weight: bold;">${Array.isArray(results.thirdPlaces) ? results.thirdPlaces.join('、') : results.thirdPlace || '-'}</div>
-                                            <div style="font-size: 12px; color: #666;">${Array.isArray(results.thirdPlaces) && results.thirdPlaces.length > 1 ? '季军(并列)' : '季军'}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                            html += renderChampionCard(cat, results, false);
                         }
                     }
                 });
@@ -2432,8 +4224,12 @@
             document.getElementById(id).classList.remove('show');
         }
 
-        // 初始化
-        loadHomeData();
+        // 等 DOM 加载完成后再初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHomeData);
+        } else {
+            loadHomeData();
+        }
     </script>
 </body>
 
