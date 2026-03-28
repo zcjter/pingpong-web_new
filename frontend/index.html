@@ -1209,7 +1209,8 @@
             color: #fff !important;
         }
 
-        #btn-view-table, #btn-view-bracket {
+        #btn-view-table,
+        #btn-view-bracket {
             padding: 6px 14px;
             font-size: 12px;
         }
@@ -1901,7 +1902,8 @@
                     <div class="actions">
                         <div class="card-title" id="competition-title"></div>
                         <div class="action-btns">
-                            <button class="btn btn-outline" id="btn-toggle-roster" onclick="toggleRoster()">👥 参赛名单</button>
+                            <button class="btn btn-outline" id="btn-toggle-roster" onclick="toggleRoster()">👥
+                                参赛名单</button>
                             <button class="btn btn-primary" onclick="showMatchModal()">+ 添加比赛</button>
                         </div>
                     </div>
@@ -1917,8 +1919,10 @@
                     <div class="actions">
                         <div class="card-title">📋 比赛信息</div>
                         <div class="action-btns">
-                            <button class="btn btn-outline active" id="btn-view-table" onclick="switchMatchView('table')">📊 列表</button>
-                            <button class="btn btn-outline" id="btn-view-bracket" onclick="switchMatchView('bracket')">🌳 对阵图</button>
+                            <button class="btn btn-outline active" id="btn-view-table"
+                                onclick="switchMatchView('table')">📊 列表</button>
+                            <button class="btn btn-outline" id="btn-view-bracket"
+                                onclick="switchMatchView('bracket')">🌳 对阵图</button>
                         </div>
                     </div>
                     <div id="detail-rounds-content"></div>
@@ -2352,7 +2356,7 @@
             '佛得角': 'cv', '几内亚': 'gn', '几内亚比绍': 'gw',
             '冈比亚': 'gm', '塞拉利昂': 'sl', '利比里亚': 'lr',
             '多哥': 'tg', '贝宁': 'bj', '毛里塔尼亚': 'mr',
-            '尼日尼亚': 'ng',
+            '尼日尼亚': 'ng', '阿里及利亚': 'dz',
             // 大洋洲
             '澳大利亚': 'au', '新西兰': 'nz', '巴布亚新几内亚': 'pg',
             '斐济': 'fj', '萨摩亚': 'ws', '汤加': 'to', '瓦努阿图': 'vu',
@@ -2501,7 +2505,7 @@
         // ========== 赛事详情：比赛轮次信息 ===========
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
+            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2666,7 +2670,7 @@
                 return;
             }
 
-            const roundOrder = ['1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
+            const roundOrder = ['1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
             eliminationRounds.sort((a, b) => {
                 const ra = String(a.roundNumber || '');
                 const rb = String(b.roundNumber || '');
@@ -2721,26 +2725,26 @@
                 const nextKey = sortedRoundKeys[i + 1];
                 const currMatches = rounds[currKey];
                 const nextMatches = rounds[nextKey];
-                
+
                 if (!currMatches || !nextMatches || currMatches.length < 2) continue;
-                
+
                 const newOrder = new Array(currMatches.length);
                 let used = new Array(currMatches.length).fill(false);
-                
+
                 for (let j = 0; j < nextMatches.length; j++) {
                     const nextMatch = nextMatches[j];
                     const p1Name = nextMatch.player1Name;
                     const p2Name = nextMatch.player2Name;
-                    
+
                     let p1Idx = -1, p2Idx = -1;
-                    
+
                     for (let k = 0; k < currMatches.length; k++) {
                         if (used[k]) continue;
                         const m = currMatches[k];
                         if (m.player1Name === p1Name || m.player2Name === p1Name) p1Idx = k;
                         if (m.player1Name === p2Name || m.player2Name === p2Name) p2Idx = k;
                     }
-                    
+
                     if (p1Idx >= 0 && p2Idx >= 0) {
                         newOrder[j * 2] = currMatches[p1Idx];
                         newOrder[j * 2 + 1] = currMatches[p2Idx];
@@ -2748,7 +2752,7 @@
                         used[p2Idx] = true;
                     }
                 }
-                
+
                 let remaining = [];
                 for (let k = 0; k < currMatches.length; k++) {
                     if (!used[k]) remaining.push(currMatches[k]);
@@ -2759,7 +2763,7 @@
                         newOrder[k] = remaining[ri++];
                     }
                 }
-                
+
                 rounds[currKey] = newOrder.filter(m => m);
             }
 
@@ -2796,18 +2800,18 @@
             const svgWidth = padding * 2 + roundCount * (matchBoxWidth + roundGap);
 
             const roundPositions = {};
-            
+
             for (let roundIdx = 0; roundIdx < roundCount; roundIdx++) {
                 const key = sortedRoundKeysFinal[roundIdx];
                 const roundMatches = rounds[key];
                 const matchesInRound = roundMatches.length;
                 const unit = maxMatches / matchesInRound;
-                
+
                 roundPositions[key] = [];
                 roundMatches.forEach((m, matchIdx) => {
                     const unitHeight = maxMatches * baseSpacing / matchesInRound;
                     const y = padding + headerHeight + matchIdx * unitHeight + (unitHeight - matchBoxHeight) / 2;
-                    
+
                     roundPositions[key].push({
                         match: m,
                         x: padding + roundIdx * (matchBoxWidth + roundGap),
@@ -2818,7 +2822,7 @@
 
             let svg = `<svg class="bracket-svg" width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">`;
 
-            svg += `<text x="${svgWidth/2}" y="18" text-anchor="middle" class="bracket-round-label" style="font-size:13px;font-weight:700;">${category}</text>`;
+            svg += `<text x="${svgWidth / 2}" y="18" text-anchor="middle" class="bracket-round-label" style="font-size:13px;font-weight:700;">${category}</text>`;
 
             sortedRoundKeysFinal.forEach((key, roundIdx) => {
                 const roundLabel = key;
@@ -2860,7 +2864,7 @@
 
                     let p1Score = m.player1Total || 0;
                     let p2Score = m.player2Total || 0;
-                    
+
                     if (!p1Score && !p2Score) {
                         try {
                             if (m.scores) {
@@ -2870,23 +2874,23 @@
                                     else if (s.p2 > s.p1) p2Score++;
                                 });
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                     }
 
                     const p1Class = p1Score > p2Score && p1Score > 0 ? 'bracket-player-name--winner' : (p1 ? '' : 'bracket-player-name--empty');
                     const p2Class = p2Score > p1Score && p2Score > 0 ? 'bracket-player-name--winner' : (p2 ? '' : 'bracket-player-name--empty');
-                    
+
                     const truncateName = (name, maxLen) => {
                         if (!name) return '待定';
                         return name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
                     };
-                    
+
                     const p1Display = truncateName(p1, 12);
                     const p2Display = truncateName(p2, 12);
                     const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
-                    svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight/2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight/2}" class="bracket-divider"/>`;
+                    svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight / 2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight / 2}" class="bracket-divider"/>`;
                     svg += `<text x="${pos.x + 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
                     svg += `<text x="${pos.x + 6}" y="${pos.y + 32}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text>`;
@@ -3139,7 +3143,7 @@
                     const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
                     return dateB - dateA;
                 });
-                
+
                 html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
                 grouped[year].forEach(c => {
                     html += `
@@ -3304,11 +3308,11 @@
             document.getElementById('roster-modal-title').textContent = id ? '编辑参赛运动员' : '添加参赛运动员';
             document.getElementById('roster-form').reset();
             document.getElementById('roster-id').value = id || '';
-            
+
             // 设置比赛地点和年份为当前比赛的
             document.getElementById('roster-venue').value = currentRosterVenue;
             document.getElementById('roster-year').value = currentRosterYear || new Date().getFullYear();
-            
+
             if (id) {
                 fetch(`${API_BASE}/roster/${id}`).then(r => r.json()).then(r => {
                     document.getElementById('roster-venue').value = r.venue || '';
@@ -4182,8 +4186,12 @@
             if (roundNumber.includes('决赛') || roundNumber.includes('Final')) return 1;
             if (roundNumber.includes('半决') || roundNumber.includes('Semi')) return 2;
             if (roundNumber.includes('1/4') || roundNumber.includes('Quarter')) return 3;
-            if (roundNumber.includes('1/8') || roundNumber.includes('1/8')) return 4;
-            return 5;
+            if (roundNumber.includes('1/8')) return 4;
+            if (roundNumber.includes('1/16')) return 5;
+            if (roundNumber.includes('1/32')) return 6;
+            if (roundNumber.includes('1/64')) return 7;
+            if (roundNumber.includes('1/128')) return 8;
+            return 9;
         }
 
         // ========== 公告管理 ==========

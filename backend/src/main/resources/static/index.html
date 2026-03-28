@@ -2501,7 +2501,7 @@
         // ========== 赛事详情：比赛轮次信息 ===========
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
+            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2666,7 +2666,7 @@
                 return;
             }
 
-            const roundOrder = ['1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
+            const roundOrder = ['1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
             eliminationRounds.sort((a, b) => {
                 const ra = String(a.roundNumber || '');
                 const rb = String(b.roundNumber || '');
@@ -4182,8 +4182,12 @@
             if (roundNumber.includes('决赛') || roundNumber.includes('Final')) return 1;
             if (roundNumber.includes('半决') || roundNumber.includes('Semi')) return 2;
             if (roundNumber.includes('1/4') || roundNumber.includes('Quarter')) return 3;
-            if (roundNumber.includes('1/8') || roundNumber.includes('1/8')) return 4;
-            return 5;
+            if (roundNumber.includes('1/8')) return 4;
+            if (roundNumber.includes('1/16')) return 5;
+            if (roundNumber.includes('1/32')) return 6;
+            if (roundNumber.includes('1/64')) return 7;
+            if (roundNumber.includes('1/128')) return 8;
+            return 9;
         }
 
         // ========== 公告管理 ==========
