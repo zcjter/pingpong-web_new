@@ -2716,51 +2716,153 @@
                 console.log(`轮次 ${key} (${rounds[key].length}场):`, rounds[key].map(m => `${m.id}:${m.player1Name} vs ${m.player2Name}`).join(', '));
             });
 
+            // 每个轮次按ID排序
+            // 按ID排序
+            Object.keys(rounds).forEach(key => {
+                rounds[key].sort((a, b) => (a.id || 0) - (b.id || 0));
+            });
+
+            function nameEq(n1, n2) {
+                if (!n1 || !n2) return false;
+                const a = String(n1).replace(/[·.]/g, '.').replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).trim();
+                const b = String(n2).replace(/[·.]/g, '.').replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).trim();
+                return a === b || a.includes(b) || b.includes(a);
+            }
+
+            // 对所有轮次从后向前重排
+            for (let roundIdx = sortedRoundKeys.length - 1; roundIdx > 0; roundIdx--) {
+                const currKey = sortedRoundKeys[roundIdx];
+                const prevKey = sortedRoundKeys[roundIdx - 1];
+                const currMatches = rounds[currKey];
+                const prevMatches = rounds[prevKey];
+
+                if (!currMatches || !prevMatches || currMatches.length < 1) continue;
+
+                const newOrder = [];
+                const used = new Set();
+
+                // 根据当前轮的位置，推算前一轮
+                for (let i = 0; i < currMatches.length; i++) {
+                    const p1 = currMatches[i].player1Name;
+                    const p2 = currMatches[i].player2Name;
+
+                    const matched = [];
+                    for (let k = 0; k < prevMatches.length; k++) {
+                        if (used.has(k)) continue;
+                        const m = prevMatches[k];
+                        if (nameEq(m.player1Name, p1) || nameEq(m.player2Name, p1) ||
+                            nameEq(m.player1Name, p2) || nameEq(m.player2Name, p2)) {
+                            matched.push({m, k});
+                        }
+                    }
+
+                    if (matched.length >= 2) {
+                        newOrder.push(matched[0].m);
+                        newOrder.push(matched[1].m);
+                        used.add(matched[0].k);
+                        used.add(matched[1].k);
+                    } else if (matched.length === 1) {
+                        newOrder.push(matched[0].m);
+                        used.add(matched[0].k);
+                    }
+                }
+
+                // 添加剩余的
+                for (let k = 0; k < prevMatches.length; k++) {
+                    if (!used.has(k)) newOrder.push(prevMatches[k]);
+                }
+
+                rounds[prevKey] = newOrder;
+            }
+
+            // 其他轮次按正常逻辑重排
             for (let i = sortedRoundKeys.length - 2; i >= 0; i--) {
                 const currKey = sortedRoundKeys[i];
                 const nextKey = sortedRoundKeys[i + 1];
+                
+                // 跳过1/32，已经处理过了
+                if (currKey.includes('1/32')) continue;
+                
                 const currMatches = rounds[currKey];
                 const nextMatches = rounds[nextKey];
-                
+
                 if (!currMatches || !nextMatches || currMatches.length < 2) continue;
-                
-                const newOrder = new Array(currMatches.length);
-                let used = new Array(currMatches.length).fill(false);
-                
+
+                const newOrder = [];
+                const used = new Set();
+
                 for (let j = 0; j < nextMatches.length; j++) {
                     const nextMatch = nextMatches[j];
-                    const p1Name = nextMatch.player1Name;
-                    const p2Name = nextMatch.player2Name;
-                    
-                    let p1Idx = -1, p2Idx = -1;
-                    
+                    const p1 = nextMatch.player1Name;
+                    const p2 = nextMatch.player2Name;
+
+                    const matched = [];
                     for (let k = 0; k < currMatches.length; k++) {
-                        if (used[k]) continue;
+                        if (used.has(k)) continue;
                         const m = currMatches[k];
-                        if (m.player1Name === p1Name || m.player2Name === p1Name) p1Idx = k;
-                        if (m.player1Name === p2Name || m.player2Name === p2Name) p2Idx = k;
+                        if (nameEq(m.player1Name, p1) || nameEq(m.player2Name, p1) ||
+                            nameEq(m.player1Name, p2) || nameEq(m.player2Name, p2)) {
+                            matched.push({m, k});
+                        }
                     }
-                    
-                    if (p1Idx >= 0 && p2Idx >= 0) {
-                        newOrder[j * 2] = currMatches[p1Idx];
-                        newOrder[j * 2 + 1] = currMatches[p2Idx];
-                        used[p1Idx] = true;
-                        used[p2Idx] = true;
+
+                    if (matched.length >= 2) {
+                        newOrder.push(matched[0].m);
+                        newOrder.push(matched[1].m);
+                        used.add(matched[0].k);
+                        used.add(matched[1].k);
                     }
                 }
-                
-                let remaining = [];
+
                 for (let k = 0; k < currMatches.length; k++) {
-                    if (!used[k]) remaining.push(currMatches[k]);
+                    if (!used.has(k)) newOrder.push(currMatches[k]);
                 }
-                let ri = 0;
-                for (let k = 0; k < newOrder.length; k++) {
-                    if (!newOrder[k] && remaining[ri]) {
-                        newOrder[k] = remaining[ri++];
+
+                rounds[currKey] = newOrder;
+            }
+
+            // 多次迭代重排，确保稳定
+            for (let iter = 0; iter < 3; iter++) {
+                for (let i = sortedRoundKeys.length - 2; i >= 0; i--) {
+                    const currKey = sortedRoundKeys[i];
+                    const nextKey = sortedRoundKeys[i + 1];
+                    const currMatches = [...rounds[currKey]];
+                    const nextMatches = [...rounds[nextKey]];
+
+                    if (!currMatches || !nextMatches || currMatches.length < 2) continue;
+
+                    const newOrder = [];
+                    const usedIndices = new Set();
+
+                    for (let j = 0; j < nextMatches.length; j++) {
+                        const nextMatch = nextMatches[j];
+                        const p1 = nextMatch.player1Name;
+                        const p2 = nextMatch.player2Name;
+
+                        const matched = [];
+                        for (let k = 0; k < currMatches.length; k++) {
+                            const m = currMatches[k];
+                            if (nameEq(m.player1Name, p1) || nameEq(m.player2Name, p1) ||
+                                nameEq(m.player1Name, p2) || nameEq(m.player2Name, p2)) {
+                                matched.push({m, k});
+                            }
+                        }
+
+                        if (matched.length >= 2) {
+                            newOrder.push(matched[0].m);
+                            newOrder.push(matched[1].m);
+                            usedIndices.add(matched[0].k);
+                            usedIndices.add(matched[1].k);
+                        }
                     }
+
+                    // 添加剩余
+                    for (let k = 0; k < currMatches.length; k++) {
+                        if (!usedIndices.has(k)) newOrder.push(currMatches[k]);
+                    }
+
+                    rounds[currKey] = newOrder;
                 }
-                
-                rounds[currKey] = newOrder.filter(m => m);
             }
 
             console.log('=== 重排后数据 ===');
@@ -2826,6 +2928,13 @@
                 svg += `<text x="${roundX}" y="${headerHeight - 2}" text-anchor="middle" class="bracket-round-label" style="font-size:9px;font-weight:600;fill:#0077b6;">${roundLabel}</text>`;
             });
 
+            function namesMatchForLine(name1, name2) {
+                if (!name1 || !name2) return false;
+                const n1 = String(name1).replace(/[·.]/g, '.').replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\s+/g, '').trim();
+                const n2 = String(name2).replace(/[·.]/g, '.').replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/\s+/g, '').trim();
+                return n1 === n2 || n1.includes(n2) || n2.includes(n1);
+            }
+
             for (let r = 0; r < sortedRoundKeysFinal.length - 1; r++) {
                 const currentKey = sortedRoundKeysFinal[r];
                 const nextKey = sortedRoundKeysFinal[r + 1];
@@ -2836,9 +2945,37 @@
 
                 for (let i = 0; i < currentPos.length; i++) {
                     const match = currentPos[i];
-                    const matchIdx = Math.floor(i / 2);
-                    const targetMatch = nextPos[matchIdx];
-                    if (!targetMatch) continue;
+                    let targetMatch;
+
+                    const isCurrentSpecial = currentKey.includes('1/128') || currentKey.includes('1/64') || currentKey.includes('1/32');
+                    const isNextSpecial = nextKey.includes('1/128') || nextKey.includes('1/64') || nextKey.includes('1/32');
+
+                    if (isCurrentSpecial || isNextSpecial) {
+                        const p1Name = match.match.player1Name;
+                        const p2Name = match.match.player2Name;
+                        const p1Total = match.match.player1Total || 0;
+                        const p2Total = match.match.player2Total || 0;
+                        const winnerName = p1Total > p2Total ? p1Name : (p2Total > p1Total ? p2Name : null);
+                        
+                        if (winnerName) {
+                            for (let j = 0; j < nextPos.length; j++) {
+                                const nm = nextPos[j].match;
+                                if (namesMatchForLine(nm.player1Name, winnerName) || namesMatchForLine(nm.player2Name, winnerName)) {
+                                    targetMatch = nextPos[j];
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        const matchIdx = Math.floor(i / 2);
+                        if (nextPos[matchIdx]) {
+                            targetMatch = nextPos[matchIdx];
+                        }
+                    }
+
+                    if (!targetMatch) {
+                        continue;
+                    }
 
                     const y1 = match.y + matchBoxHeight / 2;
                     const y2 = targetMatch.y + matchBoxHeight / 2;
