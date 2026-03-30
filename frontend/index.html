@@ -2758,7 +2758,7 @@
                         const m = prevMatches[k];
                         if (nameEq(m.player1Name, p1) || nameEq(m.player2Name, p1) ||
                             nameEq(m.player1Name, p2) || nameEq(m.player2Name, p2)) {
-                            matched.push({m, k});
+                            matched.push({ m, k });
                         }
                     }
 
@@ -2784,9 +2784,9 @@
             for (let i = sortedRoundKeys.length - 2; i >= 0; i--) {
                 const currKey = sortedRoundKeys[i];
                 const nextKey = sortedRoundKeys[i + 1];
-                
+
                 if (currKey.includes('1/32')) continue;
-                
+
                 const currMatches = rounds[currKey];
                 const nextMatches = rounds[nextKey];
 
@@ -2806,7 +2806,7 @@
                         const m = currMatches[k];
                         if (nameEq(m.player1Name, p1) || nameEq(m.player2Name, p1) ||
                             nameEq(m.player1Name, p2) || nameEq(m.player2Name, p2)) {
-                            matched.push({m, k});
+                            matched.push({ m, k });
                         }
                     }
 
@@ -2913,7 +2913,7 @@
                         const p1Total = match.match.player1Total || 0;
                         const p2Total = match.match.player2Total || 0;
                         const winnerName = p1Total > p2Total ? p1Name : (p2Total > p1Total ? p2Name : null);
-                        
+
                         if (winnerName) {
                             for (let j = 0; j < nextPos.length; j++) {
                                 const nm = nextPos[j].match;
@@ -3276,9 +3276,9 @@
                 const yearStr = comp.competitionYear ? `${comp.competitionYear}年 ` : '';
                 document.getElementById('competition-title').innerHTML = yearStr + comp.name + (dateRange ? ` <span style="font-weight:400;font-size:14px;color:#666;">${dateRange}</span>` : '');
 
-                // 重置参赛名单按钮状态（默认展开）
-                document.getElementById('btn-toggle-roster').classList.add('active');
-                document.getElementById('roster-card').style.display = 'block';
+                // 重置参赛名单按钮状态（默认关闭/折叠）
+                document.getElementById('btn-toggle-roster').classList.remove('active'); // 移除选中/展开状态的类名
+                document.getElementById('roster-card').style.display = 'none'; // 将卡片隐藏
 
                 // 重置对阵图视图为表格模式
                 currentMatchView = 'table';
