@@ -2987,10 +2987,10 @@
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
                     svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight / 2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight / 2}" class="bracket-divider"/>`;
-                    svg += `<text x="${pos.x + 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text>`;
-                    svg += `<text x="${pos.x + matchBoxWidth - 6}" y="${pos.y + 16}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
-                    svg += `<text x="${pos.x + 6}" y="${pos.y + 32}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text>`;
-                    svg += `<text x="${pos.x + matchBoxWidth - 6}" y="${pos.y + 32}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
+                    svg += `<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text>`;
+                    svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
+                    svg += `<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text>`;
+                    svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
                 });
             });
 
