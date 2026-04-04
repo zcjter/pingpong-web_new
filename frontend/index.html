@@ -2611,7 +2611,7 @@
         }
 
         function initBracketView(matches) {
-            const categories = ['男单', '女单', '男双', '女双', '混双'];
+            const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2645,7 +2645,7 @@
             document.querySelectorAll('.bracket-category-tab').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent === category);
             });
-            const categories = ['男单', '女单', '男双', '女双', '混双'];
+            const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             currentCompetitionMatches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2949,8 +2949,9 @@
             sortedRoundKeysFinal.forEach(key => {
                 roundPositions[key].forEach(pos => {
                     const m = pos.match;
-                    const p1 = m.player1Name || '';
-                    const p2 = m.player2Name || '';
+                    const isTeam = category === '男团' || category === '女团';
+                    const p1 = isTeam ? (m.player1Country || '') : (m.player1Name || '');
+                    const p2 = isTeam ? (m.player2Country || '') : (m.player2Name || '');
 
                     let p1Score = m.player1Total || 0;
                     let p2Score = m.player2Total || 0;
