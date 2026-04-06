@@ -2367,11 +2367,15 @@
             if (!country) return '';
             const name = country.trim();
 
+            // 跨国组合：国旗 + 国家名（用于参赛名单等）
             if (name.includes('/') || name.includes('+') || name.includes('&')) {
                 const sep = name.includes('/') ? '/' : (name.includes('+') ? '+' : '&');
                 const countries = name.split(sep).map(c => c.trim()).filter(c => c);
                 if (countries.length > 1) {
-                    return countries.map(c => getFlag(c)).join('<span style="margin:0 2px;color:#999;">/</span>');
+                    return countries.map(c => {
+                        const flag = getFlag(c);
+                        return flag ? `${flag}<span style="margin-right:3px;">${c}</span>` : c;
+                    }).join(`<span style="margin:0 4px;color:#ccc;">${sep}</span>`);
                 }
                 return getFlag(countries[0] || '');
             }
@@ -2401,6 +2405,21 @@
                 }
             }
             return '';
+        }
+
+        // 比赛详情专用：跨国组合只显示国旗
+        function getFlagForMatch(country) {
+            if (!country) return '';
+            const name = country.trim();
+            if (name.includes('/') || name.includes('+') || name.includes('&')) {
+                const sep = name.includes('/') ? '/' : (name.includes('+') ? '+' : '&');
+                const countries = name.split(sep).map(c => c.trim()).filter(c => c);
+                if (countries.length > 1) {
+                    return countries.map(c => getFlag(c)).join('<span style="margin:0 2px;color:#999;">/</span>');
+                }
+                return getFlag(countries[0] || '');
+            }
+            return `<span class="rt-flag">${getFlag(name)}</span>`;
         }
 
         // 导航
@@ -2588,10 +2607,8 @@
                         const totalHtml = (p1Total > 0 || p2Total > 0)
                             ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
                             : '';
-                        const isCrossCountry = (p1Country || '').includes('/') || (p1Country || '').includes('+') || (p1Country || '').includes('&');
-                        const p1FlagHtml = isCrossCountry ? getFlag(p1Country) : `<span class="rt-flag">${getFlag(p1Country)}</span>`;
-                        const isCrossCountry2 = (p2Country || '').includes('/') || (p2Country || '').includes('+') || (p2Country || '').includes('&');
-                        const p2FlagHtml = isCrossCountry2 ? getFlag(p2Country) : `<span class="rt-flag">${getFlag(p2Country)}</span>`;
+                        const p1FlagHtml = getFlagForMatch(p1Country);
+                        const p2FlagHtml = getFlagForMatch(p2Country);
                         contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
                                         <td class="rt-player">${p1FlagHtml}<span class="${p1Won ? 'rt-name--win' : ''}">${p1Name}</span></td>
