@@ -2371,6 +2371,18 @@
             if (!country) return '';
             const name = country.trim();
 
+            if (name.includes('/') || name.includes('+') || name.includes('&')) {
+                const sep = name.includes('/') ? '/' : (name.includes('+') ? '+' : '&');
+                const countries = name.split(sep).map(c => c.trim()).filter(c => c);
+                if (countries.length > 1) {
+                    return countries.map(c => {
+                        const flag = getFlag(c);
+                        return flag ? `${flag}<span style="margin-right:3px;">${c}</span>` : c;
+                    }).join(`<span style="margin:0 4px;color:#ccc;">${sep}</span>`);
+                }
+                return getFlag(countries[0] || '');
+            }
+
             // 1. 特殊处理：中华台北/中国台北 (梅花旗)
             // 使用专用的静态图片链接
             const TPE_FLAG = "https://picx.zhimg.com/80/v2-0c2290da259b563d9269af076b1e0ca9_1440w.webp?source=1def8aca";
@@ -2488,7 +2500,7 @@
                                                 <tr class="rank-${i + 1}">
                                                     <td><span class="rank-num rank-num--${i + 1}">${p.ranking || i + 1}</span></td>
                                                     <td><span class="player-flag">${getFlag(p.country)}</span>${p.playerName}</td>
-                                                    <td class="country-cell">${p.country || '-'}</td>
+                                                    <td class="country-cell">${(p.country || '').includes('/') || (p.country || '').includes('+') || (p.country || '').includes('&') ? '-' : (p.country || '-')}</td>
                                                     <td class="points">${p.points}</td>
                                                 </tr>
                                             `).join('')}
@@ -2507,6 +2519,8 @@
         }
 
         // ========== 赛事详情：比赛轮次信息 ===========
+        let currentDetailCategory = '';
+
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
@@ -2518,9 +2532,24 @@
                 if (!grouped[cat][key]) grouped[cat][key] = [];
                 grouped[cat][key].push(m);
             });
-            let html = '<div class="rounds-wrap">';
-            categories.forEach(cat => {
-                if (!grouped[cat]) return;
+
+            const availableCategories = categories.filter(cat => grouped[cat]);
+            if (availableCategories.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="background:#f5f5f5;color:#999;">暂无比赛记录</div>';
+                return;
+            }
+
+            const defaultCat = currentDetailCategory && grouped[currentDetailCategory] ? currentDetailCategory : availableCategories[0];
+            currentDetailCategory = defaultCat;
+
+            let tabsHtml = `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
+            availableCategories.forEach((cat, i) => {
+                tabsHtml += `<button class="bracket-category-tab ${cat === defaultCat ? 'active' : ''}" onclick="switchDetailCategory('${cat}', this)">${cat}</button>`;
+            });
+            tabsHtml += `</div>`;
+
+            let contentHtml = '';
+            availableCategories.forEach((cat, i) => {
                 const catData = grouped[cat];
                 const roundKeys = Object.keys(catData).sort((a, b) => {
                     const ia = roundOrder.findIndex(k => a.includes(k));
@@ -2536,15 +2565,16 @@
                     return a.localeCompare(b, 'zh');
                 });
                 if (roundKeys.length === 0) return;
-                html += `<div class="round-cat">`;
-                html += `<div class="round-cat-title">${cat}</div>`;
+
+                contentHtml += `<div id="detail-cat-${cat}" class="detail-category-content" style="display:${cat === defaultCat ? 'block' : 'none'};">`;
+                contentHtml += `<div class="round-cat">`;
                 roundKeys.forEach(key => {
                     const roundMatches = catData[key];
-                    html += `<div class="round-section">`;
-                    html += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
-                    html += `<div class="round-table-wrap"><table class="round-table">`;
-                    html += `<thead><tr><th>选手1</th><th>比分</th><th>选手2</th><th>场馆</th><th>状态</th><th>操作</th></tr></thead>`;
-                    html += `<tbody>`;
+                    contentHtml += `<div class="round-section">`;
+                    contentHtml += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
+                    contentHtml += `<div class="round-table-wrap"><table class="round-table">`;
+                    contentHtml += `<thead><tr><th>选手1</th><th>比分</th><th>选手2</th><th>场馆</th><th>状态</th><th>操作</th></tr></thead>`;
+                    contentHtml += `<tbody>`;
                     roundMatches.forEach(m => {
                         let scores = [];
                         let p1Total = 0, p2Total = 0;
@@ -2568,7 +2598,7 @@
                         const totalHtml = (p1Total > 0 || p2Total > 0)
                             ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
                             : '';
-                        html += `
+                        contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
                                         <td class="rt-player"><span class="rt-flag">${getFlag(p1Country)}</span><span class="${p1Won ? 'rt-name--win' : ''}">${p1Name}</span></td>
                                         <td class="rt-score">${scoresCell}${totalHtml}</td>
@@ -2582,16 +2612,20 @@
                                     </tr>
                                     `;
                     });
-                    html += `</tbody></table></div></div>`;
+                    contentHtml += `</tbody></table></div></div>`;
                 });
-                html += `</div>`;
+                contentHtml += `</div></div>`;
             });
-            html += '</div>';
-            if (html === '<div class="rounds-wrap"></div>') {
-                container.innerHTML = '<div class="empty-state" style="background:#f5f5f5;color:#999;">暂无比赛记录</div>';
-                return;
-            }
-            container.innerHTML = html;
+
+            container.innerHTML = tabsHtml + contentHtml;
+        }
+
+        function switchDetailCategory(cat, btn) {
+            currentDetailCategory = cat;
+            document.querySelectorAll('.detail-category-content').forEach(el => el.style.display = 'none');
+            document.getElementById('detail-cat-' + cat).style.display = 'block';
+            document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
         // ========== 对阵图视图切换 ==========
@@ -3030,7 +3064,7 @@
                 <div class="player-card" ondblclick="showPlayerDetail(${p.id})">
                     <div class="player-avatar">${p.name.charAt(0)}</div>
                     <div class="player-name">${p.name}</div>
-                    <div class="player-country">${p.country || '-'}</div>
+                    <div class="player-country">${(p.country || '').includes('/') || (p.country || '').includes('+') || (p.country || '').includes('&') ? '-' : (p.country || '-')}</div>
                     <div class="player-card-actions" onclick="event.stopPropagation()">
                         <button class="btn btn-sm btn-warning" onclick="editPlayer(${p.id})">编辑</button>
                         <button class="btn btn-sm btn-danger" onclick="deletePlayer(${p.id})">删除</button>
@@ -3048,7 +3082,7 @@
 
                 document.getElementById('detail-avatar').textContent = p.name.charAt(0);
                 document.getElementById('detail-name').textContent = p.name;
-                document.getElementById('detail-country').textContent = p.country || '-';
+                document.getElementById('detail-country').innerHTML = getFlag(p.country) || (p.country || '-');
                 let introHtml = p.introduction || '暂无简介';
 
                 function parseMarkdown(text) {
@@ -3370,19 +3404,26 @@
                 grouped[cat].push(r);
             });
 
-            let html = '';
-            categories.forEach(cat => {
-                if (!grouped[cat]) return;
-                html += `<div class="round-cat">`;
-                html += `<div class="round-cat-title">${cat}</div>`;
-                html += `<div class="round-table-wrap"><table class="round-table">`;
-                html += `<thead><tr><th>运动员</th><th>国家</th><th>操作</th></tr></thead>`;
-                html += `<tbody>`;
+            const availableCategories = categories.filter(cat => grouped[cat]);
+            const defaultCat = availableCategories[0] || '';
+
+            let tabsHtml = `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
+            availableCategories.forEach((cat, i) => {
+                tabsHtml += `<button class="bracket-category-tab ${i === 0 ? 'active' : ''}" onclick="switchRosterCategory('${cat}', this)">${cat}</button>`;
+            });
+            tabsHtml += `</div>`;
+
+            let contentHtml = '';
+            availableCategories.forEach((cat, i) => {
+                contentHtml += `<div id="roster-cat-${cat}" class="roster-category-content" style="display:${i === 0 ? 'block' : 'none'};">`;
+                contentHtml += `<div class="round-table-wrap"><table class="round-table">`;
+                contentHtml += `<thead><tr><th>运动员</th><th>国家</th><th>操作</th></tr></thead>`;
+                contentHtml += `<tbody>`;
                 grouped[cat].forEach(r => {
-                    html += `
+                    contentHtml += `
                         <tr class="round-row">
                             <td>${r.playerName}</td>
-                            <td><span class="rt-flag">${getFlag(r.country)}</span> ${r.country || '-'}</td>
+                            <td><span class="rt-flag">${getFlag(r.country)}</span> ${(r.country || '').includes('/') || (r.country || '').includes('+') || (r.country || '').includes('&') ? '' : (r.country || '')}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm" onclick="editRoster(${r.id})">编辑</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteRoster(${r.id})">删除</button>
@@ -3390,13 +3431,17 @@
                         </tr>
                     `;
                 });
-                html += `</tbody></table></div></div>`;
+                contentHtml += `</tbody></table></div></div>`;
             });
 
-            if (!html) {
-                html = '<div class="empty-state">暂无参赛名单</div>';
-            }
-            document.getElementById('roster-list-content').innerHTML = html;
+            document.getElementById('roster-list-content').innerHTML = tabsHtml + contentHtml;
+        }
+
+        function switchRosterCategory(cat, btn) {
+            document.querySelectorAll('.roster-category-content').forEach(el => el.style.display = 'none');
+            document.getElementById('roster-cat-' + cat).style.display = 'block';
+            document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
         function showRosterFormModal(id = null) {
@@ -3814,7 +3859,7 @@
                                             <tr class="rank-${i + 1}">
                                                 <td><span class="rank-num rank-num--${i + 1}">${r.ranking || i + 1}</span></td>
                                                 <td>${r.playerName}</td>
-                                                <td><span class="player-flag">${getFlag(r.country)}</span>${r.country || '-'}</td>
+                                                <td><span class="player-flag">${getFlag(r.country)}</span>${(r.country || '').includes('/') || (r.country || '').includes('+') || (r.country || '').includes('&') ? '' : (r.country || '-')}</td>
                                                 <td class="points">${r.points || 0}</td>
                                                 <td>
                                                     <button class="btn btn-warning btn-sm" onclick="editRanking(${r.id})">编辑</button>
