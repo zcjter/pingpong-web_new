@@ -2728,17 +2728,13 @@
             }
 
             const isTeamCategory = category === '男团' || category === '女团';
-            console.log('renderBracket:', category, 'isTeamCategory:', isTeamCategory, 'matches:', matches.map(m => ({id: m.id, roundNumber: m.roundNumber, category: m.category})));
             const eliminationRounds = matches.filter(m => {
                 const rn = String(m.roundNumber || '');
-                if (isTeamCategory) return true;
-                if (!rn || rn.trim() === '') return false;
+                if (!rn || rn.trim() === '') return true;
                 if (rn.includes('小组')) return false;
                 if (rn.includes('组')) return false;
-                if (rn.includes('第一轮') || rn.includes('第二轮') || rn.includes('第三轮') || rn.includes('第四轮')) return false;
-                return rn.includes('决') || rn.includes('半') || rn.includes('1/') || rn.includes('四') || !rn.match(/^\d+$/);
+                return true;
             });
-            console.log('eliminationRounds:', eliminationRounds.map(m => ({id: m.id, roundNumber: m.roundNumber})));
 
             if (eliminationRounds.length === 0) {
                 document.getElementById('bracket-container').innerHTML = '<div class="bracket-no-data">暂无淘汰赛数据</div>';
