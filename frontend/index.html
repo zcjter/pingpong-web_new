@@ -3510,11 +3510,20 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(roster)
                 });
+                const savedCategory = document.getElementById('roster-category').value;
                 closeModal('roster-modal');
                 if (currentRosterYear) {
-                    loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
+                    await loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
                 } else {
-                    loadRosterByVenue(currentRosterVenue);
+                    await loadRosterByVenue(currentRosterVenue);
+                }
+                if (savedCategory && currentRosterCategory) {
+                    setTimeout(() => {
+                        const btn = document.querySelector(`#roster-list-content .bracket-category-tab[onclick*="${savedCategory}"]`);
+                        if (btn) {
+                            switchRosterCategory(savedCategory, btn);
+                        }
+                    }, 100);
                 }
             } catch (error) {
                 console.error('Error saving roster:', error);
@@ -3793,7 +3802,16 @@
 
             closeModal('match-modal');
             if (currentCompetitionId) {
-                showCompetitionDetail(currentCompetitionId);
+                const savedCategory = document.getElementById('match-category').value;
+                await showCompetitionDetail(currentCompetitionId);
+                if (savedCategory && currentDetailCategory) {
+                    setTimeout(() => {
+                        const btn = document.querySelector(`#detail-rounds-content .bracket-category-tab[onclick*="${savedCategory}"]`);
+                        if (btn) {
+                            switchDetailCategory(savedCategory, btn);
+                        }
+                    }, 100);
+                }
             }
         });
 
