@@ -2375,10 +2375,7 @@
                 const sep = name.includes('/') ? '/' : (name.includes('+') ? '+' : '&');
                 const countries = name.split(sep).map(c => c.trim()).filter(c => c);
                 if (countries.length > 1) {
-                    return countries.map(c => {
-                        const flag = getFlag(c);
-                        return flag ? `${flag}<span style="margin-right:3px;">${c}</span>` : c;
-                    }).join(`<span style="margin:0 4px;color:#ccc;">${sep}</span>`);
+                    return countries.map(c => getFlag(c)).join('<span style="margin:0 2px;color:#999;">/</span>');
                 }
                 return getFlag(countries[0] || '');
             }
@@ -2599,11 +2596,15 @@
                         const totalHtml = (p1Total > 0 || p2Total > 0)
                             ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
                             : '';
+                        const isCrossCountry = (p1Country || '').includes('/') || (p1Country || '').includes('+') || (p1Country || '').includes('&');
+                        const p1FlagHtml = isCrossCountry ? getFlag(p1Country) : `<span class="rt-flag">${getFlag(p1Country)}</span>`;
+                        const isCrossCountry2 = (p2Country || '').includes('/') || (p2Country || '').includes('+') || (p2Country || '').includes('&');
+                        const p2FlagHtml = isCrossCountry2 ? getFlag(p2Country) : `<span class="rt-flag">${getFlag(p2Country)}</span>`;
                         contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
-                                        <td class="rt-player"><span class="rt-flag">${getFlag(p1Country)}</span><span class="${p1Won ? 'rt-name--win' : ''}">${p1Name}</span></td>
+                                        <td class="rt-player">${p1FlagHtml}<span class="${p1Won ? 'rt-name--win' : ''}">${p1Name}</span></td>
                                         <td class="rt-score">${scoresCell}${totalHtml}</td>
-                                        <td class="rt-player"><span class="rt-flag">${getFlag(p2Country)}</span><span class="${p2Won ? 'rt-name--win' : ''}">${p2Name}</span></td>
+                                        <td class="rt-player">${p2FlagHtml}<span class="${p2Won ? 'rt-name--win' : ''}">${p2Name}</span></td>
                                         <td class="rt-venue">${m.venue || '-'}</td>
                                         <td class="rt-status"><span class="rt-status-badge rt-status--${m.status}">${statusMap[m.status] || m.status}</span></td>
                                         <td>
