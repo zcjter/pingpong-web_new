@@ -2512,6 +2512,7 @@
 
         // ========== 赛事详情：比赛轮次信息 ===========
         let currentDetailCategory = '';
+        let currentRosterCategory = '';
 
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
@@ -3481,6 +3482,7 @@
         }
 
         function switchRosterCategory(cat, btn) {
+            currentRosterCategory = cat;
             document.querySelectorAll('.roster-category-content').forEach(el => el.style.display = 'none');
             document.getElementById('roster-cat-' + cat).style.display = 'block';
             document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
@@ -3496,6 +3498,11 @@
             // 设置比赛地点和年份为当前比赛的
             document.getElementById('roster-venue').value = currentRosterVenue;
             document.getElementById('roster-year').value = currentRosterYear || new Date().getFullYear();
+
+            // 新增时默认使用当前选中的分类
+            if (!id && currentRosterCategory) {
+                document.getElementById('roster-category').value = currentRosterCategory;
+            }
             
             if (id) {
                 fetch(`${API_BASE}/roster/${id}`).then(r => r.json()).then(r => {
@@ -3683,6 +3690,11 @@
             document.getElementById('match-modal-title').textContent = id ? '编辑比赛' : '添加比赛';
             document.getElementById('match-form').reset();
             document.getElementById('match-id').value = id || '';
+
+            // 新增比赛时，默认使用当前选中的分类
+            if (!id && currentDetailCategory) {
+                document.getElementById('match-category').value = currentDetailCategory;
+            }
 
             if (id) {
                 fetch(`${API_BASE}/matches/${id}`).then(r => r.json()).then(m => {
