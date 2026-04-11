@@ -743,7 +743,6 @@
         }
 
         .rt-venue {
-            color: #888;
             font-size: 11px;
         }
 
@@ -2614,6 +2613,8 @@
                         const maxLen = 20;
                         const p1DisplayName = isTeamMatch && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name;
                         const p2DisplayName = isTeamMatch && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name;
+                        const p1Title = isTeamMatch && p1Name.length > maxLen ? `title="${p1Name}"` : '';
+                        const p2Title = isTeamMatch && p2Name.length > maxLen ? `title="${p2Name}"` : '';
                         const validScores2 = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
                         const scoresCell = isTeamMatch ? '' : (validScores2.length > 0
                             ? validScores2.map(s => {
@@ -2626,22 +2627,25 @@
                         const totalHtml = (p1Total > 0 || p2Total > 0)
                             ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
                             : '';
-                        const p1FlagHtml = getFlagForMatch(p1Country);
+const p1FlagHtml = getFlagForMatch(p1Country);
                         const p2FlagHtml = getFlagForMatch(p2Country);
                         const p1NameClass = p1Won ? 'rt-name--win' : '';
                         const p2NameClass = p2Won ? 'rt-name--win' : '';
+                        const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+                        const venueInfo = m.venue || '-';
                         contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
-                                        <td class="rt-player">${p1FlagHtml}<span class="${p1NameClass}">${p1DisplayName}</span></td>
+                                        <td class="rt-player">${p1FlagHtml}<span class="${p1NameClass}" ${p1Title}>${p1DisplayName}</span></td>
                                         <td class="rt-score">${scoresCell}${totalHtml}</td>
-                                        <td class="rt-player">${p2FlagHtml}<span class="${p2NameClass}">${p2DisplayName}</span></td>
-                                        <td class="rt-venue">${m.venue || '-'}</td>
+                                        <td class="rt-player">${p2FlagHtml}<span class="${p2NameClass}" ${p2Title}>${p2DisplayName}</span></td>
+                                        <td class="rt-venue">${venueInfo}</td>
                                         <td class="rt-status"><span class="rt-status-badge rt-status--${m.status}">${statusMap[m.status] || m.status}</span></td>
                                         <td>
                                             <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
                                             <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
                                         </td>
                                     </tr>
+                                    ${matchDateStr ? `<tr class="round-row" style="background:#fafafa;"><td colspan="1" style="text-align:left;padding-left:8px;"><span style="color:#e53935;font-weight:700;">${matchDateStr}</span></td><td colspan="6"></td></tr>` : ''}
                                     `;
                     });
                     contentHtml += `</tbody></table></div></div>`;
@@ -3024,6 +3028,8 @@
                     const isTeam = category === '男团' || category === '女团';
                     const p1 = isTeam ? (m.player1Country || m.player1Name || '') : (m.player1Name || '');
                     const p2 = isTeam ? (m.player2Country || m.player2Name || '') : (m.player2Name || '');
+                    
+                    const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
 
                     let p1Score = m.player1Total || 0;
                     let p2Score = m.player2Total || 0;
@@ -3050,14 +3056,19 @@
 
                     const p1Display = truncateName(p1, 6);
                     const p2Display = truncateName(p2, 6);
+                    const p1Title = p1.length > 6 ? `title="${p1}"` : '';
+                    const p2Title = p2.length > 6 ? `title="${p2}"` : '';
                     const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
                     svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight / 2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight / 2}" class="bracket-divider"/>`;
-                    svg += `<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text>`;
+                    svg += `<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10" ${p1Title}>${p1Display}</text>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
-                    svg += `<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text>`;
+                    svg += `<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10" ${p2Title}>${p2Display}</text>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
+                    if (matchDateStr) {
+                        svg += `<text x="${pos.x + 8}" y="${pos.y + matchBoxHeight + 14}" font-size="9" fill="#e53935" font-weight="700">${matchDateStr}</text>`;
+                    }
                 });
             });
 
