@@ -3086,8 +3086,8 @@
                         return name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
                     };
                     
-                    const p1Display = truncateName(p1, 12);
-                    const p2Display = truncateName(p2, 12);
+                    const p1Display = truncateName(p1, 6);
+                    const p2Display = truncateName(p2, 6);
                     const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
