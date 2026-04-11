@@ -3095,17 +3095,17 @@ const truncateName = (name, maxLen) => {
                         return name.length > maxLen ? name.substring(0, maxLen - 1) + '…' : name;
                     };
 
-                    const p1Display = truncateName(p1, 6);
-                    const p2Display = truncateName(p2, 6);
-                    const p1Title = `title="${p1}"`;
-                    const p2Title = `title="${p2}"`;
+                    const p1Display = truncateName(p1, 10);
+                    const p2Display = truncateName(p2, 10);
+                    const p1TitleEl = p1.length > 10 ? `<title>${p1}</title>` : '';
+                    const p2TitleEl = p2.length > 10 ? `<title>${p2}</title>` : '';
                     const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
                     svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight/2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight/2}" class="bracket-divider"/>`;
-                    svg += `<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10" ${p1Title}>${p1Display}</text>`;
+                    svg += `<g>${p1TitleEl}<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text></g>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
-                    svg += `<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10" ${p2Title}>${p2Display}</text>`;
+                    svg += `<g>${p2TitleEl}<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text></g>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
                     if (matchDateStr) {
                         svg += `<text x="${pos.x + 8}" y="${pos.y + matchBoxHeight + 14}" font-size="9" fill="#e53935" font-weight="700">${matchDateStr}</text>`;
