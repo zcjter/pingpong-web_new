@@ -2971,29 +2971,34 @@
                     const match = currentPos[i];
                     let targetMatch;
 
-                    const isCurrentSpecial = currentKey.includes('1/128') || currentKey.includes('1/64') || currentKey.includes('1/32');
-                    const isNextSpecial = nextKey.includes('1/128') || nextKey.includes('1/64') || nextKey.includes('1/32');
+                    const p1Name = match.match.player1Name;
+                    const p2Name = match.match.player2Name;
+                    const p1Total = match.match.player1Total || 0;
+                    const p2Total = match.match.player2Total || 0;
+                    
+                    // 检查是否轮空（对手为空或为"轮空"）
+                    const isP1Bye = !p1Name || p1Name === '轮空' || p1Name === 'BYE' || p1Name === '待定';
+                    const isP2Bye = !p2Name || p2Name === '轮空' || p2Name === 'BYE' || p2Name === '待定';
+                    
+                    // 确定晋级选手
+                    let winnerName = null;
+                    if (isP1Bye && !isP2Bye) {
+                        winnerName = p2Name; // p2直接晋级
+                    } else if (isP2Bye && !isP1Bye) {
+                        winnerName = p1Name; // p1直接晋级
+                    } else if (p1Total > p2Total) {
+                        winnerName = p1Name;
+                    } else if (p2Total > p1Total) {
+                        winnerName = p2Name;
+                    }
 
-                    if (isCurrentSpecial || isNextSpecial) {
-                        const p1Name = match.match.player1Name;
-                        const p2Name = match.match.player2Name;
-                        const p1Total = match.match.player1Total || 0;
-                        const p2Total = match.match.player2Total || 0;
-                        const winnerName = p1Total > p2Total ? p1Name : (p2Total > p1Total ? p2Name : null);
-
-                        if (winnerName) {
-                            for (let j = 0; j < nextPos.length; j++) {
-                                const nm = nextPos[j].match;
-                                if (namesMatchForLine(nm.player1Name, winnerName) || namesMatchForLine(nm.player2Name, winnerName)) {
-                                    targetMatch = nextPos[j];
-                                    break;
-                                }
+                    if (winnerName) {
+                        for (let j = 0; j < nextPos.length; j++) {
+                            const nm = nextPos[j].match;
+                            if (namesMatchForLine(nm.player1Name, winnerName) || namesMatchForLine(nm.player2Name, winnerName)) {
+                                targetMatch = nextPos[j];
+                                break;
                             }
-                        }
-                    } else {
-                        const matchIdx = Math.floor(i / 2);
-                        if (nextPos[matchIdx]) {
-                            targetMatch = nextPos[matchIdx];
                         }
                     }
 
