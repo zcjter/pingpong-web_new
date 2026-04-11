@@ -2610,9 +2610,10 @@
                         const p2Won = p2Total > p1Total && p2Total > 0;
                         const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
                         const isTeamMatch = m.category === '男团' || m.category === '女团';
-                        const maxLen = 20;
-                        const p1DisplayName = isTeamMatch && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name;
-                        const p2DisplayName = isTeamMatch && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name;
+                        const isDoublesMatch = m.category === '男双' || m.category === '女双' || m.category === '混双';
+                        const maxLen = isDoublesMatch ? 15 : (isTeamMatch ? 20 : 999);
+                        const p1DisplayName = maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name;
+                        const p2DisplayName = maxLen < 999 && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name;
                         const p1Title = `title="${p1Name}"`;
                         const p2Title = `title="${p2Name}"`;
                         const validScores2 = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
