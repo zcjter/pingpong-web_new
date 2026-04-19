@@ -2304,7 +2304,7 @@
             // 亚洲
             '中国': 'cn', '中国内地': 'cn', '内地': 'cn',
             '中国台北': 'TPE', '中华台北': 'TPE', '台湾': 'TPE', '台北': 'TPE',
-            '中国香港': 'hk', '香港': 'hk', '澳門': 'hk',
+            '中国香港': 'hk', '香港': 'hk', '中国澳门': 'mo',
             '澳门': 'mo', '澳門': 'mo',
             '日本': 'jp', '韩国': 'kr', '朝鲜': 'kp', '北朝鲜': 'kp',
             '蒙古': 'mn', '新加坡': 'sg', '马来西亚': 'my', '泰国': 'th', '越南': 'vn',
@@ -2333,7 +2333,7 @@
             '黑山': 'me', '波黑': 'ba', '北马其顿': 'mk', '阿尔巴尼亚': 'al',
             '白俄罗斯': 'by', '乌克兰': 'ua', '摩尔多瓦': 'md', '俄罗斯': 'ru',
             '爱尔兰': 'ie', '马耳他': 'mt', '安道尔': 'ad', '摩纳哥': 'mc',
-            '圣马力诺': 'sm', '梵蒂冈': 'va',
+            '圣马力诺': 'sm', '梵蒂冈': 'va', '比利时': 'be',
             // 美洲
             '美国': 'us', '美國': 'us', '加拿大': 'ca', '墨西哥': 'mx',
             '阿根廷': 'ar', '巴西': 'br', '智利': 'cl', '哥伦比亚': 'co',
@@ -2353,7 +2353,6 @@
             '肯尼亚': 'ke', '坦桑尼亚': 'tz', '乌干达': 'ug', '加纳': 'gh',
             '尼日利亚': 'ng', '喀麦隆': 'cm', '科特迪瓦': 'ci', '塞内加尔': 'sn',
             '马里': 'ml', '布基纳法索': 'bf', '尼日尔': 'ne', '乍得': 'td',
-            '刚果': 'roc', '刚果民主共和国': 'drc', '民主刚果': 'cd',
             '安哥拉': 'ao', '莫桑比克': 'mz', '赞比亚': 'zm', '津巴布韦': 'zw',
             '博茨瓦纳': 'bw', '纳米比亚': 'na', '莱索托': 'ls', '斯威士兰': 'sz',
             '马达加斯加': 'mg', '毛里求斯': 'mu', '塞舌尔': 'sc',
@@ -2368,7 +2367,7 @@
             '斐济': 'fj', '萨摩亚': 'ws', '汤加': 'to', '瓦努阿图': 'vu',
             '密克罗尼西亚': 'fm', '帕劳': 'pw', '基里巴斯': 'ki',
             '图瓦卢': 'tv', '瑙鲁': 'nr', '马绍尔群岛': 'mh',
-            '所罗门群岛': 'sb', '新喀里多尼亚': 'nc',
+            '所罗门群岛': 'sb', '新喀里多尼亚': 'fr','法属波利尼西亚':'pf',
             // 其他
             '格陵兰': 'gl', '法罗群岛': 'fo'
         };
@@ -2396,6 +2395,11 @@
             const taipeiVariants = ["中华台北", "中国台北", "Chinese Taipei", "TPE"];
             if (taipeiVariants.some(v => name.includes(v))) {
                 return `<img src="${TPE_FLAG}" width="24" height="16" style="border-radius:2px;vertical-align:middle;border:1px solid #eee;background:#e3f2fd;padding:1px;" alt="${name}">`;
+            }
+            const GGGH_FLAG = "https://th.bing.com/th/id/R.24375a00402ca3867081c119fb7625bf?rik=BKMR0UOStMtpWQ&pid=ImgRaw&r=0";
+            const ggghVariants = ["刚果民主共和国"];
+            if (ggghVariants.some(v => name.includes(v))) {
+                return `<img src="${GGGH_FLAG}" width="24" height="16" style="border-radius:2px;vertical-align:middle;border:1px solid #eee;background:#e3f2fd;padding:1px;" alt="${name}">`;
             }
             const GG_FLAG = "https://tse3.mm.bing.net/th/id/OIP.SX_ajduMnw3TMTb3vst0wgHaE8?w=600&h=400&rs=1&pid=ImgDetMain&o=7&rm=3";
             const ggVariants = ["刚果"];
@@ -2628,11 +2632,11 @@
                         const totalHtml = (p1Total > 0 || p2Total > 0)
                             ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
                             : '';
-const p1FlagHtml = getFlagForMatch(p1Country);
+                        const p1FlagHtml = getFlagForMatch(p1Country);
                         const p2FlagHtml = getFlagForMatch(p2Country);
                         const p1NameClass = p1Won ? 'rt-name--win' : '';
                         const p2NameClass = p2Won ? 'rt-name--win' : '';
-                        const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+                        const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
                         const venueInfo = m.venue || '-';
                         contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
@@ -2980,11 +2984,11 @@ const p1FlagHtml = getFlagForMatch(p1Country);
                     const p2Name = match.match.player2Name;
                     const p1Total = match.match.player1Total || 0;
                     const p2Total = match.match.player2Total || 0;
-                    
+
                     // 检查是否轮空（对手为空或为"轮空"）
                     const isP1Bye = !p1Name || p1Name === '轮空' || p1Name === 'BYE' || p1Name === '待定';
                     const isP2Bye = !p2Name || p2Name === '轮空' || p2Name === 'BYE' || p2Name === '待定';
-                    
+
                     // 确定晋级选手
                     let winnerName = null;
                     if (isP1Bye && !isP2Bye) {
@@ -3029,8 +3033,8 @@ const p1FlagHtml = getFlagForMatch(p1Country);
                     const isTeam = category === '男团' || category === '女团';
                     const p1 = isTeam ? (m.player1Country || m.player1Name || '') : (m.player1Name || '');
                     const p2 = isTeam ? (m.player2Country || m.player2Name || '') : (m.player2Name || '');
-                    
-                    const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+
+                    const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
 
                     let p1Score = m.player1Total || 0;
                     let p2Score = m.player2Total || 0;
