@@ -1704,10 +1704,31 @@
         }
 
         /* ===== TOURNAMENT BRACKET STYLES ===== */
-        .bracket-toggle-btns {
+        .bracket-toggle-btns, .match-category-tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn, .bracket-category-tab {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .category-btn:hover, .bracket-category-tab:hover {
+            background: #f5f5f5;
+        }
+
+        .category-btn.active, .bracket-category-tab.active {
+            background: #0077b6;
+            color: #fff;
+            border-color: #0077b6;
         }
 
         .bracket-container {
@@ -1947,23 +1968,18 @@
                     <div class="card-title">📊 排名管理</div>
                     <button class="btn btn-primary" onclick="showRankingModal()">+ 添加排名</button>
                 </div>
-                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
-                    <select id="ranking-year-select" onchange="loadRankingsByFilter()"
-                        style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
-                        <option value="">选择年份</option>
-                    </select>
-                    <select id="ranking-category-select" onchange="loadRankingsByFilter()"
-                        style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
-                        <option value="">全部项目</option>
-                        <option value="男单">男单</option>
-                        <option value="女单">女单</option>
-                        <option value="男双">男双</option>
-                        <option value="女双">女双</option>
-                        <option value="混双">混双</option>
-                        <option value="男团">男团</option>
-                        <option value="女团">女团</option>
-                    </select>
+                <div style="margin-bottom: 15px;">
+                <div class="match-category-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                    <button class="category-btn active" data-cat="" onclick="filterRankingsByCategory(this, '')">全部项目</button>
+                    <button class="category-btn" data-cat="男单" onclick="filterRankingsByCategory(this, '男单')">男单</button>
+                    <button class="category-btn" data-cat="女单" onclick="filterRankingsByCategory(this, '女单')">女单</button>
+                    <button class="category-btn" data-cat="男双" onclick="filterRankingsByCategory(this, '男双')">男双</button>
+                    <button class="category-btn" data-cat="女双" onclick="filterRankingsByCategory(this, '女双')">女双</button>
+                    <button class="category-btn" data-cat="混双" onclick="filterRankingsByCategory(this, '混双')">混双</button>
+                    <button class="category-btn" data-cat="男团" onclick="filterRankingsByCategory(this, '男团')">男团</button>
+                    <button class="category-btn" data-cat="女团" onclick="filterRankingsByCategory(this, '女团')">女团</button>
                 </div>
+            </div>
                 <div id="ranking-by-year"></div>
             </div>
         </div>
@@ -2142,15 +2158,16 @@
                 </div>
                 <div class="form-group">
                     <label>项目类别</label>
-                    <select id="match-category">
-                        <option value="男单">男单</option>
-                        <option value="女单">女单</option>
-                        <option value="男双">男双</option>
-                        <option value="女双">女双</option>
-                        <option value="混双">混双</option>
-                        <option value="男团">男团</option>
-                        <option value="女团">女团</option>
-                    </select>
+                    <div class="match-category-tabs">
+                        <button type="button" class="category-btn active" data-cat="男单" onclick="selectMatchCategory(this, '男单')">男单</button>
+                        <button type="button" class="category-btn" data-cat="女单" onclick="selectMatchCategory(this, '女单')">女单</button>
+                        <button type="button" class="category-btn" data-cat="男双" onclick="selectMatchCategory(this, '男双')">男双</button>
+                        <button type="button" class="category-btn" data-cat="女双" onclick="selectMatchCategory(this, '女双')">女双</button>
+                        <button type="button" class="category-btn" data-cat="混双" onclick="selectMatchCategory(this, '混双')">混双</button>
+                        <button type="button" class="category-btn" data-cat="男团" onclick="selectMatchCategory(this, '男团')">男团</button>
+                        <button type="button" class="category-btn" data-cat="女团" onclick="selectMatchCategory(this, '女团')">女团</button>
+                    </div>
+                    <input type="hidden" id="match-category" value="男单">
                 </div>
                 <div class="form-group">
                     <label>轮次</label>
@@ -2268,15 +2285,16 @@
                 </div>
                 <div class="form-group">
                     <label>项目类别 *</label>
-                    <select id="roster-category" required>
-                        <option value="男单">男单</option>
-                        <option value="女单">女单</option>
-                        <option value="男双">男双</option>
-                        <option value="女双">女双</option>
-                        <option value="混双">混双</option>
-                        <option value="男团">男团</option>
-                        <option value="女团">女团</option>
-                    </select>
+                    <div class="match-category-tabs">
+                        <button type="button" class="category-btn active" data-cat="男单" onclick="selectRosterCategory(this, '男单')">男单</button>
+                        <button type="button" class="category-btn" data-cat="女单" onclick="selectRosterCategory(this, '女单')">女单</button>
+                        <button type="button" class="category-btn" data-cat="男双" onclick="selectRosterCategory(this, '男双')">男双</button>
+                        <button type="button" class="category-btn" data-cat="女双" onclick="selectRosterCategory(this, '女双')">女双</button>
+                        <button type="button" class="category-btn" data-cat="混双" onclick="selectRosterCategory(this, '混双')">混双</button>
+                        <button type="button" class="category-btn" data-cat="男团" onclick="selectRosterCategory(this, '男团')">男团</button>
+                        <button type="button" class="category-btn" data-cat="女团" onclick="selectRosterCategory(this, '女团')">女团</button>
+                    </div>
+                    <input type="hidden" id="roster-category" value="男单" required>
                 </div>
                 <div class="form-group">
                     <label>运动员姓名 *</label>
@@ -3492,6 +3510,19 @@
             document.getElementById('roster-cat-' + cat).style.display = 'block';
             document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            document.getElementById('roster-category').value = cat;
+        }
+
+        function selectMatchCategory(btn, cat) {
+            document.querySelectorAll('#match-modal .category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('match-category').value = cat;
+        }
+
+        function selectRosterCategory(btn, cat) {
+            document.querySelectorAll('#roster-modal .category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('roster-category').value = cat;
         }
 
         function showRosterFormModal(id = null) {
@@ -3513,9 +3544,20 @@
                 fetch(`${API_BASE}/roster/${id}`).then(r => r.json()).then(r => {
                     document.getElementById('roster-venue').value = r.venue || '';
                     document.getElementById('roster-year').value = r.year || new Date().getFullYear();
-                    document.getElementById('roster-category').value = r.category || '男单';
+                    const cat = r.category || '男单';
+                    document.getElementById('roster-category').value = cat;
+                    // 更新tab按钮状态
+                    document.querySelectorAll('#roster-modal .category-btn').forEach(b => {
+                        b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+                    });
                     document.getElementById('roster-player-name').value = r.playerName || '';
                     document.getElementById('roster-country').value = r.country || '';
+                });
+            } else {
+                // 新增时同步tab按钮状态
+                const cat = currentRosterCategory || '男单';
+                document.querySelectorAll('#roster-modal .category-btn').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-cat') === cat);
                 });
             }
         }
@@ -3708,6 +3750,16 @@
             // 新增比赛时，默认使用当前选中的分类
             if (!id && currentDetailCategory) {
                 document.getElementById('match-category').value = currentDetailCategory;
+                // 同步tab按钮状态
+                document.querySelectorAll('#match-modal .category-btn').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-cat') === currentDetailCategory);
+                });
+            } else if (!id) {
+                // 新增时同步tab按钮状态
+                const cat = '男单';
+                document.querySelectorAll('#match-modal .category-btn').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+                });
             }
 
             if (id) {
@@ -3725,6 +3777,11 @@
                     document.getElementById('match-venue').value = m.venue || '';
                     document.getElementById('match-status').value = m.status || 'scheduled';
                     document.getElementById('match-category').value = m.category || '男单';
+                    // 更新tab按钮状态
+                    const cat = m.category || '男单';
+                    document.querySelectorAll('#match-modal .category-btn').forEach(b => {
+                        b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+                    });
                     document.getElementById('match-round').value = m.roundNumber || '';
                     document.getElementById('match-remark').value = m.remark || '';
                     if (m.matchDate) {
@@ -3858,6 +3915,14 @@
 
         // ========== 排名管理 ==========
         let rankingPlayerMap = {};
+        let currentRankingCategory = '';
+
+        async function filterRankingsByCategory(btn, cat) {
+            currentRankingCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            await loadRankingsByFilter();
+        }
 
         async function loadRankingManage() {
             try {
@@ -3880,7 +3945,7 @@
 
         async function loadRankingsByFilter() {
             const year = document.getElementById('ranking-year-select').value;
-            const category = document.getElementById('ranking-category-select').value;
+            const category = currentRankingCategory;
 
             if (!year) {
                 document.getElementById('ranking-by-year').innerHTML = '<div class="empty-state">请选择年份</div>';
@@ -3960,7 +4025,7 @@
 
         function showRankingModal(id = null) {
             const year = document.getElementById('ranking-year-select').value || new Date().getFullYear();
-            const category = document.getElementById('ranking-category-select').value || '男单';
+            const category = currentRankingCategory || '男单';
 
             document.getElementById('ranking-modal').classList.add('show');
             document.getElementById('ranking-modal-title').textContent = id ? '编辑排名' : `添加排名`;
