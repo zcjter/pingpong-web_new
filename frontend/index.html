@@ -1968,20 +1968,25 @@
                     <div class="card-title">📊 排名管理</div>
                     <button class="btn btn-primary" onclick="showRankingModal()">+ 添加排名</button>
                 </div>
-                <div style="margin-bottom: 15px;">
-                <div class="match-category-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
-                    <button class="category-btn active" data-cat="" onclick="filterRankingsByCategory(this, '')">全部项目</button>
-                    <button class="category-btn" data-cat="男单" onclick="filterRankingsByCategory(this, '男单')">男单</button>
-                    <button class="category-btn" data-cat="女单" onclick="filterRankingsByCategory(this, '女单')">女单</button>
-                    <button class="category-btn" data-cat="男双" onclick="filterRankingsByCategory(this, '男双')">男双</button>
-                    <button class="category-btn" data-cat="女双" onclick="filterRankingsByCategory(this, '女双')">女双</button>
-                    <button class="category-btn" data-cat="混双" onclick="filterRankingsByCategory(this, '混双')">混双</button>
-                    <button class="category-btn" data-cat="男团" onclick="filterRankingsByCategory(this, '男团')">男团</button>
-                    <button class="category-btn" data-cat="女团" onclick="filterRankingsByCategory(this, '女团')">女团</button>
+                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                    <select id="ranking-year-select" class="form-control" style="width: 150px; display: inline-block;" onchange="loadRankingsByFilter()">
+                        <option value="">选择年份</option>
+                    </select>
+                    <select id="ranking-category-select" onchange="loadRankingsByFilter()"
+                        style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="">全部项目</option>
+                        <option value="男单">男单</option>
+                        <option value="女单">女单</option>
+                        <option value="男双">男双</option>
+                        <option value="女双">女双</option>
+                        <option value="混双">混双</option>
+                        <option value="男团">男团</option>
+                        <option value="女团">女团</option>
+                    </select>
+                </div>
                 </div>
             </div>
-                <div id="ranking-by-year"></div>
-            </div>
+            <div id="ranking-by-year"></div>
         </div>
 
         <!-- 赛事冠军 -->
@@ -3916,27 +3921,22 @@
 
         // ========== 排名管理 ==========
         let rankingPlayerMap = {};
-        let currentRankingCategory = '';
-
-        async function filterRankingsByCategory(btn, cat) {
-            currentRankingCategory = cat;
-            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            await loadRankingsByFilter();
-        }
 
         async function loadRankingManage() {
             try {
+                const yearSelect = document.getElementById('ranking-year-select');
+                if (!yearSelect) return console.error('ranking-year-select not found');
+                
                 const yearsRes = await fetch(`${API_BASE}/rankings/years`);
                 const years = await yearsRes.json();
 
                 const currentYear = new Date().getFullYear();
                 const yearOptions = years.length ? years.map(y => `<option value="${y}">${y}年</option>`).join('') : `<option value="${currentYear}">${currentYear}年</option>`;
-                document.getElementById('ranking-year-select').innerHTML = '<option value="">选择年份</option>' + yearOptions;
+                yearSelect.innerHTML = '<option value="">选择年份</option>' + yearOptions;
 
                 const firstYear = years.length ? years[years.length - 1] : currentYear;
-                if (!document.getElementById('ranking-year-select').value) {
-                    document.getElementById('ranking-year-select').value = firstYear;
+                if (!yearSelect.value) {
+                    yearSelect.value = firstYear;
                     await loadRankingsByFilter();
                 }
             } catch (e) {
@@ -3946,7 +3946,7 @@
 
         async function loadRankingsByFilter() {
             const year = document.getElementById('ranking-year-select').value;
-            const category = currentRankingCategory;
+            const category = document.getElementById('ranking-category-select').value;
 
             if (!year) {
                 document.getElementById('ranking-by-year').innerHTML = '<div class="empty-state">请选择年份</div>';
@@ -4025,8 +4025,10 @@
         }
 
         function showRankingModal(id = null) {
-            const year = document.getElementById('ranking-year-select').value || new Date().getFullYear();
-            const category = currentRankingCategory || '男单';
+            const yearSelect = document.getElementById('ranking-year-select');
+            const year = yearSelect ? yearSelect.value : new Date().getFullYear();
+            const categorySelect = document.getElementById('ranking-category-select');
+            const category = categorySelect ? categorySelect.value : '男单';
 
             document.getElementById('ranking-modal').classList.add('show');
             document.getElementById('ranking-modal-title').textContent = id ? '编辑排名' : `添加排名`;
