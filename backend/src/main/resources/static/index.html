@@ -2798,15 +2798,13 @@
                         // Status badge (hidden for completed)
                         const statusBadge = isCompleted ? '' : `<span class="match-status-badge match-status--${m.status}">${statusMap[m.status] || m.status}</span>`;
 
-                        // Right side: actions + big score + time
+                        // Action buttons on the right of top bar (original position)
                         const topRightHtml = `
-                            <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+                            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
                                 <div class="match-card-actions">
                                     <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
                                     <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
                                 </div>
-                                ${bigScore}
-                                ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
                             </div>
                         `;
 
@@ -2824,6 +2822,10 @@
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
+                                        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+                                            ${bigScore}
+                                            ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
