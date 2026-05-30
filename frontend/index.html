@@ -1914,10 +1914,26 @@
                         <div class="card-title">🏆 赛事列表</div>
                         <button class="btn btn-primary" onclick="showCompetitionModal()">+ 添加赛事</button>
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <select id="competition-year-select" onchange="filterCompetitions()"
                             style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
                             <option value="">全部年份</option>
+                        </select>
+                        <select id="competition-month-select" onchange="filterCompetitions()"
+                            style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">全部月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
                         </select>
                     </div>
                     <div id="competitions-list"></div>
@@ -3319,46 +3335,81 @@
 
         function filterCompetitions() {
             const selectedYear = document.getElementById('competition-year-select').value;
+            const selectedMonth = document.getElementById('competition-month-select').value;
             let filtered = allCompetitions;
 
             if (selectedYear) {
-                filtered = allCompetitions.filter(c => c.competitionYear == selectedYear);
+                filtered = filtered.filter(c => c.competitionYear == selectedYear);
+            }
+
+            if (selectedMonth) {
+                filtered = filtered.filter(c => {
+                    if (!c.startDate) return false;
+                    const month = new Date(c.startDate).getMonth() + 1;
+                    return month == selectedMonth;
+                });
             }
 
             // 按年份降序排序（从高到低）
             filtered.sort((a, b) => (b.competitionYear || 0) - (a.competitionYear || 0));
 
             // 按年份分组显示
-            const grouped = {};
+            const yearGrouped = {};
             filtered.forEach(c => {
                 const year = c.competitionYear || '未知年份';
-                if (!grouped[year]) grouped[year] = [];
-                grouped[year].push(c);
+                if (!yearGrouped[year]) yearGrouped[year] = [];
+                yearGrouped[year].push(c);
             });
 
             let html = '';
-            Object.keys(grouped).sort((a, b) => b - a).forEach(year => {
-                // 每年份内按开始日期降序（最近的最先）
-                grouped[year].sort((a, b) => {
-                    const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
-                    const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
-                    return dateB - dateA;
+            Object.keys(yearGrouped).sort((a, b) => b - a).forEach(year => {
+                // 每年份内按月份分组
+                const monthGrouped = {};
+                yearGrouped[year].forEach(c => {
+                    let month = '未知月份';
+                    if (c.startDate) {
+                        const m = new Date(c.startDate).getMonth() + 1;
+                        month = m + '月';
+                    }
+                    if (!monthGrouped[month]) monthGrouped[month] = [];
+                    monthGrouped[month].push(c);
                 });
 
                 html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
-                grouped[year].forEach(c => {
-                    html += `
-                        <div class="competition-card" onclick="showCompetitionDetail(${c.id})">
-                            <div class="competition-info">
-                                <h4>${c.name}</h4>
-                                <p>📍 ${c.location || '-'} | 📅 ${c.startDate && c.endDate ? new Date(c.startDate).toLocaleDateString() + ' - ' + new Date(c.endDate).toLocaleDateString() : c.startDate ? new Date(c.startDate).toLocaleDateString() : '-'}</p>
+
+                // 月份排序：1-12月在前，未知月份在最后
+                const monthKeys = Object.keys(monthGrouped).sort((a, b) => {
+                    const ma = parseInt(a);
+                    const mb = parseInt(b);
+                    if (!isNaN(ma) && !isNaN(mb)) return ma - mb;
+                    if (!isNaN(ma)) return -1;
+                    if (!isNaN(mb)) return 1;
+                    return 0;
+                });
+
+                monthKeys.forEach(month => {
+                    // 月份内按开始日期降序（最近的最先）
+                    monthGrouped[month].sort((a, b) => {
+                        const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+                        const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+                        return dateB - dateA;
+                    });
+
+                    html += `<h5 style="margin: 12px 0 8px; color: #555; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;">📅 ${month}</h5>`;
+                    monthGrouped[month].forEach(c => {
+                        html += `
+                            <div class="competition-card" onclick="showCompetitionDetail(${c.id})">
+                                <div class="competition-info">
+                                    <h4>${c.name}</h4>
+                                    <p>📍 ${c.location || '-'} | 📅 ${c.startDate && c.endDate ? new Date(c.startDate).toLocaleDateString() + ' - ' + new Date(c.endDate).toLocaleDateString() : c.startDate ? new Date(c.startDate).toLocaleDateString() : '-'}</p>
+                                </div>
+                                <div>
+                                    <button class="btn btn-warning" onclick="event.stopPropagation(); editCompetition(${c.id})">编辑</button>
+                                    <button class="btn btn-danger" onclick="event.stopPropagation(); deleteCompetition(${c.id})">删除</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="btn btn-warning" onclick="event.stopPropagation(); editCompetition(${c.id})">编辑</button>
-                                <button class="btn btn-danger" onclick="event.stopPropagation(); deleteCompetition(${c.id})">删除</button>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
             });
 
@@ -4107,33 +4158,63 @@
                 const res = await fetch(`${API_BASE}/competitions`);
                 allCompetitionsForChampions = await res.json();
 
-                // 按年份分组显示
+                // 按年份降序排序（从高到低）
                 allCompetitionsForChampions.sort((a, b) => (b.competitionYear || 0) - (a.competitionYear || 0));
 
-                const grouped = {};
+                // 按年份分组
+                const yearGrouped = {};
                 allCompetitionsForChampions.forEach(c => {
                     const year = c.competitionYear || '未知年份';
-                    if (!grouped[year]) grouped[year] = [];
-                    grouped[year].push(c);
+                    if (!yearGrouped[year]) yearGrouped[year] = [];
+                    yearGrouped[year].push(c);
                 });
 
                 let html = '';
-                Object.keys(grouped).sort((a, b) => b - a).forEach(year => {
+                Object.keys(yearGrouped).sort((a, b) => b - a).forEach(year => {
+                    // 每年份内按月份分组
+                    const monthGrouped = {};
+                    yearGrouped[year].forEach(c => {
+                        let month = '未知月份';
+                        if (c.startDate) {
+                            const m = new Date(c.startDate).getMonth() + 1;
+                            month = m + '月';
+                        }
+                        if (!monthGrouped[month]) monthGrouped[month] = [];
+                        monthGrouped[month].push(c);
+                    });
+
                     html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
-                    grouped[year].sort((a, b) => new Date(b.startDate) - new Date(a.startDate)).forEach(c => {
-                        const dateRange = c.startDate && c.endDate
-                            ? `${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}`
-                            : c.startDate
-                                ? `${new Date(c.startDate).toLocaleDateString()}`
-                                : '-';
-                        html += `
-                            <div class="competition-card" onclick="showCompetitionChampions(${c.id})">
-                                <div class="competition-info">
-                                    <h4>${c.name}</h4>
-                                    <p>📅 ${dateRange} | 📍 ${c.location || '-'}</p>
+
+                    // 月份排序：1-12月在前，未知月份在最后
+                    const monthKeys = Object.keys(monthGrouped).sort((a, b) => {
+                        const ma = parseInt(a);
+                        const mb = parseInt(b);
+                        if (!isNaN(ma) && !isNaN(mb)) return ma - mb;
+                        if (!isNaN(ma)) return -1;
+                        if (!isNaN(mb)) return 1;
+                        return 0;
+                    });
+
+                    monthKeys.forEach(month => {
+                        // 月份内按开始日期降序（最近的最先）
+                        monthGrouped[month].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+                        html += `<h5 style="margin: 12px 0 8px; color: #555; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;">📅 ${month}</h5>`;
+                        monthGrouped[month].forEach(c => {
+                            const dateRange = c.startDate && c.endDate
+                                ? `${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}`
+                                : c.startDate
+                                    ? `${new Date(c.startDate).toLocaleDateString()}`
+                                    : '-';
+                            html += `
+                                <div class="competition-card" onclick="showCompetitionChampions(${c.id})">
+                                    <div class="competition-info">
+                                        <h4>${c.name}</h4>
+                                        <p>📅 ${dateRange} | 📍 ${c.location || '-'}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        });
                     });
                 });
 
@@ -4169,7 +4250,7 @@
             let thirdContent = '';
             if (thirdNames.length > 0) {
                 thirdContent = thirdNames.map((name, i) => {
-                    const flag = thirdCountries[i] ? getFlag(thirdCountries[i]) : '';
+                    const flag = thirdCountries[i] ? getFlagForMatch(thirdCountries[i]) : '';
                     return `<div class="champion-name" style="${thirdNameStyle}">${flag}${name}</div>`;
                 }).join('');
             } else {
@@ -4182,12 +4263,12 @@
                     <div class="champion-podium" style="${bg}; border-radius: 16px;">
                         <div class="champion-slot champion-slot--1">
                             <div class="champion-medal">🥇</div>
-                            <div class="champion-name" style="${nameStyle}">${getFlag(r.championCountry)}${r.champion || '-'}</div>
+                            <div class="champion-name" style="${nameStyle}">${getFlagForMatch(r.championCountry)}${r.champion || '-'}</div>
                             <div class="champion-label" style="${labelStyle}"> 冠军</div>
                         </div>
                         <div class="champion-slot champion-slot--2">
                             <div class="champion-medal" style="${medalStyle}">🥈</div>
-                            <div class="champion-name" style="${thNameStyle}">${getFlag(r.runnerUpCountry)}${r.runnerUp || '-'}</div>
+                            <div class="champion-name" style="${thNameStyle}">${getFlagForMatch(r.runnerUpCountry)}${r.runnerUp || '-'}</div>
                             <div class="champion-label" style="${labelStyle}"> 亚军</div>
                         </div>
                         <div class="champion-slot champion-slot--3">

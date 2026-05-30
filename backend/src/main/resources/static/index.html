@@ -632,7 +632,8 @@
 
         .round-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 8px;
             background: #fff;
         }
 
@@ -1913,10 +1914,26 @@
                         <div class="card-title">🏆 赛事列表</div>
                         <button class="btn btn-primary" onclick="showCompetitionModal()">+ 添加赛事</button>
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
                         <select id="competition-year-select" onchange="filterCompetitions()"
                             style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
                             <option value="">全部年份</option>
+                        </select>
+                        <select id="competition-month-select" onchange="filterCompetitions()"
+                            style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">全部月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
                         </select>
                     </div>
                     <div id="competitions-list"></div>
@@ -2626,8 +2643,12 @@
                         const isTeamMatch = m.category === '男团' || m.category === '女团';
                         const isDoublesMatch = m.category === '男双' || m.category === '女双' || m.category === '混双';
                         const maxLen = isDoublesMatch ? 15 : (isTeamMatch ? 20 : 999);
-                        const p1DisplayName = maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name;
-                        const p2DisplayName = maxLen < 999 && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name;
+                        const isP1Bye = !p1Name || p1Name === '-' || p1Name === '轮空' || p1Name === 'BYE' || p1Name === '待定';
+                        const isP2Bye = !p2Name || p2Name === '-' || p2Name === '轮空' || p2Name === 'BYE' || p2Name === '待定';
+                        const p1DisplayName = (maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name) || '-';
+                        const p2DisplayName = (maxLen < 999 && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name) || '-';
+                        const p1Style = isP1Bye ? 'font-weight:700;' : '';
+                        const p2Style = isP2Bye ? 'font-weight:700;' : '';
                         const p1Title = `title="${p1Name}"`;
                         const p2Title = `title="${p2Name}"`;
                         const validScores2 = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
@@ -2650,9 +2671,9 @@
                         const venueInfo = m.venue || '-';
                         contentHtml += `
                                     <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
-                                        <td class="rt-player">${p1FlagHtml}<span class="${p1NameClass}" ${p1Title}>${p1DisplayName}</span></td>
+                                        <td class="rt-player">${p1FlagHtml}<span class="${p1NameClass}" ${p1Title} style="${p1Style}">${p1DisplayName}</span></td>
                                         <td class="rt-score">${scoresCell}${totalHtml}</td>
-                                        <td class="rt-player">${p2FlagHtml}<span class="${p2NameClass}" ${p2Title}>${p2DisplayName}</span></td>
+                                        <td class="rt-player">${p2FlagHtml}<span class="${p2NameClass}" ${p2Title} style="${p2Style}">${p2DisplayName}</span></td>
                                         <td class="rt-venue">${venueInfo}</td>
                                         <td class="rt-status"><span class="rt-status-badge rt-status--${m.status}">${statusMap[m.status] || m.status}</span></td>
                                         <td>
@@ -3047,8 +3068,8 @@
                     const p1Total = match.match.player1Total || 0;
                     const p2Total = match.match.player2Total || 0;
                     
-                    const isP1Bye = !p1Name || p1Name === '轮空' || p1Name === 'BYE' || p1Name === '待定';
-                    const isP2Bye = !p2Name || p2Name === '轮空' || p2Name === 'BYE' || p2Name === '待定';
+                    const isP1Bye = !p1Name || p1Name === '-' || p1Name === '轮空' || p1Name === 'BYE' || p1Name === '待定';
+                    const isP2Bye = !p2Name || p2Name === '-' || p2Name === '轮空' || p2Name === 'BYE' || p2Name === '待定';
                     
                     let winnerName = null;
                     if (isP1Bye && !isP2Bye) {
@@ -3123,13 +3144,17 @@ const truncateName = (name, maxLen) => {
                     const p2Display = truncateName(p2, 10);
                     const p1TitleEl = p1.length > 10 ? `<title>${p1}</title>` : '';
                     const p2TitleEl = p2.length > 10 ? `<title>${p2}</title>` : '';
+                    const p1IsBye = !p1 || p1 === '-' || p1 === '轮空' || p1 === 'BYE' || p1 === '待定';
+                    const p2IsBye = !p2 || p2 === '-' || p2 === '轮空' || p2 === 'BYE' || p2 === '待定';
+                    const p1Weight = p1IsBye ? 'font-weight="700"' : '';
+                    const p2Weight = p2IsBye ? 'font-weight="700"' : '';
                     const scoreText = (p1Score > 0 || p2Score > 0) ? `${p1Score} - ${p2Score}` : '';
 
                     svg += `<rect x="${pos.x}" y="${pos.y}" width="${matchBoxWidth}" height="${matchBoxHeight}" rx="6" class="bracket-match-box"/>`;
                     svg += `<line x1="${pos.x}" y1="${pos.y + matchBoxHeight/2}" x2="${pos.x + matchBoxWidth}" y2="${pos.y + matchBoxHeight/2}" class="bracket-divider"/>`;
-                    svg += `<g>${p1TitleEl}<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10">${p1Display}</text></g>`;
+                    svg += `<g>${p1TitleEl}<text x="${pos.x + 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" font-size="10" ${p1Weight}>${p1Display}</text></g>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 14}" class="bracket-player-name ${p1Class}" text-anchor="end" font-size="10">${p1Score}</text>`;
-                    svg += `<g>${p2TitleEl}<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10">${p2Display}</text></g>`;
+                    svg += `<g>${p2TitleEl}<text x="${pos.x + 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" font-size="10" ${p2Weight}>${p2Display}</text></g>`;
                     svg += `<text x="${pos.x + matchBoxWidth - 8}" y="${pos.y + 34}" class="bracket-player-name ${p2Class}" text-anchor="end" font-size="10">${p2Score}</text>`;
                     if (matchDateStr) {
                         svg += `<text x="${pos.x + 8}" y="${pos.y + matchBoxHeight + 14}" font-size="9" fill="#e53935" font-weight="700">${matchDateStr}</text>`;
@@ -3357,46 +3382,81 @@ const truncateName = (name, maxLen) => {
 
         function filterCompetitions() {
             const selectedYear = document.getElementById('competition-year-select').value;
+            const selectedMonth = document.getElementById('competition-month-select').value;
             let filtered = allCompetitions;
 
             if (selectedYear) {
-                filtered = allCompetitions.filter(c => c.competitionYear == selectedYear);
+                filtered = filtered.filter(c => c.competitionYear == selectedYear);
+            }
+
+            if (selectedMonth) {
+                filtered = filtered.filter(c => {
+                    if (!c.startDate) return false;
+                    const month = new Date(c.startDate).getMonth() + 1;
+                    return month == selectedMonth;
+                });
             }
 
             // 按年份降序排序（从高到低）
             filtered.sort((a, b) => (b.competitionYear || 0) - (a.competitionYear || 0));
 
             // 按年份分组显示
-            const grouped = {};
+            const yearGrouped = {};
             filtered.forEach(c => {
                 const year = c.competitionYear || '未知年份';
-                if (!grouped[year]) grouped[year] = [];
-                grouped[year].push(c);
+                if (!yearGrouped[year]) yearGrouped[year] = [];
+                yearGrouped[year].push(c);
             });
 
             let html = '';
-            Object.keys(grouped).sort((a, b) => b - a).forEach(year => {
-                // 每年份内按开始日期降序（最近的最先）
-                grouped[year].sort((a, b) => {
-                    const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
-                    const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
-                    return dateB - dateA;
+            Object.keys(yearGrouped).sort((a, b) => b - a).forEach(year => {
+                // 每年份内按月份分组
+                const monthGrouped = {};
+                yearGrouped[year].forEach(c => {
+                    let month = '未知月份';
+                    if (c.startDate) {
+                        const m = new Date(c.startDate).getMonth() + 1;
+                        month = m + '月';
+                    }
+                    if (!monthGrouped[month]) monthGrouped[month] = [];
+                    monthGrouped[month].push(c);
                 });
-                
+
                 html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
-                grouped[year].forEach(c => {
-                    html += `
-                        <div class="competition-card" onclick="showCompetitionDetail(${c.id})">
-                            <div class="competition-info">
-                                <h4>${c.name}</h4>
-                                <p>📍 ${c.location || '-'} | 📅 ${c.startDate && c.endDate ? new Date(c.startDate).toLocaleDateString() + ' - ' + new Date(c.endDate).toLocaleDateString() : c.startDate ? new Date(c.startDate).toLocaleDateString() : '-'}</p>
+
+                // 月份排序：1-12月在前，未知月份在最后
+                const monthKeys = Object.keys(monthGrouped).sort((a, b) => {
+                    const ma = parseInt(a);
+                    const mb = parseInt(b);
+                    if (!isNaN(ma) && !isNaN(mb)) return ma - mb;
+                    if (!isNaN(ma)) return -1;
+                    if (!isNaN(mb)) return 1;
+                    return 0;
+                });
+
+                monthKeys.forEach(month => {
+                    // 月份内按开始日期降序（最近的最先）
+                    monthGrouped[month].sort((a, b) => {
+                        const dateA = a.startDate ? new Date(a.startDate).getTime() : 0;
+                        const dateB = b.startDate ? new Date(b.startDate).getTime() : 0;
+                        return dateB - dateA;
+                    });
+
+                    html += `<h5 style="margin: 12px 0 8px; color: #555; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;">📅 ${month}</h5>`;
+                    monthGrouped[month].forEach(c => {
+                        html += `
+                            <div class="competition-card" onclick="showCompetitionDetail(${c.id})">
+                                <div class="competition-info">
+                                    <h4>${c.name}</h4>
+                                    <p>📍 ${c.location || '-'} | 📅 ${c.startDate && c.endDate ? new Date(c.startDate).toLocaleDateString() + ' - ' + new Date(c.endDate).toLocaleDateString() : c.startDate ? new Date(c.startDate).toLocaleDateString() : '-'}</p>
+                                </div>
+                                <div>
+                                    <button class="btn btn-warning" onclick="event.stopPropagation(); editCompetition(${c.id})">编辑</button>
+                                    <button class="btn btn-danger" onclick="event.stopPropagation(); deleteCompetition(${c.id})">删除</button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="btn btn-warning" onclick="event.stopPropagation(); editCompetition(${c.id})">编辑</button>
-                                <button class="btn btn-danger" onclick="event.stopPropagation(); deleteCompetition(${c.id})">删除</button>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
             });
 
@@ -4145,33 +4205,63 @@ const truncateName = (name, maxLen) => {
                 const res = await fetch(`${API_BASE}/competitions`);
                 allCompetitionsForChampions = await res.json();
 
-                // 按年份分组显示
+                // 按年份降序排序（从高到低）
                 allCompetitionsForChampions.sort((a, b) => (b.competitionYear || 0) - (a.competitionYear || 0));
 
-                const grouped = {};
+                // 按年份分组
+                const yearGrouped = {};
                 allCompetitionsForChampions.forEach(c => {
                     const year = c.competitionYear || '未知年份';
-                    if (!grouped[year]) grouped[year] = [];
-                    grouped[year].push(c);
+                    if (!yearGrouped[year]) yearGrouped[year] = [];
+                    yearGrouped[year].push(c);
                 });
 
                 let html = '';
-                Object.keys(grouped).sort((a, b) => b - a).forEach(year => {
+                Object.keys(yearGrouped).sort((a, b) => b - a).forEach(year => {
+                    // 每年份内按月份分组
+                    const monthGrouped = {};
+                    yearGrouped[year].forEach(c => {
+                        let month = '未知月份';
+                        if (c.startDate) {
+                            const m = new Date(c.startDate).getMonth() + 1;
+                            month = m + '月';
+                        }
+                        if (!monthGrouped[month]) monthGrouped[month] = [];
+                        monthGrouped[month].push(c);
+                    });
+
                     html += `<h4 style="margin: 20px 0 10px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">${year}年</h4>`;
-                    grouped[year].sort((a, b) => new Date(b.startDate) - new Date(a.startDate)).forEach(c => {
-                        const dateRange = c.startDate && c.endDate
-                            ? `${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}`
-                            : c.startDate
-                                ? `${new Date(c.startDate).toLocaleDateString()}`
-                                : '-';
-                        html += `
-                            <div class="competition-card" onclick="showCompetitionChampions(${c.id})">
-                                <div class="competition-info">
-                                    <h4>${c.name}</h4>
-                                    <p>📅 ${dateRange} | 📍 ${c.location || '-'}</p>
+
+                    // 月份排序：1-12月在前，未知月份在最后
+                    const monthKeys = Object.keys(monthGrouped).sort((a, b) => {
+                        const ma = parseInt(a);
+                        const mb = parseInt(b);
+                        if (!isNaN(ma) && !isNaN(mb)) return ma - mb;
+                        if (!isNaN(ma)) return -1;
+                        if (!isNaN(mb)) return 1;
+                        return 0;
+                    });
+
+                    monthKeys.forEach(month => {
+                        // 月份内按开始日期降序（最近的最先）
+                        monthGrouped[month].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+                        html += `<h5 style="margin: 12px 0 8px; color: #555; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px;">📅 ${month}</h5>`;
+                        monthGrouped[month].forEach(c => {
+                            const dateRange = c.startDate && c.endDate
+                                ? `${new Date(c.startDate).toLocaleDateString()} - ${new Date(c.endDate).toLocaleDateString()}`
+                                : c.startDate
+                                    ? `${new Date(c.startDate).toLocaleDateString()}`
+                                    : '-';
+                            html += `
+                                <div class="competition-card" onclick="showCompetitionChampions(${c.id})">
+                                    <div class="competition-info">
+                                        <h4>${c.name}</h4>
+                                        <p>📅 ${dateRange} | 📍 ${c.location || '-'}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        });
                     });
                 });
 
