@@ -2061,18 +2061,9 @@
                     <div class="actions">
                         <div class="card-title" id="competition-title"></div>
                         <div class="action-btns">
-                            <button class="btn btn-outline" id="btn-toggle-roster" onclick="toggleRoster()">👥
-                                参赛名单</button>
                             <button class="btn btn-primary" onclick="showMatchModal()">+ 添加比赛</button>
                         </div>
                     </div>
-                </div>
-                <div class="card" id="roster-card">
-                    <div class="actions">
-                        <div class="card-title">👥 参赛名单</div>
-                        <button class="btn btn-success" onclick="showRosterFormModal()">+ 添加运动员</button>
-                    </div>
-                    <div id="roster-list-content"></div>
                 </div>
                 <div class="card">
                     <div class="actions">
@@ -2402,50 +2393,6 @@
         </div>
     </div>
 
-    <!-- 参赛名单模态框 -->
-    <div id="roster-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="roster-modal-title">添加参赛运动员</h3>
-                <button class="close-btn" onclick="closeModal('roster-modal')">&times;</button>
-            </div>
-            <form id="roster-form">
-                <input type="hidden" id="roster-id">
-                <div class="form-group">
-                    <label>比赛地点 *</label>
-                    <input type="text" id="roster-venue" required placeholder="输入比赛地点">
-                </div>
-                <div class="form-group">
-                    <label>年份 *</label>
-                    <input type="number" id="roster-year" required placeholder="输入年份" value="2026">
-                </div>
-                <div class="form-group">
-                    <label>项目类别 *</label>
-                    <div class="match-category-tabs">
-                        <button type="button" class="category-btn active" data-cat="男单" onclick="selectRosterCategory(this, '男单')">男单</button>
-                        <button type="button" class="category-btn" data-cat="女单" onclick="selectRosterCategory(this, '女单')">女单</button>
-                        <button type="button" class="category-btn" data-cat="男双" onclick="selectRosterCategory(this, '男双')">男双</button>
-                        <button type="button" class="category-btn" data-cat="女双" onclick="selectRosterCategory(this, '女双')">女双</button>
-                        <button type="button" class="category-btn" data-cat="混双" onclick="selectRosterCategory(this, '混双')">混双</button>
-                        <button type="button" class="category-btn" data-cat="男团" onclick="selectRosterCategory(this, '男团')">男团</button>
-                        <button type="button" class="category-btn" data-cat="女团" onclick="selectRosterCategory(this, '女团')">女团</button>
-                    </div>
-                    <input type="hidden" id="roster-category" value="男单" required>
-                </div>
-                <div class="form-group">
-                    <label>运动员姓名 *</label>
-                    <input type="text" id="roster-player-name" required placeholder="输入运动员姓名">
-                </div>
-                <div class="form-group">
-                    <label>国家</label>
-                    <input type="text" id="roster-country" placeholder="输入国家名称">
-                </div>
-                <button type="submit" class="btn btn-primary">保存</button>
-                <button type="button" class="btn" onclick="closeModal('roster-modal')">取消</button>
-            </form>
-        </div>
-    </div>
-
     <script>
         const API_BASE = 'http://localhost:8090/api';
         let currentPlayerId = null;
@@ -2530,7 +2477,7 @@
             if (!country) return '';
             const name = country.trim();
 
-            // 跨国组合：国旗 + 国家名（用于参赛名单等）
+            // 跨国组合：国旗 + 国家名
             if (name.includes('/') || name.includes('+') || name.includes('&')) {
                 const sep = name.includes('/') ? '/' : (name.includes('+') ? '+' : '&');
                 const countries = name.split(sep).map(c => c.trim()).filter(c => c);
@@ -2700,7 +2647,6 @@
 
         // ========== 赛事详情：比赛轮次信息 ===========
         let currentDetailCategory = '';
-        let currentRosterCategory = '';
 
         function renderDetailRounds(container, matches) {
             const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
@@ -3591,10 +3537,6 @@
                 const yearStr = comp.competitionYear ? `${comp.competitionYear}年 ` : '';
                 document.getElementById('competition-title').innerHTML = yearStr + comp.name + (dateRange ? ` <span style="font-weight:400;font-size:14px;color:#666;">${dateRange}</span>` : '');
 
-                // 重置参赛名单按钮状态（默认关闭/折叠）
-                document.getElementById('btn-toggle-roster').classList.remove('active'); // 移除选中/展开状态的类名
-                document.getElementById('roster-card').style.display = 'none'; // 将卡片隐藏
-
                 // 重置对阵图视图为表格模式
                 currentMatchView = 'table';
                 document.getElementById('detail-rounds-content').style.display = 'block';
@@ -3605,17 +3547,6 @@
                 // 比赛信息（默认显示）
                 renderDetailRounds(document.getElementById('detail-rounds-content'), matches);
 
-                // 加载参赛名单（使用比赛地点和年份）
-                const venue = comp.location || '';
-                const year = comp.competitionYear;
-                if (venue && year) {
-                    loadRosterByVenueAndYear(venue, year);
-                } else if (venue) {
-                    loadRosterByVenue(venue);
-                } else {
-                    document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">请先为赛事设置比赛地点和年份</div>';
-                }
-
                 document.getElementById('competitions-list-view').style.display = 'none';
                 document.getElementById('competition-detail-view').style.display = 'block';
             } catch (e) {
@@ -3623,205 +3554,10 @@
             }
         }
 
-        function toggleRoster() {
-            const card = document.getElementById('roster-card');
-            const btn = document.getElementById('btn-toggle-roster');
-            if (card.style.display === 'none') {
-                card.style.display = 'block';
-                btn.classList.add('active');
-            } else {
-                card.style.display = 'none';
-                btn.classList.remove('active');
-            }
-        }
-
-        // ========== 参赛名单相关函数 ==========
-        let currentRosterVenue = '';
-        let currentRosterYear = null;
-
-        async function loadRosterByVenue(venue) {
-            currentRosterVenue = venue;
-            currentRosterYear = null;
-            try {
-                const res = await fetch(`${API_BASE}/roster/venue/${encodeURIComponent(venue)}`);
-                const rosters = await res.json();
-                renderRosterList(rosters);
-            } catch (e) {
-                console.error('Error loading roster:', e);
-                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">加载参赛名单失败</div>';
-            }
-        }
-
-        async function loadRosterByVenueAndYear(venue, year) {
-            currentRosterVenue = venue;
-            currentRosterYear = year;
-            try {
-                const res = await fetch(`${API_BASE}/roster/venue/${encodeURIComponent(venue)}/year/${year}`);
-                const rosters = await res.json();
-                renderRosterList(rosters);
-            } catch (e) {
-                console.error('Error loading roster:', e);
-                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">加载参赛名单失败</div>';
-            }
-        }
-
-        function renderRosterList(rosters) {
-            if (!rosters || rosters.length === 0) {
-                document.getElementById('roster-list-content').innerHTML = '<div class="empty-state">暂无参赛名单</div>';
-                return;
-            }
-
-            const categories = ['男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-            const grouped = {};
-            rosters.forEach(r => {
-                const cat = r.category || '其他';
-                if (!grouped[cat]) grouped[cat] = [];
-                grouped[cat].push(r);
-            });
-
-            const availableCategories = categories.filter(cat => grouped[cat]);
-            const defaultCat = availableCategories[0] || '';
-
-            let tabsHtml = `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
-            availableCategories.forEach((cat, i) => {
-                tabsHtml += `<button class="bracket-category-tab ${i === 0 ? 'active' : ''}" onclick="switchRosterCategory('${cat}', this)">${cat}</button>`;
-            });
-            tabsHtml += `</div>`;
-
-            let contentHtml = '';
-            availableCategories.forEach((cat, i) => {
-                contentHtml += `<div id="roster-cat-${cat}" class="roster-category-content" style="display:${i === 0 ? 'block' : 'none'};">`;
-                contentHtml += `<div class="round-table-wrap"><table class="round-table">`;
-                contentHtml += `<thead><tr><th>运动员</th><th>国家</th><th>操作</th></tr></thead>`;
-                contentHtml += `<tbody>`;
-                grouped[cat].forEach(r => {
-                    contentHtml += `
-                        <tr class="round-row">
-                            <td>${r.playerName}</td>
-                            <td><span class="rt-flag">${getFlag(r.country)}</span> ${(r.country || '').includes('/') || (r.country || '').includes('+') || (r.country || '').includes('&') ? '' : (r.country || '')}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editRoster(${r.id})">编辑</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteRoster(${r.id})">删除</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                contentHtml += `</tbody></table></div></div>`;
-            });
-
-            document.getElementById('roster-list-content').innerHTML = tabsHtml + contentHtml;
-        }
-
-        function switchRosterCategory(cat, btn) {
-            currentRosterCategory = cat;
-            document.querySelectorAll('.roster-category-content').forEach(el => el.style.display = 'none');
-            document.getElementById('roster-cat-' + cat).style.display = 'block';
-            document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('roster-category').value = cat;
-        }
-
         function selectMatchCategory(btn, cat) {
             document.querySelectorAll('#match-modal .category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('match-category').value = cat;
-        }
-
-        function selectRosterCategory(btn, cat) {
-            document.querySelectorAll('#roster-modal .category-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('roster-category').value = cat;
-        }
-
-        function showRosterFormModal(id = null) {
-            document.getElementById('roster-modal').classList.add('show');
-            document.getElementById('roster-modal-title').textContent = id ? '编辑参赛运动员' : '添加参赛运动员';
-            document.getElementById('roster-form').reset();
-            document.getElementById('roster-id').value = id || '';
-
-            // 设置比赛地点和年份为当前比赛的
-            document.getElementById('roster-venue').value = currentRosterVenue;
-            document.getElementById('roster-year').value = currentRosterYear || new Date().getFullYear();
-
-            // 新增时默认使用当前选中的分类
-            if (!id && currentRosterCategory) {
-                document.getElementById('roster-category').value = currentRosterCategory;
-            }
-
-            if (id) {
-                fetch(`${API_BASE}/roster/${id}`).then(r => r.json()).then(r => {
-                    document.getElementById('roster-venue').value = r.venue || '';
-                    document.getElementById('roster-year').value = r.year || new Date().getFullYear();
-                    const cat = r.category || '男单';
-                    document.getElementById('roster-category').value = cat;
-                    // 更新tab按钮状态
-                    document.querySelectorAll('#roster-modal .category-btn').forEach(b => {
-                        b.classList.toggle('active', b.getAttribute('data-cat') === cat);
-                    });
-                    document.getElementById('roster-player-name').value = r.playerName || '';
-                    document.getElementById('roster-country').value = r.country || '';
-                });
-            } else {
-                // 新增时同步tab按钮状态
-                const cat = currentRosterCategory || '男单';
-                document.querySelectorAll('#roster-modal .category-btn').forEach(b => {
-                    b.classList.toggle('active', b.getAttribute('data-cat') === cat);
-                });
-            }
-        }
-
-        document.getElementById('roster-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const id = document.getElementById('roster-id').value;
-            const roster = {
-                venue: document.getElementById('roster-venue').value,
-                year: parseInt(document.getElementById('roster-year').value),
-                category: document.getElementById('roster-category').value,
-                playerName: document.getElementById('roster-player-name').value,
-                country: document.getElementById('roster-country').value
-            };
-
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `${API_BASE}/roster/${id}` : `${API_BASE}/roster`;
-
-            try {
-                await fetch(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(roster)
-                });
-                const savedCategory = document.getElementById('roster-category').value;
-                closeModal('roster-modal');
-                if (currentRosterYear) {
-                    await loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
-                } else {
-                    await loadRosterByVenue(currentRosterVenue);
-                }
-                if (savedCategory && currentRosterCategory) {
-                    setTimeout(() => {
-                        const btn = document.querySelector(`#roster-list-content .bracket-category-tab[onclick*="${savedCategory}"]`);
-                        if (btn) {
-                            switchRosterCategory(savedCategory, btn);
-                        }
-                    }, 100);
-                }
-            } catch (error) {
-                console.error('Error saving roster:', error);
-                alert('保存失败');
-            }
-        });
-
-        async function editRoster(id) { showRosterFormModal(id); }
-
-        async function deleteRoster(id) {
-            if (confirm('确定要删除这个运动员吗？')) {
-                await fetch(`${API_BASE}/roster/${id}`, { method: 'DELETE' });
-                if (currentRosterYear) {
-                    loadRosterByVenueAndYear(currentRosterVenue, currentRosterYear);
-                } else {
-                    loadRosterByVenue(currentRosterVenue);
-                }
-            }
         }
 
         function showCompetitionsList() {
