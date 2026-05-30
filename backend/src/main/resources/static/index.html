@@ -2797,20 +2797,18 @@
                                         <div class="match-scores-row">${p1RowHtml}</div>
                                         <div class="match-scores-row">${p2RowHtml}</div>
                                     </div>
-                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-left:auto;">
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">
                                         ${bigScore}
-                                        ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
                                     </div>
                                 `;
                                 // Wrap in a flex container
                                 scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:16px;">${scoresGridHtml}</div>`;
                             }
                         } else {
-                            // Team match: just show big score + time on the right
+                            // Team match: just show big score on the right
                             scoresGridHtml = `
                                 <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;">
                                     ${bigScore}
-                                    ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
                                 </div>
                             `;
                         }
@@ -2842,6 +2840,7 @@
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
+                                        ${matchDateStr ? `<span class="match-player-time" style="margin-left:auto;">${matchDateStr}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
