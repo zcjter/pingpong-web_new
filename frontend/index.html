@@ -1820,6 +1820,116 @@
             color: #999;
             font-size: 14px;
         }
+
+        /* ===== MATCH CARD STYLES ===== */
+        .match-card {
+            background: #fff;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .match-card:hover {
+            border-color: #0077b6;
+            box-shadow: 0 3px 12px rgba(0,119,182,.1);
+        }
+        .match-card-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+        .match-card-venue {
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .match-card-bigscore {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+        .match-card-date {
+            font-size: 11px;
+            color: #e53935;
+            font-weight: 600;
+            margin-left: auto;
+        }
+        .match-card-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .match-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .match-player-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .match-player-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .match-player-name--win {
+            color: #e53935;
+        }
+        .match-player-time {
+            font-size: 11px;
+            color: #e53935;
+            font-weight: 600;
+        }
+        .match-scores-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 0;
+        }
+        .match-score-line {
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+        .match-score-line .ms-win {
+            color: #1565c0;
+        }
+        .match-score-line .ms-lose {
+            color: #b0bec5;
+        }
+        .match-status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .match-status--scheduled {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .match-status--ongoing {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+        .match-status--cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
     </style>
 </head>
 
@@ -2637,9 +2747,6 @@
                     const roundMatches = catData[key];
                     contentHtml += `<div class="round-section">`;
                     contentHtml += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
-                    contentHtml += `<div class="round-table-wrap"><table class="round-table">`;
-                    contentHtml += `<thead><tr><th>选手1</th><th>比分</th><th>选手2</th><th>场馆</th><th>状态</th><th>操作</th></tr></thead>`;
-                    contentHtml += `<tbody>`;
                     roundMatches.forEach(m => {
                         let scores = [];
                         let p1Total = 0, p2Total = 0;
@@ -2650,48 +2757,67 @@
                         const p2Country = m.player2Country || '';
                         const p1Won = p1Total > p2Total && p1Total > 0;
                         const p2Won = p2Total > p1Total && p2Total > 0;
-                        const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
                         const isTeamMatch = m.category === '男团' || m.category === '女团';
                         const isDoublesMatch = m.category === '男双' || m.category === '女双' || m.category === '混双';
                         const maxLen = isDoublesMatch ? 15 : (isTeamMatch ? 20 : 999);
-                        const p1DisplayName = maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name;
-                        const p2DisplayName = maxLen < 999 && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name;
+                        const p1DisplayName = (maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name) || '-';
+                        const p2DisplayName = (maxLen < 999 && p2Name.length > maxLen ? p2Name.substring(0, maxLen) + '...' : p2Name) || '-';
                         const p1Title = `title="${p1Name}"`;
                         const p2Title = `title="${p2Name}"`;
-                        const validScores2 = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
-                        const scoresCell = isTeamMatch ? '' : (validScores2.length > 0
-                            ? validScores2.map(s => {
-                                const p1Win = s.p1 > s.p2;
-                                const p1Score = `<span style="color:${p1Win ? '#1565c0' : '#b0bec5'};font-weight:700;">${s.p1}</span>`;
-                                const p2Score = `<span style="color:${!p1Win ? '#1565c0' : '#b0bec5'};font-weight:700;">${s.p2}</span>`;
-                                return `<span class="rs-game">${p1Score}:${p2Score}</span>`;
-                            }).join('')
-                            : '');
-                        const totalHtml = (p1Total > 0 || p2Total > 0)
-                            ? `<span class="rt-total ${p1Won ? 'rt-total--win' : ''}">${p1Total}</span><span class="rt-sep">:</span><span class="rt-total ${p2Won ? 'rt-total--win' : ''}">${p2Total}</span>`
-                            : '';
                         const p1FlagHtml = getFlagForMatch(p1Country);
                         const p2FlagHtml = getFlagForMatch(p2Country);
-                        const p1NameClass = p1Won ? 'rt-name--win' : '';
-                        const p2NameClass = p2Won ? 'rt-name--win' : '';
                         const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
                         const venueInfo = m.venue || '-';
+                        const statusMap = { scheduled: '已安排', ongoing: '进行中', completed: '已完成', cancelled: '已取消' };
+                        const isCompleted = m.status === 'completed';
+
+                        // Big score
+                        const bigScore = (p1Total > 0 || p2Total > 0)
+                            ? `<span class="match-card-bigscore">${p1Total}:${p2Total}</span>`
+                            : '';
+
+                        // Vertical scores (only for non-team)
+                        let scoresVerticalHtml = '';
+                        if (!isTeamMatch) {
+                            const validScores = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
+                            if (validScores.length > 0) {
+                                scoresVerticalHtml = `<div class="match-scores-vertical">`;
+                                validScores.forEach(s => {
+                                    const p1Win = s.p1 > s.p2;
+                                    scoresVerticalHtml += `<div class="match-score-line"><span class="${p1Win ? 'ms-win' : 'ms-lose'}">${s.p1}</span><span style="color:#ccc;margin:0 2px;">:</span><span class="${!p1Win ? 'ms-win' : 'ms-lose'}">${s.p2}</span></div>`;
+                                });
+                                scoresVerticalHtml += `</div>`;
+                            }
+                        }
+
+                        // Status badge (hidden for completed)
+                        const statusBadge = isCompleted ? '' : `<span class="match-status-badge match-status--${m.status}">${statusMap[m.status] || m.status}</span>`;
+
                         contentHtml += `
-                                    <tr class="round-row ${p1Won ? 'round-row--winner' : ''}" ondblclick="editMatch(${m.id})" style="cursor:pointer;">
-                                        <td class="rt-player">${p1FlagHtml}<span class="${p1NameClass}" ${p1Title}>${p1DisplayName}</span></td>
-                                        <td class="rt-score">${scoresCell}${totalHtml}</td>
-                                        <td class="rt-player">${p2FlagHtml}<span class="${p2NameClass}" ${p2Title}>${p2DisplayName}</span></td>
-                                        <td class="rt-venue">${venueInfo}</td>
-                                        <td class="rt-status"><span class="rt-status-badge rt-status--${m.status}">${statusMap[m.status] || m.status}</span></td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
-                                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
-                                        </td>
-                                    </tr>
-                                    ${matchDateStr ? `<tr class="round-row" style="background:#fafafa;"><td colspan="1" style="text-align:left;padding-left:8px;"><span style="color:#e53935;font-weight:700;">${matchDateStr}</span></td><td colspan="6"></td></tr>` : ''}
-                                    `;
+                            <div class="match-card" ondblclick="editMatch(${m.id})">
+                                <div class="match-card-top">
+                                    <span class="match-card-venue">🏟️ ${venueInfo}</span>
+                                    ${bigScore}
+                                    ${statusBadge}
+                                    <div class="match-card-actions">
+                                        <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
+                                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
+                                    </div>
+                                </div>
+                                <div class="match-card-body">
+                                    <div class="match-player-row">
+                                        <span class="match-player-name ${p1Won ? 'match-player-name--win' : ''}" ${p1Title}>${p1FlagHtml}${p1DisplayName}</span>
+                                    </div>
+                                    ${scoresVerticalHtml}
+                                    <div class="match-player-row">
+                                        <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
+                                        ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     });
-                    contentHtml += `</tbody></table></div></div>`;
+                    contentHtml += `</div>`;
                 });
                 contentHtml += `</div></div>`;
             });
