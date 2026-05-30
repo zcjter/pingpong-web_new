@@ -1889,7 +1889,7 @@
         }
         .match-player-time {
             font-size: 11px;
-            color: #888;
+            color: #e53935;
             font-weight: 600;
         }
         .match-scores-grid {
@@ -2797,10 +2797,9 @@
                         // Status badge (hidden for completed)
                         const statusBadge = isCompleted ? '' : `<span class="match-status-badge match-status--${m.status}">${statusMap[m.status] || m.status}</span>`;
 
-                        // Time info + action buttons on the right of top bar
+                        // Action buttons on the right of top bar
                         const topRightHtml = `
                             <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-                                ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
                                 <div class="match-card-actions">
                                     <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
                                     <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
@@ -2823,6 +2822,7 @@
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
+                                        ${matchDateStr ? `<span class="match-player-time" style="margin-left:auto;">${matchDateStr}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
