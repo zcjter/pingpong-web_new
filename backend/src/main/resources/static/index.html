@@ -855,78 +855,70 @@
            ===================================================== */
         .champion-podium {
             display: flex;
-            align-items: flex-end;
+            align-items: stretch;
             justify-content: center;
-            gap: 16px;
-            padding: 24px 16px 8px;
+            gap: 12px;
+            padding: 12px 0;
         }
 
         .champion-slot {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 16px 20px 20px;
-            border-radius: 16px;
-            min-width: 120px;
-            min-height: 140px;
+            padding: 16px 20px 16px;
+            border-radius: 12px;
+            min-width: 110px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .champion-slot:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
         }
 
-        .champion-slot--1 {
-            background: linear-gradient(160deg, #ffd700 0%, #ffb300 100%);
-        }
-
-        .champion-slot--2 {
-            background: linear-gradient(160deg, #e0e0e0 0%, #bdbdbd 100%);
-        }
-
-        .champion-slot--3 {
-            background: linear-gradient(160deg, #ffcc80 0%, #ff8f00 100%);
+        .champion-slots-wrapper {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 12px;
         }
 
         .champion-medal {
-            font-size: 40px;
+            font-size: 36px;
             line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .champion-slot--1 .champion-medal {
-            font-size: 52px;
+            margin-bottom: 6px;
         }
 
         .champion-name {
-            font-size: 15px;
-            font-weight: 800;
+            font-size: 14px;
+            font-weight: 700;
             color: #1a1a2e;
             text-align: center;
             word-break: keep-all;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .champion-label {
             font-size: 11px;
             font-weight: 600;
-            opacity: 0.7;
-            color: #333;
+            color: #888;
             text-align: center;
         }
 
         .champion-cat-section {
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .champion-cat-title {
             font-size: 14px;
             font-weight: 700;
             color: #1a1a2e;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             padding-bottom: 5px;
-            border-bottom: 2px solid #ffd700;
+            border-bottom: 2px solid #e0e0e0;
             display: inline-block;
         }
 
@@ -4435,19 +4427,7 @@ const truncateName = (name, maxLen) => {
         }
 
         // 带国旗的冠军渲染
-        function renderChampionCard(cat, r, isMain) {
-            const bg = isMain
-                ? 'background: linear-gradient(135deg, #1a1a2e 0%, #0077b6 100%)'
-                : 'background: #f0f4ff; border: 1px solid #e0e0e0';
-            const textColor = isMain ? '#fff' : '#1a1a2e';
-            const labelColor = isMain ? 'rgba(255,255,255,0.75)' : '#888';
-            const medalStyle = isMain ? 'font-size:48px' : 'font-size:36px';
-            const nameStyle = isMain ? 'font-size:16px;font-weight:800;color:#fff' : 'font-size:14px;font-weight:700;color:#1a1a2e';
-            const labelStyle = isMain ? 'font-size:11px;opacity:0.75;color:#fff' : 'font-size:11px;color:#888';
-            const thirdNameStyle = isMain ? 'font-size:13px;font-weight:700;color:#fff' : 'font-size:13px;font-weight:700;color:#1a1a2e';
-            const thirdLabelStyle = isMain ? 'font-size:10px;opacity:0.7;color:#fff' : 'font-size:10px;color:#999';
-            const thNameStyle = isMain ? 'font-size:15px;font-weight:800;color:#fff' : 'font-size:14px;font-weight:700;color:#1a1a2e';
-
+        function renderChampionCard(cat, r) {
             // 并列季军：每个国家单独显示国旗+名字
             const thirdCountries = Array.isArray(r.thirdCountries) ? r.thirdCountries : [];
             const thirdNames = Array.isArray(r.thirdPlaces) ? r.thirdPlaces : [r.thirdPlace].filter(Boolean);
@@ -4457,30 +4437,30 @@ const truncateName = (name, maxLen) => {
             if (thirdNames.length > 0) {
                 thirdContent = thirdNames.map((name, i) => {
                     const flag = thirdCountries[i] ? getFlag(thirdCountries[i]) : '';
-                    return `<div class="champion-name" style="${thirdNameStyle}">${flag}${name}</div>`;
+                    return `<div class="champion-name">${flag}${name}</div>`;
                 }).join('');
             } else {
-                thirdContent = `<div class="champion-name" style="${thirdNameStyle}">-</div>`;
+                thirdContent = `<div class="champion-name">-</div>`;
             }
 
             return `
                 <div class="champion-cat-section">
                     <div class="champion-cat-title">${cat}</div>
-                    <div class="champion-podium" style="${bg}; border-radius: 16px;">
-                        <div class="champion-slot champion-slot--1">
+                    <div class="champion-podium">
+                        <div class="champion-slot">
                             <div class="champion-medal">🥇</div>
-                            <div class="champion-name" style="${nameStyle}">${getFlag(r.championCountry)}${r.champion || '-'}</div>
-                            <div class="champion-label" style="${labelStyle}"> 冠军</div>
+                            <div class="champion-name">${getFlag(r.championCountry)}${r.champion || '-'}</div>
+                            <div class="champion-label">冠军</div>
                         </div>
-                        <div class="champion-slot champion-slot--2">
-                            <div class="champion-medal" style="${medalStyle}">🥈</div>
-                            <div class="champion-name" style="${thNameStyle}">${getFlag(r.runnerUpCountry)}${r.runnerUp || '-'}</div>
-                            <div class="champion-label" style="${labelStyle}"> 亚军</div>
+                        <div class="champion-slot">
+                            <div class="champion-medal">🥈</div>
+                            <div class="champion-name">${getFlag(r.runnerUpCountry)}${r.runnerUp || '-'}</div>
+                            <div class="champion-label">亚军</div>
                         </div>
-                        <div class="champion-slot champion-slot--3">
-                            <div class="champion-medal" style="${medalStyle}">🥉</div>
+                        <div class="champion-slot">
+                            <div class="champion-medal">🥉</div>
                             ${thirdContent}
-                            <div class="champion-label" style="${thirdLabelStyle}"> ${third3Label}</div>
+                            <div class="champion-label">${third3Label}</div>
                         </div>
                     </div>
                 </div>
@@ -4539,7 +4519,7 @@ const truncateName = (name, maxLen) => {
                     if (grouped[cat] && grouped[cat].length > 0) {
                         const results = getMedalWinnersWithFlags(grouped[cat], cat);
                         if (results) {
-                            html += renderChampionCard(cat, results, true);
+                            html += renderChampionCard(cat, results);
                         }
                     }
                 });
@@ -4553,7 +4533,7 @@ const truncateName = (name, maxLen) => {
                     if (!categories.includes(cat)) {
                         const results = getMedalWinnersWithFlags(grouped[cat], cat);
                         if (results) {
-                            html += renderChampionCard(cat, results, false);
+                            html += renderChampionCard(cat, results);
                         }
                     }
                 });
