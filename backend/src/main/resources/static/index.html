@@ -1863,6 +1863,13 @@
             font-weight: 600;
             margin-left: auto;
         }
+        .match-card-right {
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
         .match-card-actions {
             display: flex;
             gap: 6px;
@@ -2797,7 +2804,7 @@
                                         <div class="match-scores-row">${p1RowHtml}</div>
                                         <div class="match-scores-row">${p2RowHtml}</div>
                                     </div>
-                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">
+                                    <div class="match-card-right">
                                         ${bigScore}
                                     </div>
                                 `;
@@ -2807,8 +2814,10 @@
                         } else {
                             // Team match: just show big score on the right
                             scoresGridHtml = `
-                                <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;">
-                                    ${bigScore}
+                                <div style="display:flex;align-items:center;justify-content:flex-end;padding:4px 0;">
+                                    <div class="match-card-right">
+                                        ${bigScore}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -2825,7 +2834,7 @@
                                 <div class="match-card-body">
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p1Won ? 'match-player-name--win' : ''}" ${p1Title}>${p1FlagHtml}${p1DisplayName}</span>
-                                        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+                                        <div class="match-card-right">
                                             <div class="match-card-actions">
                                                 <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
                                                 <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
@@ -2835,7 +2844,7 @@
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
-                                        ${matchDateStr ? `<span class="match-player-time" style="margin-left:auto;">${matchDateStr}</span>` : ''}
+                                        ${matchDateStr ? `<span class="match-card-right"><span class="match-player-time">${matchDateStr}</span></span>` : ''}
                                     </div>
                                 </div>
                             </div>
