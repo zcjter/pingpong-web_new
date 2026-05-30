@@ -2791,6 +2791,7 @@
                             : '';
 
                         // Two-row scores (each game: p1 score on p1 row, p2 score on p2 row)
+                        // Big score and time on the far right, parallel to detailed scores
                         let scoresGridHtml = '';
                         if (!isTeamMatch) {
                             const validScores = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
@@ -2802,8 +2803,27 @@
                                     p1RowHtml += `<span class="match-score-item ${p1Win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p1}</span>`;
                                     p2RowHtml += `<span class="match-score-item ${!p1Win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p2}</span>`;
                                 });
-                                scoresGridHtml = `<div class="match-scores-grid"><div class="match-scores-row">${p1RowHtml}</div><div class="match-scores-row">${p2RowHtml}</div></div>`;
+                                scoresGridHtml = `
+                                    <div class="match-scores-grid">
+                                        <div class="match-scores-row">${p1RowHtml}</div>
+                                        <div class="match-scores-row">${p2RowHtml}</div>
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-left:auto;">
+                                        ${bigScore}
+                                        ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
+                                    </div>
+                                `;
+                                // Wrap in a flex container
+                                scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:16px;">${scoresGridHtml}</div>`;
                             }
+                        } else {
+                            // Team match: just show big score + time on the right
+                            scoresGridHtml = `
+                                <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;">
+                                    ${bigScore}
+                                    ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
+                                </div>
+                            `;
                         }
 
                         // Status badge (hidden for completed)
@@ -2833,10 +2853,6 @@
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
-                                        <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-                                            ${bigScore}
-                                            ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
-                                        </div>
                                     </div>
                                 </div>
                             </div>
