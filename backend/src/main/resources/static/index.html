@@ -2801,8 +2801,8 @@
                                         ${bigScore}
                                     </div>
                                 `;
-                                // Wrap in a flex container
-                                scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:16px;">${scoresGridHtml}</div>`;
+                                // Wrap in a flex container with same gap as other rows
+                                scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:10px;">${scoresGridHtml}</div>`;
                             }
                         } else {
                             // Team match: just show big score on the right
@@ -2816,26 +2816,21 @@
                         // Status badge (hidden for completed)
                         const statusBadge = isCompleted ? '' : `<span class="match-status-badge match-status--${m.status}">${statusMap[m.status] || m.status}</span>`;
 
-                        // Action buttons on the right of top bar (original position)
-                        const topRightHtml = `
-                            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-                                <div class="match-card-actions">
-                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
-                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
-                                </div>
-                            </div>
-                        `;
-
                         contentHtml += `
                             <div class="match-card" ondblclick="editMatch(${m.id})">
                                 <div class="match-card-top">
                                     <span class="match-card-venue">🏟️ ${venueInfo}</span>
                                     ${statusBadge}
-                                    ${topRightHtml}
                                 </div>
                                 <div class="match-card-body">
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p1Won ? 'match-player-name--win' : ''}" ${p1Title}>${p1FlagHtml}${p1DisplayName}</span>
+                                        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+                                            <div class="match-card-actions">
+                                                <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
+                                                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     ${scoresGridHtml}
                                     <div class="match-player-row">
