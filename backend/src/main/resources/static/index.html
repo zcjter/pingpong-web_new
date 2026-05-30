@@ -1885,31 +1885,44 @@
             gap: 6px;
         }
         .match-player-name--win {
-            color: #e53935;
+            color: #2e7d32;
         }
         .match-player-time {
             font-size: 11px;
-            color: #e53935;
+            color: #888;
             font-weight: 600;
         }
-        .match-scores-vertical {
+        .match-scores-grid {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            padding: 6px 0;
+            gap: 4px;
+            padding: 4px 0 4px 20px;
         }
-        .match-score-line {
+        .match-scores-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .match-score-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
             font-size: 13px;
             font-weight: 700;
             font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
         }
-        .match-score-line .ms-win {
-            color: #1565c0;
+        .match-score-item--win {
+            color: #2e7d32;
         }
-        .match-score-line .ms-lose {
+        .match-score-item--lose {
             color: #b0bec5;
+        }
+        .match-score-colon {
+            color: #ccc;
+            font-weight: 400;
+            margin: 0 2px;
+            font-family: 'Courier New', monospace;
         }
         .match-status-badge {
             display: inline-block;
@@ -2765,22 +2778,35 @@
                             ? `<span class="match-card-bigscore">${p1Total}:${p2Total}</span>`
                             : '';
 
-                        // Vertical scores (only for non-team)
-                        let scoresVerticalHtml = '';
+                        // Two-row scores (each game: p1 score on p1 row, p2 score on p2 row)
+                        let scoresGridHtml = '';
                         if (!isTeamMatch) {
                             const validScores = scores.filter(s => !(s.p1 === 0 && s.p2 === 0));
                             if (validScores.length > 0) {
-                                scoresVerticalHtml = `<div class="match-scores-vertical">`;
+                                let p1RowHtml = '';
+                                let p2RowHtml = '';
                                 validScores.forEach(s => {
                                     const p1Win = s.p1 > s.p2;
-                                    scoresVerticalHtml += `<div class="match-score-line"><span class="${p1Win ? 'ms-win' : 'ms-lose'}">${s.p1}</span><span style="color:#ccc;margin:0 2px;">:</span><span class="${!p1Win ? 'ms-win' : 'ms-lose'}">${s.p2}</span></div>`;
+                                    p1RowHtml += `<span class="match-score-item ${p1Win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p1}</span>`;
+                                    p2RowHtml += `<span class="match-score-item ${!p1Win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p2}</span>`;
                                 });
-                                scoresVerticalHtml += `</div>`;
+                                scoresGridHtml = `<div class="match-scores-grid"><div class="match-scores-row">${p1RowHtml}</div><div class="match-scores-row">${p2RowHtml}</div></div>`;
                             }
                         }
 
                         // Status badge (hidden for completed)
                         const statusBadge = isCompleted ? '' : `<span class="match-status-badge match-status--${m.status}">${statusMap[m.status] || m.status}</span>`;
+
+                        // Time info + action buttons on the right of top bar
+                        const topRightHtml = `
+                            <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+                                ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
+                                <div class="match-card-actions">
+                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
+                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
+                                </div>
+                            </div>
+                        `;
 
                         contentHtml += `
                             <div class="match-card" ondblclick="editMatch(${m.id})">
@@ -2788,19 +2814,15 @@
                                     <span class="match-card-venue">🏟️ ${venueInfo}</span>
                                     ${bigScore}
                                     ${statusBadge}
-                                    <div class="match-card-actions">
-                                        <button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(${m.id})">编辑</button>
-                                        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(${m.id})">删除</button>
-                                    </div>
+                                    ${topRightHtml}
                                 </div>
                                 <div class="match-card-body">
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p1Won ? 'match-player-name--win' : ''}" ${p1Title}>${p1FlagHtml}${p1DisplayName}</span>
                                     </div>
-                                    ${scoresVerticalHtml}
+                                    ${scoresGridHtml}
                                     <div class="match-player-row">
                                         <span class="match-player-name ${p2Won ? 'match-player-name--win' : ''}" ${p2Title}>${p2FlagHtml}${p2DisplayName}</span>
-                                        ${matchDateStr ? `<span class="match-player-time">${matchDateStr}</span>` : ''}
                                     </div>
                                 </div>
                             </div>
