@@ -59,9 +59,6 @@ public class Match {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "qualification")
-    private Boolean qualification = false;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

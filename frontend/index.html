@@ -2339,12 +2339,6 @@
                     <input type="text" id="match-round" placeholder="如: 1/4决赛、半决赛、决赛">
                 </div>
                 <div class="form-group">
-                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                        <input type="checkbox" id="match-qualification" value="1" style="width:16px;height:16px;">
-                        资格赛（不显示在对阵图中）
-                    </label>
-                </div>
-                <div class="form-group">
                     <label>备注</label>
                     <textarea id="match-remark"></textarea>
                 </div>
@@ -2888,7 +2882,7 @@
         function initBracketView(matches) {
             const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
-            matches.filter(m => !m.qualification).forEach(m => {
+            matches.forEach(m => {
                 const cat = m.category || '其他';
                 if (!categoryMatches[cat]) categoryMatches[cat] = [];
                 categoryMatches[cat].push(m);
@@ -2922,7 +2916,7 @@
             });
             const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
-            currentCompetitionMatches.filter(m => !m.qualification).forEach(m => {
+            currentCompetitionMatches.forEach(m => {
                 const cat = m.category || '其他';
                 if (!categoryMatches[cat]) categoryMatches[cat] = [];
                 categoryMatches[cat].push(m);
@@ -3790,7 +3784,6 @@
                         b.classList.toggle('active', b.getAttribute('data-cat') === cat);
                     });
                     document.getElementById('match-round').value = m.roundNumber || '';
-                    document.getElementById('match-qualification').checked = m.qualification || false;
                     document.getElementById('match-remark').value = m.remark || '';
                     if (m.matchDate) {
                         document.getElementById('match-date').value = m.matchDate.slice(0, 16);
@@ -3866,7 +3859,6 @@
                 status: document.getElementById('match-status').value,
                 roundNumber: document.getElementById('match-round').value || null,
                 category: document.getElementById('match-category').value,
-                qualification: document.getElementById('match-qualification').checked,
                 remark: document.getElementById('match-remark').value
             };
 

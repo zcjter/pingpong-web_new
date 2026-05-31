@@ -49,7 +49,6 @@ CREATE TABLE IF NOT EXISTS matches (
     remark TEXT,
     round_number VARCHAR(50),
     category VARCHAR(50),
-    qualification TINYINT(1) DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (competition_id) REFERENCES competitions(id)
