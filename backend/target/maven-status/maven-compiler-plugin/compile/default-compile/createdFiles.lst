@@ -1,16 +1,12 @@
 com\pingpong\controller\PlayerRankingController.class
 com\pingpong\entity\Match.class
 com\pingpong\controller\CompetitionController.class
-com\pingpong\mapper\CompetitionRosterRepository.class
 com\pingpong\service\PlayerRankingService.class
-com\pingpong\controller\CompetitionRosterController.class
 com\pingpong\entity\Player.class
 com\pingpong\mapper\PlayerRankingRepository.class
 com\pingpong\mapper\MatchRepository.class
 com\pingpong\controller\MatchController.class
 com\pingpong\entity\Announcement.class
-com\pingpong\service\CompetitionRosterService.class
-com\pingpong\entity\CompetitionRoster.class
 com\pingpong\service\CompetitionService.class
 com\pingpong\controller\PlayerController.class
 com\pingpong\controller\AnnouncementController.class
