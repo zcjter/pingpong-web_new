@@ -59,6 +59,9 @@ public class Match {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "first_to_7")
+    private Boolean firstTo7 = false;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

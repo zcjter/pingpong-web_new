@@ -2299,6 +2299,12 @@
                     <input type="text" id="match-round" placeholder="如: 1/4决赛、半决赛、决赛">
                 </div>
                 <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" id="match-first-to-7" style="width:16px;height:16px;">
+                        先到7分获胜（总积分制）
+                    </label>
+                </div>
+                <div class="form-group">
                     <label>备注</label>
                     <textarea id="match-remark"></textarea>
                 </div>
@@ -2692,7 +2698,7 @@
                     roundMatches.forEach(m => {
                         let scores = [];
                         let p1Total = 0, p2Total = 0;
-                        try { if (m.scores) { scores = JSON.parse(m.scores); scores.forEach(s => { if (s.p1 > s.p2) p1Total++; else if (s.p2 > s.p1) p2Total++; }); } } catch (e) { }
+                        try { if (m.scores) { scores = JSON.parse(m.scores); scores.forEach(s => { if (m.firstTo7) { p1Total += s.p1; p2Total += s.p2; } else { if (s.p1 > s.p2) p1Total++; else if (s.p2 > s.p1) p2Total++; } }); } } catch (e) { }
                         const p1Name = m.player1Name || '-';
                         const p2Name = m.player2Name || '-';
                         const p1Country = m.player1Country || '';
@@ -3223,10 +3229,12 @@ const matchDateStr = m.matchDate ? new Date(m.matchDate).toLocaleString('zh-CN',
                             if (m.scores) {
                                 const scores = JSON.parse(m.scores);
                                 scores.forEach(s => {
-                                    if (s.p1 > s.p2) p1Score++;
-                                    else if (s.p2 > s.p1) p2Score++;
+                                    if (m.firstTo7) { p1Score += s.p1; p2Score += s.p2; }
+                                    else { if (s.p1 > s.p2) p1Score++; else if (s.p2 > s.p1) p2Score++; }
                                 });
                             }
+                        } catch (e) { }
+                    }
                         } catch (e) {}
                     }
 
@@ -3773,6 +3781,7 @@ const truncateName = (name, maxLen) => {
                         b.classList.toggle('active', b.getAttribute('data-cat') === cat);
                     });
                     document.getElementById('match-round').value = m.roundNumber || '';
+                    document.getElementById('match-first-to-7').checked = m.firstTo7 || false;
                     document.getElementById('match-remark').value = m.remark || '';
                     if (m.matchDate) {
                         document.getElementById('match-date').value = m.matchDate.slice(0, 16);
@@ -3823,13 +3832,19 @@ const truncateName = (name, maxLen) => {
             const p2Inputs = document.querySelectorAll('.score-p2');
             const scores = [];
             let p1Total = 0, p2Total = 0;
+            const firstTo7 = document.getElementById('match-first-to-7').checked;
 
             p1Inputs.forEach((input, i) => {
                 const p1 = parseInt(input.value) || 0;
                 const p2 = parseInt(p2Inputs[i].value) || 0;
                 scores.push({ p1, p2 });
-                if (p1 > p2) p1Total++;
-                else if (p2 > p1) p2Total++;
+                if (firstTo7) {
+                    p1Total += p1;
+                    p2Total += p2;
+                } else {
+                    if (p1 > p2) p1Total++;
+                    else if (p2 > p1) p2Total++;
+                }
             });
 
             const match = {
@@ -3843,6 +3858,7 @@ const truncateName = (name, maxLen) => {
                 scores: JSON.stringify(scores),
                 player1Total: p1Total,
                 player2Total: p2Total,
+                firstTo7: firstTo7,
                 venue: document.getElementById('match-venue').value,
                 matchDate: document.getElementById('match-date').value || null,
                 status: document.getElementById('match-status').value,
