@@ -36,6 +36,9 @@ public class Match {
     @Column(name = "scores", columnDefinition = "JSON")
     private String scores;
 
+    @Column(name = "team_scores", columnDefinition = "TEXT")
+    private String teamScores;
+
     @Column(name = "player1_total")
     private Integer player1Total;
 
