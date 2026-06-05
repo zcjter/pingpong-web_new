@@ -2334,6 +2334,16 @@
                     </div>
                     <input type="hidden" id="match-category" value="男单">
                 </div>
+                <div id="team-match-section" style="display:none;">
+                    <div class="form-group">
+                        <label>团体赛场次数</label>
+                        <select id="team-match-count" onchange="renderTeamSubMatches()">
+                            <option value="3">3场2胜</option>
+                            <option value="5" selected>5场3胜</option>
+                        </select>
+                    </div>
+                    <div id="team-sub-matches-container"></div>
+                </div>
                 <div class="form-group">
                     <label>轮次</label>
                     <input type="text" id="match-round" placeholder="如: 1/4决赛、半决赛、决赛">
@@ -2526,6 +2536,7 @@
             '密克罗尼西亚': 'fm', '帕劳': 'pw', '基里巴斯': 'ki',
             '图瓦卢': 'tv', '瑙鲁': 'nr', '马绍尔群岛': 'mh',
             '所罗门群岛': 'sb', '新喀里多尼亚': 'fr','法属波利尼西亚':'pf',
+            '塔希提': 'pf', '塔希提岛': 'pf', '大溪地': 'pf',
             // 其他
             '格陵兰': 'gl', '法罗群岛': 'fo'
         };
@@ -2760,6 +2771,11 @@
                         let scores = [];
                         let p1Total = 0, p2Total = 0;
                         try { if (m.scores) { scores = JSON.parse(m.scores); scores.forEach(s => { if (s.p1 > s.p2) p1Total++; else if (s.p2 > s.p1) p2Total++; }); } } catch (e) { }
+                        // 团体赛但没有scores时使用存储的player1Total/player2Total
+                        if (p1Total === 0 && p2Total === 0 && m.teamScores && m.player1Total != null) {
+                            p1Total = m.player1Total;
+                            p2Total = m.player2Total;
+                        }
                         const p1Name = m.player1Name || '-';
                         const p2Name = m.player2Name || '-';
                         const p1Country = m.player1Country || '';
@@ -2810,13 +2826,74 @@
                                 // Wrap in a flex container with same gap as other rows
                                 scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:10px;">${scoresGridHtml}</div>`;
                             }
-                        } else {
-                            // Team match: just show big score on the right
+                        } else if (!m.teamScores) {
+                            // Team match without sub-match data: show big score only (backward compatible)
                             scoresGridHtml = `
                                 <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;">
                                     ${bigScore}
                                 </div>
                             `;
+                        } else {
+                            // Team match with sub-match data
+                            try {
+                                const teamScores = JSON.parse(m.teamScores);
+                                let subHtml = '';
+                                teamScores.forEach((sub, si) => {
+                                    const subP1Won = sub.p1Total > sub.p2Total;
+                                    // 去掉尾部连续的 0:0（后面没打的局不展示）
+                                    const rawScores = sub.scores || [];
+                                    let lastNonZero = rawScores.length - 1;
+                                    while (lastNonZero >= 0 && rawScores[lastNonZero].p1 === 0 && rawScores[lastNonZero].p2 === 0) lastNonZero--;
+                                    const subScores = rawScores.slice(0, lastNonZero + 1);
+                                    // 如果两名选手都为空，跳过整场（如 5 场只打了 3 场）
+                                    if (!sub.p1 && !sub.p2) return;
+                                    let subScoresHtml = '';
+                                    if (subScores.length > 0) {
+                                        let subP1Row = '', subP2Row = '';
+                                        subScores.forEach(s => {
+                                            const win = s.p1 > s.p2;
+                                            subP1Row += `<span class="match-score-item ${win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p1}</span>`;
+                                            subP2Row += `<span class="match-score-item ${!win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p2}</span>`;
+                                        });
+                                        subScoresHtml = `
+                                            <div class="match-scores-grid" style="margin-top:4px;">
+                                                <div class="match-scores-row">${subP1Row}</div>
+                                                <div class="match-scores-row">${subP2Row}</div>
+                                            </div>
+                                        `;
+                                    }
+                                    const subResult = subP1Won
+                                        ? `<span style="color:#2e7d32;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`
+                                        : `<span style="color:#d32f2f;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`;
+                                    const p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
+                                    const p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
+                                    subHtml += `
+                                        <div style="border-top:1px solid #eee;padding:6px 0;${si === 0 ? 'border-top:none;' : ''}">
+                                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">
+                                                <span>${p1Flag}${sub.p1 || '?'}</span>
+                                                <span style="color:#999;font-weight:400;">vs</span>
+                                                <span>${p2Flag}${sub.p2 || '?'}</span>
+                                                <span style="margin-left:auto;">${subResult}</span>
+                                            </div>
+                                            ${subScoresHtml ? `<div style="padding-left:4px;">${subScoresHtml}</div>` : ''}
+                                        </div>
+                                    `;
+                                });
+                                scoresGridHtml = `
+                                    <div style="flex:1;min-width:0;padding:4px 0;">${subHtml}</div>
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">
+                                        ${bigScore}
+                                    </div>
+                                `;
+                                scoresGridHtml = `<div style="display:flex;align-items:stretch;gap:10px;">${scoresGridHtml}</div>`;
+                            } catch (e) {
+                                // Fallback: show big score only
+                                scoresGridHtml = `
+                                    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:4px 0;">
+                                        ${bigScore}
+                                    </div>
+                                `;
+                            }
                         }
 
                         // Status badge (hidden for completed)
@@ -3616,6 +3693,14 @@
             document.querySelectorAll('#match-modal .category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('match-category').value = cat;
+            const isTeam = cat === '男团' || cat === '女团';
+            document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
+            // 切换时去掉选手1/选手2的required，避免提交时报错
+            document.getElementById('match-player1').required = !isTeam;
+            document.getElementById('match-player2').required = !isTeam;
+            if (isTeam) {
+                renderTeamSubMatches();
+            }
         }
 
         function showCompetitionsList() {
@@ -3725,6 +3810,54 @@
             container.innerHTML = html;
         }
 
+        function renderTeamSubMatchScores(selectEl) {
+            const idx = selectEl.getAttribute('data-idx');
+            const games = parseInt(selectEl.value);
+            const container = document.querySelector(`.tsm-scores[data-idx="${idx}"]`);
+            if (!container) return;
+            let html = '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">';
+            for (let i = 1; i <= games; i++) {
+                html += `<span style="font-size:11px;color:#666;">第${i}局:</span>
+                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="P1" style="width:50px;">
+                    <span style="font-size:11px;color:#666;">:</span>
+                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="P2" style="width:50px;">`;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderTeamSubMatches() {
+            const count = parseInt(document.getElementById('team-match-count').value);
+            const container = document.getElementById('team-sub-matches-container');
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                html += `
+                    <div class="team-sub-match" style="border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
+                        <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px;">第${i+1}场</div>
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                            <input type="text" class="tsm-p1" placeholder="选手1姓名" style="flex:1;" data-idx="${i}">
+                            <input type="text" class="tsm-p1-country" placeholder="国家" style="width:70px;" data-idx="${i}">
+                            <span style="font-weight:600;color:#999;">VS</span>
+                            <input type="text" class="tsm-p2" placeholder="选手2姓名" style="flex:1;" data-idx="${i}">
+                            <input type="text" class="tsm-p2-country" placeholder="国家" style="width:70px;" data-idx="${i}">
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+                            <label style="font-size:11px;color:#666;">局数:</label>
+                            <select class="tsm-games" data-idx="${i}" onchange="renderTeamSubMatchScores(this)" style="font-size:12px;">
+                                <option value="3">3局2胜</option>
+                                <option value="5" selected>5局3胜</option>
+                                <option value="7">7局4胜</option>
+                            </select>
+                        </div>
+                        <div class="tsm-scores" data-idx="${i}"></div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            // 初始化每场的比分输入
+            container.querySelectorAll('.tsm-games').forEach(el => renderTeamSubMatchScores(el));
+        }
+
         let playerNameMap = {}; // 名字到ID的映射
 
         async function showMatchModal(id = null) {
@@ -3756,12 +3889,23 @@
                 document.querySelectorAll('#match-modal .category-btn').forEach(b => {
                     b.classList.toggle('active', b.getAttribute('data-cat') === currentDetailCategory);
                 });
+                const isTeamNew = currentDetailCategory === '男团' || currentDetailCategory === '女团';
+                document.getElementById('team-match-section').style.display = isTeamNew ? 'block' : 'none';
+                document.getElementById('match-player1').required = !isTeamNew;
+                document.getElementById('match-player2').required = !isTeamNew;
+                if (isTeamNew) renderTeamSubMatches();
             } else if (!id) {
                 // 新增时同步tab按钮状态
                 const cat = '男单';
                 document.querySelectorAll('#match-modal .category-btn').forEach(b => {
                     b.classList.toggle('active', b.getAttribute('data-cat') === cat);
                 });
+                // 如果默认类别是团体赛，显示团体表单
+                const isTeamDef = cat === '男团' || cat === '女团';
+                document.getElementById('team-match-section').style.display = isTeamDef ? 'block' : 'none';
+                document.getElementById('match-player1').required = !isTeamDef;
+                document.getElementById('match-player2').required = !isTeamDef;
+                if (isTeamDef) renderTeamSubMatches();
             }
 
             if (id) {
@@ -3790,8 +3934,46 @@
                         document.getElementById('match-date').value = m.matchDate.slice(0, 16);
                     }
 
-                    // 加载比分
-                    if (m.scores) {
+                    // 处理团体赛子场次
+                    const isTeam = cat === '男团' || cat === '女团';
+                    document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
+                    document.getElementById('match-player1').required = !isTeam;
+                    document.getElementById('match-player2').required = !isTeam;
+                    if (isTeam && m.teamScores) {
+                        try {
+                            const teamScores = JSON.parse(m.teamScores);
+                            document.getElementById('team-match-count').value = teamScores.length;
+                            renderTeamSubMatches();
+                            // 填充子场次数据
+                            teamScores.forEach((sub, i) => {
+                                const p1Input = document.querySelector(`.tsm-p1[data-idx="${i}"]`);
+                                const p1cInput = document.querySelector(`.tsm-p1-country[data-idx="${i}"]`);
+                                const p2Input = document.querySelector(`.tsm-p2[data-idx="${i}"]`);
+                                const p2cInput = document.querySelector(`.tsm-p2-country[data-idx="${i}"]`);
+                                if (p1Input) p1Input.value = sub.p1 || '';
+                                if (p1cInput) p1cInput.value = sub.p1Country || '';
+                                if (p2Input) p2Input.value = sub.p2 || '';
+                                if (p2cInput) p2cInput.value = sub.p2Country || '';
+                                // 设置局数并填入比分
+                                if (sub.scores && sub.scores.length) {
+                                    const gamesSelect = document.querySelector(`.tsm-games[data-idx="${i}"]`);
+                                    if (gamesSelect) {
+                                        gamesSelect.value = sub.scores.length;
+                                        renderTeamSubMatchScores(gamesSelect);
+                                        const p1ScoreInputs = document.querySelectorAll(`.tsm-score-p1[data-idx="${i}"]`);
+                                        const p2ScoreInputs = document.querySelectorAll(`.tsm-score-p2[data-idx="${i}"]`);
+                                        sub.scores.forEach((s, j) => {
+                                            if (p1ScoreInputs[j]) p1ScoreInputs[j].value = s.p1;
+                                            if (p2ScoreInputs[j]) p2ScoreInputs[j].value = s.p2;
+                                        });
+                                    }
+                                }
+                            });
+                        } catch (e) { }
+                    }
+
+                    // 加载比分（非团体赛）
+                    if (m.scores && !isTeam) {
                         try {
                             const scores = JSON.parse(m.scores);
                             document.getElementById('match-games').value = scores.length;
@@ -3811,57 +3993,118 @@
         document.getElementById('match-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const id = document.getElementById('match-id').value;
+            const category = document.getElementById('match-category').value;
+            const isTeam = category === '男团' || category === '女团';
 
-            // 直接输入运动员姓名，不与运动员管理挂钩
-            const p1Name = document.getElementById('match-player1').value.trim();
-            const p2Name = document.getElementById('match-player2').value.trim();
+            let match;
 
-            if (!p1Name || !p2Name) {
-                alert('请输入选手姓名');
-                return;
+            if (isTeam) {
+                // ===== 团体赛：收集子场次数据 =====
+                const subMatchEls = document.querySelectorAll('.team-sub-match');
+                const teamScores = [];
+                let teamP1Total = 0, teamP2Total = 0;
+
+                subMatchEls.forEach((el, i) => {
+                    const p1Name = el.querySelector('.tsm-p1').value.trim();
+                    const p2Name = el.querySelector('.tsm-p2').value.trim();
+                    const p1Country = el.querySelector('.tsm-p1-country').value.trim();
+                    const p2Country = el.querySelector('.tsm-p2-country').value.trim();
+
+                    const p1ScoreInputs = el.querySelectorAll('.tsm-score-p1');
+                    const p2ScoreInputs = el.querySelectorAll('.tsm-score-p2');
+                    const subScores = [];
+                    let subP1Total = 0, subP2Total = 0;
+
+                    p1ScoreInputs.forEach((inp, j) => {
+                        const p1 = parseInt(inp.value) || 0;
+                        const p2 = parseInt(p2ScoreInputs[j].value) || 0;
+                        subScores.push({ p1, p2 });
+                        if (p1 > p2) subP1Total++;
+                        else if (p2 > p1) subP2Total++;
+                    });
+
+                    teamScores.push({
+                        p1: p1Name,
+                        p1Country: p1Country,
+                        p2: p2Name,
+                        p2Country: p2Country,
+                        scores: subScores,
+                        p1Total: subP1Total,
+                        p2Total: subP2Total
+                    });
+
+                    if (subP1Total > subP2Total) teamP1Total++;
+                    else if (subP2Total > subP1Total) teamP2Total++;
+                });
+
+                match = {
+                    competitionId: currentCompetitionId,
+                    player1Name: document.getElementById('match-player1').value.trim() || category,
+                    player2Name: document.getElementById('match-player2').value.trim() || category,
+                    player1Country: document.getElementById('match-player1-country').value || '',
+                    player2Country: document.getElementById('match-player2-country').value || '',
+                    teamScores: JSON.stringify(teamScores),
+                    scores: null,
+                    player1Total: teamP1Total,
+                    player2Total: teamP2Total,
+                    venue: document.getElementById('match-venue').value,
+                    matchDate: document.getElementById('match-date').value || null,
+                    status: document.getElementById('match-status').value,
+                    roundNumber: document.getElementById('match-round').value || null,
+                    category: category,
+                    remark: document.getElementById('match-remark').value
+                };
+            } else {
+                // ===== 非团体赛：原有逻辑 =====
+                const p1Name = document.getElementById('match-player1').value.trim();
+                const p2Name = document.getElementById('match-player2').value.trim();
+
+                if (!p1Name || !p2Name) {
+                    alert('请输入选手姓名');
+                    return;
+                }
+
+                if (p1Name === p2Name) {
+                    alert('不能选择同一名选手');
+                    return;
+                }
+
+                const player1Id = playerNameMap[p1Name] || null;
+                const player2Id = playerNameMap[p2Name] || null;
+
+                const p1Inputs = document.querySelectorAll('.score-p1');
+                const p2Inputs = document.querySelectorAll('.score-p2');
+                const scores = [];
+                let p1Total = 0, p2Total = 0;
+
+                p1Inputs.forEach((input, j) => {
+                    const p1 = parseInt(input.value) || 0;
+                    const p2 = parseInt(p2Inputs[j].value) || 0;
+                    scores.push({ p1, p2 });
+                    if (p1 > p2) p1Total++;
+                    else if (p2 > p1) p2Total++;
+                });
+
+                match = {
+                    competitionId: currentCompetitionId,
+                    player1Id: player1Id,
+                    player1Name: p1Name,
+                    player1Country: document.getElementById('match-player1-country').value || '',
+                    player2Id: player2Id,
+                    player2Name: p2Name,
+                    player2Country: document.getElementById('match-player2-country').value || '',
+                    scores: JSON.stringify(scores),
+                    teamScores: null,
+                    player1Total: p1Total,
+                    player2Total: p2Total,
+                    venue: document.getElementById('match-venue').value,
+                    matchDate: document.getElementById('match-date').value || null,
+                    status: document.getElementById('match-status').value,
+                    roundNumber: document.getElementById('match-round').value || null,
+                    category: category,
+                    remark: document.getElementById('match-remark').value
+                };
             }
-
-            if (p1Name === p2Name) {
-                alert('不能选择同一名选手');
-                return;
-            }
-
-            // 查找已有名为p1Name和p2Name的运动员ID（用于关联）
-            const player1Id = playerNameMap[p1Name] || null;
-            const player2Id = playerNameMap[p2Name] || null;
-
-            // 收集比分
-            const p1Inputs = document.querySelectorAll('.score-p1');
-            const p2Inputs = document.querySelectorAll('.score-p2');
-            const scores = [];
-            let p1Total = 0, p2Total = 0;
-
-            p1Inputs.forEach((input, i) => {
-                const p1 = parseInt(input.value) || 0;
-                const p2 = parseInt(p2Inputs[i].value) || 0;
-                scores.push({ p1, p2 });
-                if (p1 > p2) p1Total++;
-                else if (p2 > p1) p2Total++;
-            });
-
-            const match = {
-                competitionId: currentCompetitionId,
-                player1Id: player1Id,
-                player1Name: p1Name,
-                player1Country: document.getElementById('match-player1-country').value || '',
-                player2Id: player2Id,
-                player2Name: p2Name,
-                player2Country: document.getElementById('match-player2-country').value || '',
-                scores: JSON.stringify(scores),
-                player1Total: p1Total,
-                player2Total: p2Total,
-                venue: document.getElementById('match-venue').value,
-                matchDate: document.getElementById('match-date').value || null,
-                status: document.getElementById('match-status').value,
-                roundNumber: document.getElementById('match-round').value || null,
-                category: document.getElementById('match-category').value,
-                remark: document.getElementById('match-remark').value
-            };
 
             const method = id ? 'PUT' : 'POST';
             const url = id ? `${API_BASE}/matches/${id}` : `${API_BASE}/matches`;
