@@ -1917,24 +1917,6 @@
             margin: 0 2px;
             font-family: 'Courier New', monospace;
         }
-        .match-sub-game {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            margin-right: 8px;
-            padding: 1px 6px;
-            border-radius: 3px;
-            background: #f5f5f5;
-        }
-        .match-sub-game--win {
-            color: #2e7d32;
-            background: #e8f5e9;
-        }
-        .match-sub-game--lose {
-            color: #b0bec5;
-            background: #fafafa;
-        }
         .match-status-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -2867,12 +2849,18 @@
                                     if (!sub.p1 && !sub.p2) return;
                                     let subScoresHtml = '';
                                     if (subScores.length > 0) {
-                                        let gamesHtml = '';
+                                        let subP1Row = '', subP2Row = '';
                                         subScores.forEach(s => {
                                             const win = s.p1 > s.p2;
-                                            gamesHtml += `<span class="match-sub-game ${win ? 'match-sub-game--win' : 'match-sub-game--lose'}">${s.p1}:${s.p2}</span>`;
+                                            subP1Row += `<span class="match-score-item ${win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p1}</span>`;
+                                            subP2Row += `<span class="match-score-item ${!win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p2}</span>`;
                                         });
-                                        subScoresHtml = `<div style="margin-top:3px;">${gamesHtml}</div>`;
+                                        subScoresHtml = `
+                                            <div class="match-scores-grid" style="margin-top:4px;">
+                                                <div class="match-scores-row">${subP1Row}</div>
+                                                <div class="match-scores-row">${subP2Row}</div>
+                                            </div>
+                                        `;
                                     }
                                     const subResult = subP1Won
                                         ? `<span style="color:#2e7d32;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`
@@ -2880,14 +2868,14 @@
                                     const p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
                                     const p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
                                     subHtml += `
-                                        <div style="border-top:1px solid #eee;padding:5px 0;${si === 0 ? 'border-top:none;' : ''}">
-                                            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#444;">
+                                        <div style="border-top:1px solid #eee;padding:6px 0;${si === 0 ? 'border-top:none;' : ''}">
+                                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">
                                                 <span>${p1Flag}${sub.p1 || '?'}</span>
-                                                <span style="color:#bdbdbd;font-weight:400;">vs</span>
+                                                <span style="color:#999;font-weight:400;">vs</span>
                                                 <span>${p2Flag}${sub.p2 || '?'}</span>
-                                                <span style="margin-left:auto;font-size:13px;">${subResult}</span>
+                                                <span style="margin-left:auto;">${subResult}</span>
                                             </div>
-                                            ${subScoresHtml}
+                                            ${subScoresHtml ? `<div style="padding-left:4px;">${subScoresHtml}</div>` : ''}
                                         </div>
                                     `;
                                 });
@@ -3827,14 +3815,20 @@
             const games = parseInt(selectEl.value);
             const container = document.querySelector(`.tsm-scores[data-idx="${idx}"]`);
             if (!container) return;
-            let html = '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">';
+            let html = '<table style="width:100%;border-collapse:collapse;margin-top:4px;">';
+            html += '<tr style="font-size:10px;color:#999;">';
             for (let i = 1; i <= games; i++) {
-                html += `<span style="font-size:11px;color:#666;">第${i}局:</span>
-                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="P1" style="width:50px;">
-                    <span style="font-size:11px;color:#666;">:</span>
-                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="P2" style="width:50px;">`;
+                html += `<th style="padding:2px 4px;text-align:center;font-weight:400;">第${i}局</th>`;
             }
-            html += '</div>';
+            html += '</tr><tr>';
+            for (let i = 1; i <= games; i++) {
+                html += `<td style="padding:2px;text-align:center;white-space:nowrap;">
+                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:38px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                    <span style="color:#bbb;margin:0 1px;">:</span>
+                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:38px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                </td>`;
+            }
+            html += '</tr></table>';
             container.innerHTML = html;
         }
 
@@ -3844,18 +3838,22 @@
             let html = '';
             for (let i = 0; i < count; i++) {
                 html += `
-                    <div class="team-sub-match" style="border:1px solid #e0e0e0;border-radius:8px;padding:12px;margin-bottom:10px;">
-                        <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:6px;">第${i+1}场</div>
+                    <div class="team-sub-match" style="border:1px solid #d0d0d0;border-radius:8px;padding:12px;margin-bottom:10px;background:#fafafa;">
+                        <div style="font-size:12px;font-weight:700;color:#444;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #1a73e8;display:inline-block;">第${i+1}场</div>
                         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                            <input type="text" class="tsm-p1" placeholder="选手1姓名" style="flex:1;" data-idx="${i}">
-                            <input type="text" class="tsm-p1-country" placeholder="国家" style="width:70px;" data-idx="${i}">
-                            <span style="font-weight:600;color:#999;">VS</span>
-                            <input type="text" class="tsm-p2" placeholder="选手2姓名" style="flex:1;" data-idx="${i}">
-                            <input type="text" class="tsm-p2-country" placeholder="国家" style="width:70px;" data-idx="${i}">
+                            <div style="flex:1;display:flex;gap:4px;align-items:center;">
+                                <input type="text" class="tsm-p1" placeholder="选手1姓名" style="flex:1;min-width:0;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
+                                <input type="text" class="tsm-p1-country" placeholder="国家" style="width:60px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
+                            </div>
+                            <span style="font-weight:700;color:#bbb;font-size:13px;">VS</span>
+                            <div style="flex:1;display:flex;gap:4px;align-items:center;">
+                                <input type="text" class="tsm-p2" placeholder="选手2姓名" style="flex:1;min-width:0;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
+                                <input type="text" class="tsm-p2-country" placeholder="国家" style="width:60px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
+                            </div>
                         </div>
-                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
-                            <label style="font-size:11px;color:#666;">局数:</label>
-                            <select class="tsm-games" data-idx="${i}" onchange="renderTeamSubMatchScores(this)" style="font-size:12px;">
+                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+                            <label style="font-size:11px;color:#666;font-weight:500;">局数:</label>
+                            <select class="tsm-games" data-idx="${i}" onchange="renderTeamSubMatchScores(this)" style="font-size:12px;border:1px solid #ddd;border-radius:4px;padding:3px 6px;">
                                 <option value="3">3局2胜</option>
                                 <option value="5" selected>5局3胜</option>
                                 <option value="7">7局4胜</option>
