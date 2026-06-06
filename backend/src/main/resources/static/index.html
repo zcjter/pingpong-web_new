@@ -2331,8 +2331,7 @@
                         <button type="button" class="category-btn" data-cat="u17男双" onclick="selectMatchCategory(this, 'u17男双')">u17男双</button>
                         <button type="button" class="category-btn" data-cat="u17女双" onclick="selectMatchCategory(this, 'u17女双')">u17女双</button>
                         <button type="button" class="category-btn" data-cat="u17混双" onclick="selectMatchCategory(this, 'u17混双')">u17混双</button>
-                        <button type="button" class="category-btn" data-cat="u17男团" onclick="selectMatchCategory(this, 'u17男团')">u17男团</button>
-                        <button type="button" class="category-btn" data-cat="u17女团" onclick="selectMatchCategory(this, 'u17女团')">u17女团</button>
+                       
                         <button type="button" class="category-btn" data-cat="u19男单" onclick="selectMatchCategory(this, 'u19男单')">u19男单</button>
                         <button type="button" class="category-btn" data-cat="u19女单" onclick="selectMatchCategory(this, 'u19女单')">u19女单</button>
                         <button type="button" class="category-btn" data-cat="u19男双" onclick="selectMatchCategory(this, 'u19男双')">u19男双</button>
@@ -2442,8 +2441,7 @@
                         <option value="u17男双">u17男双</option>
                         <option value="u17女双">u17女双</option>
                         <option value="u17混双">u17混双</option>
-                        <option value="u17男团">u17男团</option>
-                        <option value="u17女团">u17女团</option>
+
                         <option value="u19男单">u19男单</option>
                         <option value="u19女单">u19女单</option>
                         <option value="u19男双">u19男双</option>
@@ -2704,7 +2702,7 @@
                         if (!grouped[cat]) grouped[cat] = [];
                         grouped[cat].push(r);
                     });
-                    const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                    const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                     categories.forEach(cat => {
                         if (grouped[cat] && grouped[cat].length > 0) {
                             const top3 = grouped[cat].slice(0, 3).sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
@@ -2739,7 +2737,7 @@
         let currentDetailCategory = '';
 
         function renderDetailRounds(container, matches) {
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
@@ -2978,7 +2976,7 @@
         }
 
         function initBracketView(matches) {
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -3012,7 +3010,7 @@
             document.querySelectorAll('.bracket-category-tab').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent === category);
             });
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             currentCompetitionMatches.forEach(m => {
                 const cat = m.category || '其他';
@@ -4249,7 +4247,7 @@
                     grouped[cat].sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
                 });
 
-                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                 let html = '';
 
                 categories.forEach(cat => {
@@ -4526,7 +4524,7 @@
                         : '';
 
                 // 按项目分组
-                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                 const grouped = {};
                 matches.forEach(m => {
                     const cat = m.category || '其他';
