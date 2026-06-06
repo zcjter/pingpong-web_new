@@ -2862,9 +2862,7 @@
                                             </div>
                                         `;
                                     }
-                                    const subResult = subP1Won
-                                        ? `<span style="color:#2e7d32;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`
-                                        : `<span style="color:#d32f2f;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`;
+                                    const subResult = `<span style="color:#d4a017;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`;
                                     const p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
                                     const p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
                                     subHtml += `
@@ -3815,20 +3813,21 @@
             const games = parseInt(selectEl.value);
             const container = document.querySelector(`.tsm-scores[data-idx="${idx}"]`);
             if (!container) return;
-            let html = '<table style="width:100%;border-collapse:collapse;margin-top:4px;">';
+            let html = '<div style="overflow-x:auto;margin-top:4px;">';
+            html += '<table style="border-collapse:collapse;white-space:nowrap;">';
             html += '<tr style="font-size:10px;color:#999;">';
             for (let i = 1; i <= games; i++) {
-                html += `<th style="padding:2px 4px;text-align:center;font-weight:400;">第${i}局</th>`;
+                html += `<th style="padding:2px 3px;text-align:center;font-weight:400;min-width:68px;">第${i}局</th>`;
             }
             html += '</tr><tr>';
             for (let i = 1; i <= games; i++) {
-                html += `<td style="padding:2px;text-align:center;white-space:nowrap;">
-                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:38px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                html += `<td style="padding:2px 3px;text-align:center;">
+                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:36px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
                     <span style="color:#bbb;margin:0 1px;">:</span>
-                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:38px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:36px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
                 </td>`;
             }
-            html += '</tr></table>';
+            html += '</tr></table></div>';
             container.innerHTML = html;
         }
 
