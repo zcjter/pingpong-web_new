@@ -1917,6 +1917,24 @@
             margin: 0 2px;
             font-family: 'Courier New', monospace;
         }
+        .match-sub-game {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            margin-right: 8px;
+            padding: 1px 6px;
+            border-radius: 3px;
+            background: #f5f5f5;
+        }
+        .match-sub-game--win {
+            color: #2e7d32;
+            background: #e8f5e9;
+        }
+        .match-sub-game--lose {
+            color: #b0bec5;
+            background: #fafafa;
+        }
         .match-status-badge {
             display: inline-block;
             padding: 2px 8px;
@@ -2849,18 +2867,12 @@
                                     if (!sub.p1 && !sub.p2) return;
                                     let subScoresHtml = '';
                                     if (subScores.length > 0) {
-                                        let subP1Row = '', subP2Row = '';
+                                        let gamesHtml = '';
                                         subScores.forEach(s => {
                                             const win = s.p1 > s.p2;
-                                            subP1Row += `<span class="match-score-item ${win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p1}</span>`;
-                                            subP2Row += `<span class="match-score-item ${!win ? 'match-score-item--win' : 'match-score-item--lose'}">${s.p2}</span>`;
+                                            gamesHtml += `<span class="match-sub-game ${win ? 'match-sub-game--win' : 'match-sub-game--lose'}">${s.p1}:${s.p2}</span>`;
                                         });
-                                        subScoresHtml = `
-                                            <div class="match-scores-grid" style="margin-top:4px;">
-                                                <div class="match-scores-row">${subP1Row}</div>
-                                                <div class="match-scores-row">${subP2Row}</div>
-                                            </div>
-                                        `;
+                                        subScoresHtml = `<div style="margin-top:3px;">${gamesHtml}</div>`;
                                     }
                                     const subResult = subP1Won
                                         ? `<span style="color:#2e7d32;font-weight:700;font-size:13px;">${sub.p1Total}:${sub.p2Total}</span>`
@@ -2868,14 +2880,14 @@
                                     const p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
                                     const p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
                                     subHtml += `
-                                        <div style="border-top:1px solid #eee;padding:6px 0;${si === 0 ? 'border-top:none;' : ''}">
-                                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">
+                                        <div style="border-top:1px solid #eee;padding:5px 0;${si === 0 ? 'border-top:none;' : ''}">
+                                            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#444;">
                                                 <span>${p1Flag}${sub.p1 || '?'}</span>
-                                                <span style="color:#999;font-weight:400;">vs</span>
+                                                <span style="color:#bdbdbd;font-weight:400;">vs</span>
                                                 <span>${p2Flag}${sub.p2 || '?'}</span>
-                                                <span style="margin-left:auto;">${subResult}</span>
+                                                <span style="margin-left:auto;font-size:13px;">${subResult}</span>
                                             </div>
-                                            ${subScoresHtml ? `<div style="padding-left:4px;">${subScoresHtml}</div>` : ''}
+                                            ${subScoresHtml}
                                         </div>
                                     `;
                                 });
