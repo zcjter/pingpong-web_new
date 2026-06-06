@@ -603,6 +603,14 @@
             margin-bottom: 14px;
         }
 
+        .round-section.is-group {
+            border: 2px solid #cce5ff;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: #f8fbff;
+            margin-bottom: 18px;
+        }
+
         .round-header {
             display: inline-flex;
             align-items: center;
@@ -2779,7 +2787,8 @@
                 contentHtml += `<div class="round-cat">`;
                 roundKeys.forEach(key => {
                     const roundMatches = catData[key];
-                    contentHtml += `<div class="round-section">`;
+                    const isGroup = key.includes('组');
+                    contentHtml += `<div class="round-section${isGroup ? ' is-group' : ''}">`;
                     contentHtml += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
                     roundMatches.forEach(m => {
                         let scores = [];
@@ -2882,9 +2891,9 @@
                                     subHtml += `
                                         <div style="border-top:1px solid #eee;padding:6px 0;${si === 0 ? 'border-top:none;' : ''}">
                                             <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">
-                                                <span>${p1Flag}${sub.p1 || '?'}</span>
+                                                <span style="${subP1Won ? 'color:#2e7d32;' : 'color:#333;'}">${p1Flag}${sub.p1 || '?'}</span>
                                                 <span style="color:#999;font-weight:400;">vs</span>
-                                                <span>${p2Flag}${sub.p2 || '?'}</span>
+                                                <span style="${!subP1Won ? 'color:#2e7d32;' : 'color:#333;'}">${p2Flag}${sub.p2 || '?'}</span>
                                                 <span style="margin-left:auto;">${subResult}</span>
                                             </div>
                                             ${subScoresHtml ? `<div style="padding-left:4px;">${subScoresHtml}</div>` : ''}
@@ -3828,21 +3837,15 @@
             const games = parseInt(selectEl.value);
             const container = document.querySelector(`.tsm-scores[data-idx="${idx}"]`);
             if (!container) return;
-            let html = '<div style="overflow-x:auto;margin-top:4px;">';
-            html += '<table style="border-collapse:collapse;white-space:nowrap;">';
-            html += '<tr style="font-size:10px;color:#999;">';
+            let html = '';
             for (let i = 1; i <= games; i++) {
-                html += `<th style="padding:2px 3px;text-align:center;font-weight:400;min-width:68px;">第${i}局</th>`;
+                html += `<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
+                    <span style="font-size:11px;color:#999;min-width:32px;">第${i}局</span>
+                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:40px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                    <span style="color:#bbb;">:</span>
+                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:40px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
+                </div>`;
             }
-            html += '</tr><tr>';
-            for (let i = 1; i <= games; i++) {
-                html += `<td style="padding:2px 3px;text-align:center;">
-                    <input type="number" class="tsm-score-p1" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:36px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
-                    <span style="color:#bbb;margin:0 1px;">:</span>
-                    <input type="number" class="tsm-score-p2" data-idx="${idx}" min="0" max="30" placeholder="-" style="width:36px;text-align:center;font-size:12px;border:1px solid #ddd;border-radius:3px;padding:2px;">
-                </td>`;
-            }
-            html += '</tr></table></div>';
             container.innerHTML = html;
         }
 
