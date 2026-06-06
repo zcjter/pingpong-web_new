@@ -2316,16 +2316,22 @@
                         <button type="button" class="category-btn" data-cat="u15男双" onclick="selectMatchCategory(this, 'u15男双')">u15男双</button>
                         <button type="button" class="category-btn" data-cat="u15女双" onclick="selectMatchCategory(this, 'u15女双')">u15女双</button>
                         <button type="button" class="category-btn" data-cat="u15混双" onclick="selectMatchCategory(this, 'u15混双')">u15混双</button>
+                        <button type="button" class="category-btn" data-cat="u15男团" onclick="selectMatchCategory(this, 'u15男团')">u15男团</button>
+                        <button type="button" class="category-btn" data-cat="u15女团" onclick="selectMatchCategory(this, 'u15女团')">u15女团</button>
                         <button type="button" class="category-btn" data-cat="u17男单" onclick="selectMatchCategory(this, 'u17男单')">u17男单</button>
                         <button type="button" class="category-btn" data-cat="u17女单" onclick="selectMatchCategory(this, 'u17女单')">u17女单</button>
                         <button type="button" class="category-btn" data-cat="u17男双" onclick="selectMatchCategory(this, 'u17男双')">u17男双</button>
                         <button type="button" class="category-btn" data-cat="u17女双" onclick="selectMatchCategory(this, 'u17女双')">u17女双</button>
                         <button type="button" class="category-btn" data-cat="u17混双" onclick="selectMatchCategory(this, 'u17混双')">u17混双</button>
+                        <button type="button" class="category-btn" data-cat="u17男团" onclick="selectMatchCategory(this, 'u17男团')">u17男团</button>
+                        <button type="button" class="category-btn" data-cat="u17女团" onclick="selectMatchCategory(this, 'u17女团')">u17女团</button>
                         <button type="button" class="category-btn" data-cat="u19男单" onclick="selectMatchCategory(this, 'u19男单')">u19男单</button>
                         <button type="button" class="category-btn" data-cat="u19女单" onclick="selectMatchCategory(this, 'u19女单')">u19女单</button>
                         <button type="button" class="category-btn" data-cat="u19男双" onclick="selectMatchCategory(this, 'u19男双')">u19男双</button>
                         <button type="button" class="category-btn" data-cat="u19女双" onclick="selectMatchCategory(this, 'u19女双')">u19女双</button>
                         <button type="button" class="category-btn" data-cat="u19混双" onclick="selectMatchCategory(this, 'u19混双')">u19混双</button>
+                        <button type="button" class="category-btn" data-cat="u19男团" onclick="selectMatchCategory(this, 'u19男团')">u19男团</button>
+                        <button type="button" class="category-btn" data-cat="u19女团" onclick="selectMatchCategory(this, 'u19女团')">u19女团</button>
                         <button type="button" class="category-btn" data-cat="男单" onclick="selectMatchCategory(this, '男单')">男单</button>
                         <button type="button" class="category-btn" data-cat="女单" onclick="selectMatchCategory(this, '女单')">女单</button>
                         <button type="button" class="category-btn" data-cat="男双" onclick="selectMatchCategory(this, '男双')">男双</button>
@@ -2421,16 +2427,22 @@
                         <option value="u15男双">u15男双</option>
                         <option value="u15女双">u15女双</option>
                         <option value="u15混双">u15混双</option>
+                        <option value="u15男团">u15男团</option>
+                        <option value="u15女团">u15女团</option>
                         <option value="u17男单">u17男单</option>
                         <option value="u17女单">u17女单</option>
                         <option value="u17男双">u17男双</option>
                         <option value="u17女双">u17女双</option>
                         <option value="u17混双">u17混双</option>
+                        <option value="u17男团">u17男团</option>
+                        <option value="u17女团">u17女团</option>
                         <option value="u19男单">u19男单</option>
                         <option value="u19女单">u19女单</option>
                         <option value="u19男双">u19男双</option>
                         <option value="u19女双">u19女双</option>
                         <option value="u19混双">u19混双</option>
+                        <option value="u19男团">u19男团</option>
+                        <option value="u19女团">u19女团</option>
                         <option value="男单">男单</option>
                         <option value="女单">女单</option>
                         <option value="男双">男双</option>
@@ -2684,7 +2696,7 @@
                         if (!grouped[cat]) grouped[cat] = [];
                         grouped[cat].push(r);
                     });
-                    const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                    const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                     categories.forEach(cat => {
                         if (grouped[cat] && grouped[cat].length > 0) {
                             const top3 = grouped[cat].slice(0, 3).sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
@@ -2719,7 +2731,7 @@
         let currentDetailCategory = '';
 
         function renderDetailRounds(container, matches) {
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
@@ -2784,7 +2796,7 @@
                         const p2Country = m.player2Country || '';
                         const p1Won = p1Total > p2Total && p1Total > 0;
                         const p2Won = p2Total > p1Total && p2Total > 0;
-                        const isTeamMatch = m.category === '男团' || m.category === '女团';
+                        const isTeamMatch = m.category && m.category.includes('团');
                         const isDoublesMatch = m.category === '男双' || m.category === '女双' || m.category === '混双';
                         const maxLen = isDoublesMatch ? 15 : (isTeamMatch ? 20 : 999);
                         const p1DisplayName = (maxLen < 999 && p1Name.length > maxLen ? p1Name.substring(0, maxLen) + '...' : p1Name) || '-';
@@ -2957,7 +2969,7 @@
         }
 
         function initBracketView(matches) {
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -2991,7 +3003,7 @@
             document.querySelectorAll('.bracket-category-tab').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent === category);
             });
-            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
             const categoryMatches = {};
             currentCompetitionMatches.forEach(m => {
                 const cat = m.category || '其他';
@@ -3007,7 +3019,7 @@
                 return;
             }
 
-            const isTeamCategory = category === '男团' || category === '女团';
+            const isTeamCategory = category && category.includes('团');
             const eliminationRounds = matches.filter(m => {
                 const rn = String(m.roundNumber || '');
                 if (!rn || rn.trim() === '') return true;
@@ -3302,7 +3314,7 @@
             sortedRoundKeysFinal.forEach(key => {
                 roundPositions[key].forEach(pos => {
                     const m = pos.match;
-                    const isTeam = category === '男团' || category === '女团';
+                    const isTeam = category && category.includes('团');
                     const p1 = isTeam ? (m.player1Country || m.player1Name || '') : (m.player1Name || '');
                     const p2 = isTeam ? (m.player2Country || m.player2Name || '') : (m.player2Name || '');
 
@@ -3693,7 +3705,7 @@
             document.querySelectorAll('#match-modal .category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('match-category').value = cat;
-            const isTeam = cat === '男团' || cat === '女团';
+            const isTeam = cat && cat.includes('团');
             document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
             document.getElementById('match-regular-score-section').style.display = isTeam ? 'none' : 'block';
             // 切换时去掉选手1/选手2的required，避免提交时报错
@@ -3901,7 +3913,7 @@
                 document.querySelectorAll('#match-modal .category-btn').forEach(b => {
                     b.classList.toggle('active', b.getAttribute('data-cat') === currentDetailCategory);
                 });
-                const isTeamNew = currentDetailCategory === '男团' || currentDetailCategory === '女团';
+                const isTeamNew = currentDetailCategory && currentDetailCategory.includes('团');
                 document.getElementById('team-match-section').style.display = isTeamNew ? 'block' : 'none';
                 document.getElementById('match-regular-score-section').style.display = isTeamNew ? 'none' : 'block';
                 document.getElementById('match-player1').required = !isTeamNew;
@@ -3914,7 +3926,7 @@
                     b.classList.toggle('active', b.getAttribute('data-cat') === cat);
                 });
                 // 如果默认类别是团体赛，显示团体表单
-                const isTeamDef = cat === '男团' || cat === '女团';
+                const isTeamDef = cat && cat.includes('团');
                 document.getElementById('team-match-section').style.display = isTeamDef ? 'block' : 'none';
                 document.getElementById('match-regular-score-section').style.display = isTeamDef ? 'none' : 'block';
                 document.getElementById('match-player1').required = !isTeamDef;
@@ -3949,7 +3961,7 @@
                     }
 
                     // 处理团体赛子场次
-                    const isTeam = cat === '男团' || cat === '女团';
+                    const isTeam = cat && cat.includes('团');
                     document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
                     document.getElementById('match-regular-score-section').style.display = isTeam ? 'none' : 'block';
                     document.getElementById('match-player1').required = !isTeam;
@@ -4009,7 +4021,7 @@
             e.preventDefault();
             const id = document.getElementById('match-id').value;
             const category = document.getElementById('match-category').value;
-            const isTeam = category === '男团' || category === '女团';
+            const isTeam = category && category.includes('团');
 
             let match;
 
@@ -4234,7 +4246,7 @@
                     grouped[cat].sort((a, b) => (a.ranking || 999) - (b.ranking || 999));
                 });
 
-                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                 let html = '';
 
                 categories.forEach(cat => {
@@ -4511,7 +4523,7 @@
                         : '';
 
                 // 按项目分组
-                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+                const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u17男团', 'u17女团', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
                 const grouped = {};
                 matches.forEach(m => {
                     const cat = m.category || '其他';
