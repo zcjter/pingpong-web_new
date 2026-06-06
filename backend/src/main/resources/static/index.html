@@ -2264,6 +2264,7 @@
                         <input type="text" id="match-player1-country" placeholder="国家" style="width:100px;">
                     </div>
                 </div>
+                <div id="match-regular-score-section">
                 <div class="form-group">
                     <label>局数 (5局3胜或7局4胜)</label>
                     <select id="match-games" onchange="renderScoreInputs()">
@@ -2275,6 +2276,7 @@
                 <div class="form-group">
                     <label>每局比分</label>
                     <div id="score-inputs-container"></div>
+                </div>
                 </div>
                 <div class="form-group">
                     <label>选手2 *</label>
@@ -3693,6 +3695,7 @@
             document.getElementById('match-category').value = cat;
             const isTeam = cat === '男团' || cat === '女团';
             document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
+            document.getElementById('match-regular-score-section').style.display = isTeam ? 'none' : 'block';
             // 切换时去掉选手1/选手2的required，避免提交时报错
             document.getElementById('match-player1').required = !isTeam;
             document.getElementById('match-player2').required = !isTeam;
@@ -3839,15 +3842,15 @@
                 html += `
                     <div class="team-sub-match" style="border:1px solid #d0d0d0;border-radius:8px;padding:12px;margin-bottom:10px;background:#fafafa;">
                         <div style="font-size:12px;font-weight:700;color:#444;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #1a73e8;display:inline-block;">第${i+1}场</div>
-                        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-                            <div style="flex:1;display:flex;gap:4px;align-items:center;">
-                                <input type="text" class="tsm-p1" placeholder="选手1姓名" style="flex:1;min-width:0;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
-                                <input type="text" class="tsm-p1-country" placeholder="国家" style="width:60px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
+                        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+                            <div style="flex:1;display:flex;gap:4px;align-items:center;min-width:0;max-width:45%;">
+                                <input type="text" class="tsm-p1" placeholder="选手1" style="width:100px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
+                                <input type="text" class="tsm-p1-country" placeholder="国家" style="width:70px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
                             </div>
-                            <span style="font-weight:700;color:#bbb;font-size:13px;">VS</span>
-                            <div style="flex:1;display:flex;gap:4px;align-items:center;">
-                                <input type="text" class="tsm-p2" placeholder="选手2姓名" style="flex:1;min-width:0;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
-                                <input type="text" class="tsm-p2-country" placeholder="国家" style="width:60px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
+                            <span style="font-weight:700;color:#bbb;font-size:12px;flex-shrink:0;">VS</span>
+                            <div style="flex:1;display:flex;gap:4px;align-items:center;min-width:0;max-width:45%;">
+                                <input type="text" class="tsm-p2" placeholder="选手2" style="width:100px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:13px;" data-idx="${i}">
+                                <input type="text" class="tsm-p2-country" placeholder="国家" style="width:70px;border:1px solid #ddd;border-radius:4px;padding:5px 8px;font-size:12px;" data-idx="${i}">
                             </div>
                         </div>
                         <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
@@ -3900,6 +3903,7 @@
                 });
                 const isTeamNew = currentDetailCategory === '男团' || currentDetailCategory === '女团';
                 document.getElementById('team-match-section').style.display = isTeamNew ? 'block' : 'none';
+                document.getElementById('match-regular-score-section').style.display = isTeamNew ? 'none' : 'block';
                 document.getElementById('match-player1').required = !isTeamNew;
                 document.getElementById('match-player2').required = !isTeamNew;
                 if (isTeamNew) renderTeamSubMatches();
@@ -3912,6 +3916,7 @@
                 // 如果默认类别是团体赛，显示团体表单
                 const isTeamDef = cat === '男团' || cat === '女团';
                 document.getElementById('team-match-section').style.display = isTeamDef ? 'block' : 'none';
+                document.getElementById('match-regular-score-section').style.display = isTeamDef ? 'none' : 'block';
                 document.getElementById('match-player1').required = !isTeamDef;
                 document.getElementById('match-player2').required = !isTeamDef;
                 if (isTeamDef) renderTeamSubMatches();
@@ -3946,6 +3951,7 @@
                     // 处理团体赛子场次
                     const isTeam = cat === '男团' || cat === '女团';
                     document.getElementById('team-match-section').style.display = isTeam ? 'block' : 'none';
+                    document.getElementById('match-regular-score-section').style.display = isTeam ? 'none' : 'block';
                     document.getElementById('match-player1').required = !isTeam;
                     document.getElementById('match-player2').required = !isTeam;
                     if (isTeam && m.teamScores) {
