@@ -5311,37 +5311,7 @@
 
                 cont.innerHTML = html; load.style.display = 'none';
 
-                // 3) 全局胜率趋势（折线图）
-                if (d.monthlyWinRate && d.monthlyWinRate.length > 1) {
-                    var trendDiv = document.createElement('div');
-                    trendDiv.style.marginBottom = '20px';
-                    trendDiv.innerHTML = '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">📈 全局胜率趋势</h4><div id="v-ov-monthly-trend" style="height:240px;"></div>';
-                    cont.appendChild(trendDiv);
-                    var chart = echarts.init(document.getElementById('v-ov-monthly-trend'));
-                    var months = d.monthlyWinRate.map(function(m){ return m.month; });
-                    var matches = d.monthlyWinRate.map(function(m){ return m.matches; });
-                    var winRates = d.monthlyWinRate.map(function(m){ return m.winRate; });
-                    chart.setOption({
-                        tooltip:{trigger:'axis'},
-                        legend:{data:['场次','胜率(%)'],bottom:0,textStyle:{fontSize:11}},
-                        grid:{left:'3%',right:'3%',bottom:'16%',top:'4%',containLabel:true},
-                        xAxis:{type:'category',data:months,axisLabel:{rotate:30,fontSize:10}},
-                        yAxis:[
-                            {type:'value',name:'场次',minInterval:1,axisLabel:{fontSize:10}},
-                            {type:'value',name:'胜率(%)',min:0,max:100,axisLabel:{fontSize:10,formatter:'{value}%'}}
-                        ],
-                        series:[
-                            {name:'场次',type:'bar',barWidth:'20%',data:matches,itemStyle:{color:'#0077b6',borderRadius:[3,3,0,0]}},
-                            {name:'胜率(%)',type:'line',yAxisIndex:1,data:winRates,smooth:true,
-                              symbol:'circle',symbolSize:6,lineStyle:{color:'#e53935',width:2},
-                              itemStyle:{color:'#e53935'},areaStyle:{color:'rgba(229,57,53,.12)'},
-                              label:{show:true,position:'top',fontSize:10,fontWeight:'bold',formatter:'{c}%'}}
-                        ]
-                    }, true);
-                    window.addEventListener('resize',function(){chart.resize();});
-                }
-
-                // 4) 各类赛事占比（饼图）
+                // 3) 各类赛事占比（饼图）
                 if (d.compTypeDistribution && d.compTypeDistribution.length > 0) {
                     var pieDiv = document.createElement('div');
                     pieDiv.style.marginBottom = '20px';
@@ -5364,7 +5334,7 @@
                     window.addEventListener('resize',function(){pieChart.resize();});
                 }
 
-                // 5) 各国冠军榜
+                // 4) 各国冠军榜
                 if (d.countryChampionships && d.countryChampionships.length > 0) {
                     var champDiv = document.createElement('div');
                     champDiv.style.marginBottom = '20px';
@@ -5388,7 +5358,7 @@
                     window.addEventListener('resize',function(){barChart.resize();});
                 }
 
-                // 6) 冷门对局
+                // 5) 冷门对局
                 if (d.upsets && d.upsets.length > 0) {
                     var upsetDiv = document.createElement('div');
                     upsetDiv.style.marginBottom = '10px';
@@ -5411,7 +5381,7 @@
                     cont.appendChild(upsetDiv);
                 }
 
-                if (!html && !d.monthlyWinRate && !d.compTypeDistribution && !d.countryChampionships && !d.upsets) {
+                if (!html && !d.compTypeDistribution && !d.countryChampionships && !d.upsets) {
                     cont.innerHTML = '<div class="empty-state" style="padding:20px;">暂无总体分析数据</div>';
                 }
                 load.style.display = 'none';
@@ -5500,6 +5470,9 @@
                 var scores = [];
                 try { if (m.scores) scores = JSON.parse(m.scores); } catch(e) {}
                 if (!scores || scores.length===0) { cont.innerHTML += '<div class="empty-state">暂无比分数据</div>'; return; }
+                // 过滤掉 0-0 的无效局
+                scores = scores.filter(function(s){ return !(s.p1 === 0 && s.p2 === 0); });
+                if (scores.length === 0) { cont.innerHTML += '<div class="empty-state">暂无比分数据</div>'; return; }
 
                 chartDiv.style.display = 'block';
                 if (vizScoreChart) vizScoreChart.dispose();
