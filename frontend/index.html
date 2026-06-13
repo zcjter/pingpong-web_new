@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Lato:wght@300;400;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1944,6 +1945,139 @@
             background: #ffebee;
             color: #c62828;
         }
+
+        /* ===== 可视化 & 图片上传 ===== */
+        .chart-container { width:100%; height:340px; }
+        .chart-container-sm { width:100%; height:280px; }
+        .viz-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .viz-stat-card {
+            background: #f8f9fb;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        .viz-stat-card .v-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0077b6;
+        }
+        .viz-stat-card .v-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 3px;
+        }
+        .viz-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .viz-tab-bar {
+            display: flex;
+            gap: 2px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .viz-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all .2s;
+            color: #666;
+            user-select: none;
+        }
+        .viz-tab:hover {
+            color: #333;
+            background: #f5f7fa;
+        }
+        @media (max-width:768px) { .viz-row { grid-template-columns:1fr; } }
+        .viz-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .viz-controls select, .viz-controls input[type="file"] {
+            padding: 7px 10px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #fff;
+        }
+        .viz-controls select:focus {
+            border-color: #0077b6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,119,182,.15);
+        }
+        .upload-zone {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafafa;
+            margin-bottom: 14px;
+            transition: all .3s;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #0077b6;
+            background: #f0f7ff;
+        }
+        .upload-zone .uz-icon { font-size: 40px; color: #ccc; }
+        .upload-zone .uz-text { font-size: 14px; color: #999; margin-top: 6px; }
+        .upload-zone .uz-hint { font-size: 12px; color: #bbb; margin-top: 4px; }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .preview-item {
+            border-radius: 8px; overflow: hidden;
+            border: 1px solid #eee; background: #fafafa;
+            position: relative;
+        }
+        .preview-item img { width:100%; height:120px; object-fit:cover; display:block; }
+        .preview-item .pi-info { padding:6px 8px; font-size:11px; color:#666; }
+        .sub-tabs {
+            display: flex; gap: 4px; margin-bottom: 14px;
+        }
+        .sub-tab {
+            padding: 7px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+            color: #666; border-radius: 6px; transition: all .2s;
+            background: #f0f0f0;
+        }
+        .sub-tab:hover { background: #e0e0e0; }
+        .sub-tab.active { background: #0077b6; color: #fff; }
+        .sub-content { display: none; }
+        .sub-content.active { display: block; }
+        .viz-toast {
+            position: fixed; top: 20px; right: 20px; padding: 12px 18px;
+            border-radius: 10px; color: #fff; font-weight: 600; font-size: 13px;
+            z-index: 99999; box-shadow: 0 4px 20px rgba(0,0,0,.2);
+            transform: translateX(120%); transition: transform .3s ease;
+            max-width: 360px;
+        }
+        .viz-toast.show { transform: translateX(0); }
+        .viz-toast.success { background: #43a047; }
+        .viz-toast.error { background: #e53935; }
+        .viz-toast.info { background: #0077b6; }
+        .loading-spinner {
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid #ccc; border-top-color: #0077b6;
+            border-radius: 50%; animation: spin .6s linear infinite;
+            margin-right: 4px; vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 
@@ -1958,6 +2092,7 @@
         <span class="nav-item" data-page="competitions">赛事管理</span>
         <span class="nav-item" data-page="ranking-manage">排名管理</span>
         <span class="nav-item" data-page="champions">赛事冠军</span>
+        <span class="nav-item" data-page="visualization">📊 数据</span>
     </div>
 
     <div class="container">
@@ -2170,6 +2305,51 @@
                         <button class="btn btn-danger" onclick="deleteAnnouncement(currentAnnouncementId)">删除</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 数据可视化页面 ===== -->
+    <div id="page-visualization" style="display:none;">
+        <div class="card">
+            <div class="sub-tabs">
+                <div class="sub-tab active" data-sub="player" onclick="switchVizSub('player',this)">👤 运动员分析</div>
+                <div class="sub-tab" data-sub="overview" onclick="switchVizSub('overview',this)">📊 总体分析</div>
+                <div class="sub-tab" data-sub="score" onclick="switchVizSub('score',this)">🏓 比分走势</div>
+            </div>
+
+            <!-- 子标签：运动员分析 -->
+            <div id="viz-player" class="sub-content active">
+                <div class="viz-controls" style="position:relative;">
+                    <input id="v-player-search" type="text" placeholder="🔍 输入运动员名称..." oninput="filterPlayerAutocomplete()" style="min-width:220px;padding:7px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;">
+                    <select id="v-player-select" onchange="loadVizPlayerDetailed()" style="display:none;">
+                        <option value="">-- 选择运动员 --</option>
+                    </select>
+                    <div id="v-player-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:1000;background:#fff;border:1px solid #ddd;border-radius:8px;max-height:300px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1);"></div>
+                    <span id="v-player-loading" style="display:none;"><span class="loading-spinner"></span>加载中...</span>
+                </div>
+                <div id="v-player-content" class="empty-state" style="padding:20px;">请选择运动员查看完整数据分析</div>
+            </div>
+
+            <!-- 子标签：总体分析 -->
+            <div id="viz-overview" class="sub-content">
+                <div id="v-overview-content" style="padding:4px 0;"></div>
+                <div id="v-overview-loading" style="display:none;text-align:center;padding:20px;"><span class="loading-spinner"></span>加载中...</div>
+            </div>
+
+            <!-- 子标签：比分走势（折线图，跳过团体赛） -->
+            <div id="viz-score" class="sub-content">
+                <div class="viz-controls">
+                    <input id="v-score-search" type="text" placeholder="🔍 搜索赛事..." oninput="filterScoreCompetitions()" style="min-width:140px;padding:7px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;">
+                    <select id="v-score-competition" onchange="loadScoreMatches()" style="min-width:160px;">
+                        <option value="">-- 选择赛事 --</option>
+                    </select>
+                    <select id="v-score-match" onchange="loadScoreTrend()" style="min-width:200px;">
+                        <option value="">-- 选择比赛 --</option>
+                    </select>
+                </div>
+                <div id="v-score-content" class="empty-state" style="padding:20px;">选择赛事和比赛查看每局比分走势</div>
+                <div id="chart-score-trend" style="width:100%;height:300px;display:none;"></div>
             </div>
         </div>
     </div>
@@ -2660,6 +2840,9 @@
                 case 'competitions': loadCompetitions(); break;
                 case 'ranking-manage': loadRankingManage(); break;
                 case 'champions': loadChampionsPage(); break;
+                case 'visualization':
+                    loadVizPlayerList(); loadVizCompetitions();
+                    break;
             }
         }
 
@@ -4836,6 +5019,569 @@
         function closeModal(id) {
             document.getElementById(id).classList.remove('show');
         }
+
+        // ====================================================================
+        //  数据可视化 (新功能)
+        // ====================================================================
+
+        var vizScoreChart = null;
+
+        // 切换子标签
+        function switchVizSub(name, el) {
+            document.querySelectorAll('.sub-content').forEach(function(c){ c.classList.remove('active'); });
+            document.querySelectorAll('.sub-tab').forEach(function(t){ t.classList.remove('active'); });
+            document.getElementById('viz-' + name).classList.add('active');
+            el.classList.add('active');
+            if (name === 'player') { loadVizPlayerList(); }
+            if (name === 'overview') { loadVizOverview(); }
+            if (name === 'score') { loadVizCompetitions(); }
+        }
+
+        // --- 运动员分析（输入自动补全搜索）---
+        var vizPlayerNames = [];
+
+        function loadVizPlayerList() {
+            fetch(API_BASE+'/statistics/players/from-matches').then(function(r){return r.json();}).then(function(players){
+                // Filter to individual names only
+                var singles = players.filter(function(p){
+                    return !/[\/、，,&+]/.test(p.name);
+                });
+                vizPlayerNames = singles.map(function(p){ return p.name; });
+                // Populate hidden select as fallback
+                var sel = document.getElementById('v-player-select');
+                sel.innerHTML = '<option value="">-- 选择运动员 --</option>' +
+                    singles.map(function(p){ return '<option value="'+p.name+'">'+p.name+'</option>'; }).join('');
+            }).catch(function(e){console.error(e);});
+        }
+
+        function filterPlayerAutocomplete() {
+            var q = document.getElementById('v-player-search').value.trim();
+            var dd = document.getElementById('v-player-dropdown');
+            if (!q) { dd.style.display = 'none'; dd.innerHTML = ''; return; }
+            var matched = vizPlayerNames.filter(function(n){
+                return n.toLowerCase().indexOf(q.toLowerCase()) >= 0;
+            }).slice(0, 50);
+            if (matched.length === 0) { dd.style.display = 'none'; dd.innerHTML = ''; return; }
+            dd.style.display = 'block';
+            dd.innerHTML = matched.map(function(n){
+                return '<div onclick="selectPlayerAutocomplete(\''+n.replace(/'/g,"\\'")+'\')" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f0f0f0;transition:background .15s;" onmouseover="this.style.background=\'#f5f7fa\'" onmouseout="this.style.background=\'\'">'+n+'</div>';
+            }).join('');
+        }
+
+        function selectPlayerAutocomplete(name) {
+            document.getElementById('v-player-search').value = name;
+            document.getElementById('v-player-dropdown').style.display = 'none';
+            document.getElementById('v-player-dropdown').innerHTML = '';
+            loadVizPlayerDetailed();
+        }
+
+        function loadVizPlayerDetailed() {
+            var name = document.getElementById('v-player-search').value.trim();
+            var cont = document.getElementById('v-player-content');
+            var load = document.getElementById('v-player-loading');
+            if (!name) { cont.innerHTML = '<div class="empty-state" style="padding:20px;">请选择运动员查看完整数据分析</div>'; return; }
+            load.style.display = 'inline-block'; cont.innerHTML = '';
+
+            fetch(API_BASE+'/statistics/player/detailed-by-name?name='+encodeURIComponent(name))
+            .then(function(r){return r.json();})
+            .then(function(d){
+                var html = '';
+
+                // === 基本战绩卡片 ===
+                html += '<div class="viz-stats-grid" style="margin-bottom:14px;">' +
+                    '<div class="viz-stat-card" style="background:#e8f5e9;"><div class="v-value" style="color:#2e7d32;">'+(d.totalMatches||0)+'</div><div class="v-label">总场次</div></div>' +
+                    '<div class="viz-stat-card" style="background:#e8f5e9;"><div class="v-value" style="color:#2e7d32;">'+(d.wins||0)+'</div><div class="v-label">胜</div></div>' +
+                    '<div class="viz-stat-card" style="background:#ffebee;"><div class="v-value" style="color:#c62828;">'+(d.losses||0)+'</div><div class="v-label">负</div></div>' +
+                    '<div class="viz-stat-card" style="background:#e3f2fd;"><div class="v-value" style="color:#0077b6;">'+(d.winRate||0)+'%</div><div class="v-label">胜率</div></div></div>';
+
+                if (d.totalMatches === 0) html += '<div class="empty-state" style="padding:16px;">暂无比赛记录</div>';
+                cont.innerHTML = html; load.style.display = 'none';
+
+                // === Tab 化展示 ===
+                var tabSections = [];
+
+                // 参赛赛事
+                if (d.competitionDetails && d.competitionDetails.length > 0) {
+                    var compHtml = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">赛事</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">年份</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">项目</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">场次</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">负</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜率</th></tr></thead><tbody>';
+                    d.competitionDetails.forEach(function(cd){
+                        compHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+(cd.competitionName||'')+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(cd.competitionYear||'-')+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;">'+(cd.category||'-')+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(cd.matches||0)+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#2e7d32;">'+(cd.wins||0)+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#c62828;">'+(cd.losses||0)+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(cd.winRate||0)+'%</td></tr>';
+                    });
+                    compHtml += '</tbody></table></div>';
+                    // Add comp type breakdown if available
+                    if (d.compTypeBreakdown && d.compTypeBreakdown.length > 0) {
+                        compHtml += '<h4 style="font-size:12px;color:#888;margin:14px 0 6px;">按赛事类型统计</h4>';
+                        compHtml += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                            '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">类型</th>' +
+                            '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">场次</th>' +
+                            '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜</th>' +
+                            '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">负</th>' +
+                            '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜率</th></tr></thead><tbody>';
+                        d.compTypeBreakdown.forEach(function(r){
+                            compHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+r.type+'</td>' +
+                                '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+r.matches+'</td>' +
+                                '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#2e7d32;">'+r.wins+'</td>' +
+                                '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#c62828;">'+r.losses+'</td>' +
+                                '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(r.winRate||0)+'%</td></tr>';
+                        });
+                        compHtml += '</tbody></table></div>';
+                    }
+                    tabSections.push({label:'参赛赛事', html:compHtml});
+                }
+
+                // 夺冠记录
+                if (d.championships && d.championships.length > 0) {
+                    var champHtml = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#fff8e1;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">赛事</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">项目</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">类型</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">决赛对手</th></tr></thead><tbody>';
+                    var sortedChamps = d.championships.slice().sort(function(a, b){
+                        var catCmp = (a.category||'').localeCompare(b.category||'');
+                        if (catCmp !== 0) return catCmp;
+                        return (b.competitionYear||0) - (a.competitionYear||0);
+                    });
+                    sortedChamps.forEach(function(ch){
+                        var pt = ch.playType || '-';
+                        var ptColor = pt==='单打'?'#0077b6':(pt==='双打'?'#43a047':(pt==='团体'?'#fb8c00':'#999'));
+                        champHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;">'+(ch.competitionName||'')+' ('+(ch.competitionYear||'')+')</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;">'+ch.category+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;color:'+ptColor+';">'+pt+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+ch.opponent+'</td></tr>';
+                    });
+                    champHtml += '</tbody></table></div>';
+                    tabSections.push({label:'夺冠记录', html:champHtml});
+                }
+
+                // 对手交锋记录
+                if (d.opponentRecords && d.opponentRecords.length > 0) {
+                    var oppHtml = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">对手</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">交手次数</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">负</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜率</th></tr></thead><tbody>';
+                    d.opponentRecords.forEach(function(r){
+                        oppHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+r.opponent+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+r.matches+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#2e7d32;">'+r.wins+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#c62828;">'+r.losses+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(r.winRate||0)+'%</td></tr>';
+                    });
+                    oppHtml += '</tbody></table></div>';
+                    tabSections.push({label:'对手交锋记录', html:oppHtml});
+                }
+
+                // 各轮次胜率
+                if (d.roundBreakdown && d.roundBreakdown.length > 0) {
+                    var roundHtml = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">轮次</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">场次</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">负</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜率</th></tr></thead><tbody>';
+                    d.roundBreakdown.forEach(function(r){
+                        roundHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+r.round+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+r.matches+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#2e7d32;">'+r.wins+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#c62828;">'+r.losses+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+(r.winRate||0)+'%</td></tr>';
+                    });
+                    roundHtml += '</tbody></table></div>';
+                    tabSections.push({label:'各轮次胜率', html:roundHtml});
+                }
+
+                // 比分分析
+                var hasScoreAnalysis = (d.maxScoreDiff||0) > 0 || d.comebackWins || d.comebackLosses || (d.scoreDistribution && d.scoreDistribution.length > 0);
+                if (hasScoreAnalysis) {
+                    var scoreHtml = '<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">' +
+                        '<div class="viz-stat-card" style="flex:1;min-width:100px;background:#e3f2fd;text-align:center;padding:10px;"><div class="v-value" style="font-size:20px;color:#0077b6;">'+(d.maxScoreDiff||0)+'</div><div class="v-label" style="font-size:11px;">单局最大分差</div></div>' +
+                        '<div class="viz-stat-card" style="flex:1;min-width:100px;background:#e8f5e9;text-align:center;padding:10px;"><div class="v-value" style="font-size:20px;color:#2e7d32;">'+(d.comebackWins||0)+'</div><div class="v-label" style="font-size:11px;">逆转获胜</div></div>' +
+                        '<div class="viz-stat-card" style="flex:1;min-width:100px;background:#ffebee;text-align:center;padding:10px;"><div class="v-value" style="font-size:20px;color:#c62828;">'+(d.comebackLosses||0)+'</div><div class="v-label" style="font-size:11px;">被逆转告负</div></div>' +
+                        '</div>';
+                    if (d.scoreDistribution && d.scoreDistribution.length > 0) {
+                        scoreHtml += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                            '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">比分</th>' +
+                            '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">出现次数</th></tr></thead><tbody>';
+                        var topScores = d.scoreDistribution.slice(0, 15);
+                        topScores.forEach(function(s){
+                            scoreHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+s.score+'</td>' +
+                                '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+s.count+'</td></tr>';
+                        });
+                        scoreHtml += '</tbody></table></div>';
+                    }
+                    tabSections.push({label:'比分分析', html:scoreHtml});
+                }
+
+                // 渲染 Tab
+                if (tabSections.length > 0) {
+                    var tabBar = '<div class="viz-tab-bar" style="display:flex;gap:2px;border-bottom:2px solid #e0e0e0;margin-bottom:12px;flex-wrap:wrap;">';
+                    var tabPanels = '';
+                    tabSections.forEach(function(ts, i){
+                        var active = i === 0 ? ' active' : '';
+                        tabBar += '<span class="viz-tab'+active+'" data-idx="'+i+'" style="padding:8px 16px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;color:'+(i===0?'#0077b6':'#666')+';font-weight:'+(i===0?'600':'400')+';border-bottom-color:'+(i===0?'#0077b6':'transparent')+';">'+ts.label+'</span>';
+                        tabPanels += '<div class="viz-tab-panel'+active+'" data-idx="'+i+'" style="display:'+(i===0?'block':'none')+';">'+ts.html+'</div>';
+                    });
+                    tabBar += '</div>';
+                    cont.insertAdjacentHTML('beforeend', tabBar + tabPanels);
+                    // Tab switching via click
+                    var tabs = cont.querySelectorAll('.viz-tab');
+                    var panels = cont.querySelectorAll('.viz-tab-panel');
+                    tabs.forEach(function(tab){
+                        tab.addEventListener('click', function(){
+                            var idx = parseInt(this.getAttribute('data-idx'));
+                            tabs.forEach(function(t){
+                                t.style.color = '#666';
+                                t.style.fontWeight = '400';
+                                t.style.borderBottomColor = 'transparent';
+                            });
+                            panels.forEach(function(p){ p.style.display = 'none'; });
+                            this.style.color = '#0077b6';
+                            this.style.fontWeight = '600';
+                            this.style.borderBottomColor = '#0077b6';
+                            var panel = panels[idx];
+                            if (panel) panel.style.display = 'block';
+                        });
+                    });
+                }
+            })
+            .catch(function(e){
+                console.error(e);
+                cont.innerHTML = '<div class="empty-state" style="padding:16px;color:#e53935;">加载失败</div>';
+                load.style.display = 'none';
+            });
+        }
+
+        // --- 总体分析 ---
+        function loadVizOverview() {
+            var cont = document.getElementById('v-overview-content');
+            var load = document.getElementById('v-overview-loading');
+            cont.innerHTML = ''; load.style.display = 'inline-block';
+
+            fetch(API_BASE+'/statistics/overview')
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                var html = '';
+
+                // 1) 全局比分分布
+                if (d.scoreDistribution && d.scoreDistribution.length > 0) {
+                    html += '<div style="margin-bottom:20px;">';
+                    html += '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">📊 全局比分分布 <span style="font-size:11px;color:#999;font-weight:400;">最大分差: '+(d.maxScoreDiff||0)+'</span></h4>';
+                    html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">比分</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">出现次数</th></tr></thead><tbody>';
+                    d.scoreDistribution.forEach(function(s){
+                        html += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+s.score+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+s.count+'</td></tr>';
+                    });
+                    html += '</tbody></table></div></div>';
+                }
+
+                // 2) 最活跃运动员 Top 20
+                if (d.mostActivePlayers && d.mostActivePlayers.length > 0) {
+                    html += '<div style="margin-bottom:20px;">';
+                    html += '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">👥 最活跃运动员 Top 20</h4>';
+                    html += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">#</th>' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">运动员</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">场次</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜率</th></tr></thead><tbody>';
+                    d.mostActivePlayers.forEach(function(p, i){
+                        html += '<tr><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#999;">'+(i+1)+'</td>' +
+                            '<td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;">'+p.name+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+p.matches+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#2e7d32;">'+p.wins+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+p.winRate+'%</td></tr>';
+                    });
+                    html += '</tbody></table></div></div>';
+                }
+
+                cont.innerHTML = html; load.style.display = 'none';
+
+                // 3) 全局胜率趋势（折线图）
+                if (d.monthlyWinRate && d.monthlyWinRate.length > 1) {
+                    var trendDiv = document.createElement('div');
+                    trendDiv.style.marginBottom = '20px';
+                    trendDiv.innerHTML = '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">📈 全局胜率趋势</h4><div id="v-ov-monthly-trend" style="height:240px;"></div>';
+                    cont.appendChild(trendDiv);
+                    var chart = echarts.init(document.getElementById('v-ov-monthly-trend'));
+                    var months = d.monthlyWinRate.map(function(m){ return m.month; });
+                    var matches = d.monthlyWinRate.map(function(m){ return m.matches; });
+                    var winRates = d.monthlyWinRate.map(function(m){ return m.winRate; });
+                    chart.setOption({
+                        tooltip:{trigger:'axis'},
+                        legend:{data:['场次','胜率(%)'],bottom:0,textStyle:{fontSize:11}},
+                        grid:{left:'3%',right:'3%',bottom:'16%',top:'4%',containLabel:true},
+                        xAxis:{type:'category',data:months,axisLabel:{rotate:30,fontSize:10}},
+                        yAxis:[
+                            {type:'value',name:'场次',minInterval:1,axisLabel:{fontSize:10}},
+                            {type:'value',name:'胜率(%)',min:0,max:100,axisLabel:{fontSize:10,formatter:'{value}%'}}
+                        ],
+                        series:[
+                            {name:'场次',type:'bar',barWidth:'20%',data:matches,itemStyle:{color:'#0077b6',borderRadius:[3,3,0,0]}},
+                            {name:'胜率(%)',type:'line',yAxisIndex:1,data:winRates,smooth:true,
+                              symbol:'circle',symbolSize:6,lineStyle:{color:'#e53935',width:2},
+                              itemStyle:{color:'#e53935'},areaStyle:{color:'rgba(229,57,53,.12)'},
+                              label:{show:true,position:'top',fontSize:10,fontWeight:'bold',formatter:'{c}%'}}
+                        ]
+                    }, true);
+                    window.addEventListener('resize',function(){chart.resize();});
+                }
+
+                // 4) 各类赛事占比（饼图）
+                if (d.compTypeDistribution && d.compTypeDistribution.length > 0) {
+                    var pieDiv = document.createElement('div');
+                    pieDiv.style.marginBottom = '20px';
+                    pieDiv.innerHTML = '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">🏟️ 各类赛事占比</h4><div id="v-ov-comp-type" style="height:260px;"></div>';
+                    cont.appendChild(pieDiv);
+                    var pieChart = echarts.init(document.getElementById('v-ov-comp-type'));
+                    var total = d.compTypeDistribution.reduce(function(s, t){ return s + t.count; }, 0);
+                    var pieData = d.compTypeDistribution.map(function(t){
+                        return {name: t.type, value: t.count};
+                    });
+                    pieChart.setOption({
+                        tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},
+                        series:[{
+                            type:'pie',radius:['30%','55%'],center:['50%','55%'],
+                            data:pieData,
+                            label:{fontSize:11,formatter:'{b}\n{d}%'},
+                            emphasis:{itemStyle:{shadowBlur:10,shadowOffsetX:0,shadowColor:'rgba(0,0,0,0.5)'}}
+                        }]
+                    }, true);
+                    window.addEventListener('resize',function(){pieChart.resize();});
+                }
+
+                // 5) 各国冠军榜
+                if (d.countryChampionships && d.countryChampionships.length > 0) {
+                    var champDiv = document.createElement('div');
+                    champDiv.style.marginBottom = '20px';
+                    champDiv.innerHTML = '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">🏆 各国冠军榜</h4><div id="v-ov-country-chart" style="height:280px;"></div>';
+                    cont.appendChild(champDiv);
+                    var barChart = echarts.init(document.getElementById('v-ov-country-chart'));
+                    var countries = d.countryChampionships.map(function(c){ return c.country; });
+                    var champs = d.countryChampionships.map(function(c){ return c.championships; });
+                    barChart.setOption({
+                        tooltip:{trigger:'axis'},
+                        grid:{left:'8%',right:'3%',bottom:'22%',top:'6%',containLabel:false},
+                        xAxis:{type:'category',data:countries,axisLabel:{fontSize:11,rotate:45,interval:0}},
+                        yAxis:{type:'value',minInterval:1,axisLabel:{fontSize:10}},
+                        series:[{
+                            type:'bar',barWidth:'50%',data:champs,
+                            itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#f5af19'},{offset:1,color:'#f12711'}]),
+                              borderRadius:[4,4,0,0]},
+                            label:{show:true,position:'top',fontSize:11,fontWeight:'bold'}
+                        }]
+                    }, true);
+                    window.addEventListener('resize',function(){barChart.resize();});
+                }
+
+                // 6) 冷门对局
+                if (d.upsets && d.upsets.length > 0) {
+                    var upsetDiv = document.createElement('div');
+                    upsetDiv.style.marginBottom = '10px';
+                    var upsetHtml = '<h4 style="font-size:14px;color:#333;margin:0 0 8px;">🔥 冷门对局 <span style="font-size:11px;color:#999;font-weight:400;">低排名选手战胜高排名选手</span></h4>';
+                    upsetHtml += '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="background:#f5f7fa;">' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">胜者</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">胜者积分</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">败者积分</th>' +
+                        '<th style="padding:6px 10px;text-align:center;border-bottom:1px solid #eee;">分差</th>' +
+                        '<th style="padding:6px 10px;text-align:left;border-bottom:1px solid #eee;">赛事</th></tr></thead><tbody>';
+                    d.upsets.forEach(function(u){
+                        upsetHtml += '<tr><td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-weight:600;color:#2e7d32;">'+u.winner+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;">'+u.winnerPoints+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;font-weight:600;">'+u.loserPoints+'</td>' +
+                            '<td style="padding:6px 10px;text-align:center;border-bottom:1px solid #f0f0f0;color:#e53935;">+'+u.diff+'</td>' +
+                            '<td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;color:#666;">'+u.competition+'</td></tr>';
+                    });
+                    upsetHtml += '</tbody></table></div>';
+                    upsetDiv.innerHTML = upsetHtml;
+                    cont.appendChild(upsetDiv);
+                }
+
+                if (!html && !d.monthlyWinRate && !d.compTypeDistribution && !d.countryChampionships && !d.upsets) {
+                    cont.innerHTML = '<div class="empty-state" style="padding:20px;">暂无总体分析数据</div>';
+                }
+                load.style.display = 'none';
+            })
+            .catch(function(e){
+                console.error(e);
+                cont.innerHTML = '<div class="empty-state" style="padding:16px;color:#e53935;">加载失败</div>';
+                load.style.display = 'none';
+            });
+        }
+
+        // --- 比分走势（折线图，跳过团体赛）---
+        var allScoreCompetitions = []; // cache all competitions for search
+
+        function loadVizCompetitions() {
+            fetch(API_BASE+'/competitions').then(function(r){return r.json();}).then(function(comps){
+                allScoreCompetitions = comps;
+                var sel = document.getElementById('v-score-competition');
+                // Clear search input
+                var searchInput = document.getElementById('v-score-search');
+                if (searchInput) searchInput.value = '';
+                populateScoreCompetitions(comps);
+            }).catch(function(e){console.error(e);});
+        }
+
+        function populateScoreCompetitions(comps) {
+            var sel = document.getElementById('v-score-competition');
+            sel.innerHTML = '<option value="">-- 选择赛事 --</option>' +
+                comps.map(function(c){ return '<option value="'+c.id+'">'+(c.name||'')+' ('+(c.competitionYear||'')+')</option>'; }).join('');
+        }
+
+        function filterScoreCompetitions() {
+            var q = document.getElementById('v-score-search').value.trim().toLowerCase();
+            var filtered = !q ? allScoreCompetitions : allScoreCompetitions.filter(function(c){
+                return (c.name && c.name.toLowerCase().indexOf(q) >= 0) ||
+                       (c.competitionYear && String(c.competitionYear).indexOf(q) >= 0);
+            });
+            populateScoreCompetitions(filtered);
+            // If the selected competition is no longer in the filtered list, reset
+            var sel = document.getElementById('v-score-competition');
+            if (!sel.value) {
+                document.getElementById('v-score-content').innerHTML = '<div class="empty-state" style="padding:20px;">选择赛事和比赛查看每局比分走势</div>';
+                document.getElementById('v-score-match').innerHTML = '<option value="">-- 选择比赛 --</option>';
+                document.getElementById('chart-score-trend').style.display = 'none';
+            }
+        }
+
+        function loadScoreMatches() {
+            var compId = document.getElementById('v-score-competition').value;
+            var sel = document.getElementById('v-score-match');
+            var cont = document.getElementById('v-score-content');
+            var chart = document.getElementById('chart-score-trend');
+            chart.style.display = 'none'; cont.style.display = 'block';
+            if (!compId) { sel.innerHTML = '<option value="">-- 选择比赛 --</option>'; cont.innerHTML = '<div class="empty-state" style="padding:20px;">请选择赛事</div>'; return; }
+            fetch(API_BASE+'/matches/competition/'+compId).then(function(r){return r.json();}).then(function(matches){
+                // 过滤掉团体赛
+                var singles = matches.filter(function(m){ return !(m.category && m.category.indexOf('团') >= 0); });
+                sel.innerHTML = '<option value="">-- 选择比赛 --</option>' +
+                    singles.map(function(m){
+                        var label = (m.player1Name||'?')+' vs '+(m.player2Name||'?');
+                        if (m.roundNumber) label = '['+m.roundNumber+'] '+label;
+                        if (m.category && m.category.indexOf('团')>=0) label += ' [团体]';
+                        return '<option value="'+m.id+'">'+label+'</option>';
+                    }).join('');
+                cont.innerHTML = singles.length === 0
+                    ? '<div class="empty-state" style="padding:20px;">该赛事没有个人比赛数据（全部为团体赛）</div>'
+                    : '<div class="empty-state" style="padding:20px;">请选择比赛查看比分走势</div>';
+            }).catch(function(e){console.error(e);});
+        }
+
+        function loadScoreTrend() {
+            var matchId = document.getElementById('v-score-match').value;
+            var cont = document.getElementById('v-score-content');
+            var chartDiv = document.getElementById('chart-score-trend');
+            cont.style.display = 'block'; chartDiv.style.display = 'none';
+            if (!matchId) { cont.innerHTML = '<div class="empty-state" style="padding:20px;">请选择比赛</div>'; return; }
+            fetch(API_BASE+'/matches/'+matchId).then(function(r){return r.json();}).then(function(m){
+                // 跳过团体赛
+                if (m.category && m.category.indexOf('团') >= 0) {
+                    cont.innerHTML = '<div class="empty-state" style="padding:20px;">团体赛不分析比分走势</div>';
+                    return;
+                }
+                cont.innerHTML = '<div style="margin-bottom:10px;font-size:13px;color:#333;"><b>'+(m.player1Name||'?')+'</b> vs <b>'+(m.player2Name||'?')+'</b>' +
+                    (m.roundNumber?' | '+m.roundNumber:'') + (m.venue?' | 🏟️ '+m.venue:'') + '</div>';
+
+                var scores = [];
+                try { if (m.scores) scores = JSON.parse(m.scores); } catch(e) {}
+                if (!scores || scores.length===0) { cont.innerHTML += '<div class="empty-state">暂无比分数据</div>'; return; }
+
+                chartDiv.style.display = 'block';
+                if (vizScoreChart) vizScoreChart.dispose();
+                vizScoreChart = echarts.init(chartDiv);
+
+                var games = scores.map(function(_,i){ return '第'+(i+1)+'局'; });
+                var p1s = scores.map(function(s){ return s.p1; });
+                var p2s = scores.map(function(s){ return s.p2; });
+                var maxScore = 0;
+                scores.forEach(function(s){ if(s.p1>maxScore)maxScore=s.p1; if(s.p2>maxScore)maxScore=s.p2; });
+                maxScore = Math.max(maxScore+3, 15);
+
+                vizScoreChart.setOption({
+                    tooltip: {
+                        trigger:'axis',
+                        formatter: function(params) {
+                            var idx = params[0].dataIndex, s = scores[idx];
+                            return '<b>第'+(idx+1)+'局</b><br/>'+
+                                (m.player1Name||'选手1')+': '+s.p1+' 分<br/>'+
+                                (m.player2Name||'选手2')+': '+s.p2+' 分<br/>'+
+                                (s.p1>s.p2 ? '✅ '+(m.player1Name||'选手1')+' 胜' : (s.p2>s.p1 ? '✅ '+(m.player2Name||'选手2')+' 胜' : '⚖️ 平局'));
+                        }
+                    },
+                    legend: {
+                        data: [m.player1Name||'选手1', m.player2Name||'选手2'],
+                        bottom: 0, textStyle:{fontSize:12}
+                    },
+                    grid: { left:'3%', right:'3%', bottom:'14%', top:'6%', containLabel:true },
+                    xAxis: { type:'category', data:games, axisLabel:{fontSize:12,fontWeight:'bold'} },
+                    yAxis: { type:'value', min:0, max:maxScore, axisLabel:{fontSize:11} },
+                    series: [
+                        {
+                            name: m.player1Name||'选手1',
+                            type:'line',
+                            data: p1s,
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 10,
+                            lineStyle: { color:'#0077b6', width:2 },
+                            itemStyle: { color:'#0077b6' },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0,0,0,1,
+                                    [{offset:0,color:'rgba(0,119,182,.3)'},{offset:1,color:'rgba(0,119,182,.02)'}])
+                            },
+                            label: { show:true, position:'bottom', fontSize:11, fontWeight:'bold', color:'#0077b6',
+                                padding:[4,0,0,0], formatter: function(p){ return p.value+'分'; } }
+                        },
+                        {
+                            name: m.player2Name||'选手2',
+                            type:'line',
+                            data: p2s,
+                            smooth: true,
+                            symbol: 'diamond',
+                            symbolSize: 10,
+                            lineStyle: { color:'#fb8c00', width:2 },
+                            itemStyle: { color:'#fb8c00' },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0,0,0,1,
+                                    [{offset:0,color:'rgba(251,140,0,.3)'},{offset:1,color:'rgba(251,140,0,.02)'}])
+                            },
+                            label: { show:true, position:'bottom', fontSize:11, fontWeight:'bold', color:'#fb8c00',
+                                padding:[4,0,0,0], formatter: function(p){ return p.value+'分'; } }
+                        }
+                    ]
+                }, true);
+                window.addEventListener('resize', function(){ if(vizScoreChart) vizScoreChart.resize(); });
+            }).catch(function(e){console.error(e);cont.innerHTML='<div class="empty-state" style="color:#e53935;">加载失败</div>';});
+        }
+
+        // ECharts resize
+        window.addEventListener('resize', function(){
+            if(vizScoreChart) vizScoreChart.resize();
+        });
+
+        // Close autocomplete dropdown on outside click
+        document.addEventListener('click', function(e) {
+            var dd = document.getElementById('v-player-dropdown');
+            var search = document.getElementById('v-player-search');
+            if (dd && search && !search.contains(e.target) && !dd.contains(e.target)) {
+                dd.style.display = 'none';
+            }
+        });
 
         // 等 DOM 加载完成后再初始化
         if (document.readyState === 'loading') {
