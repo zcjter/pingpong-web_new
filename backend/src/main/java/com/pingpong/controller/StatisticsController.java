@@ -349,7 +349,7 @@ public class StatisticsController {
             compTypeBreakdown.add(item);
         });
         List<String> typeOrder = Arrays.asList("大满贯赛", "冠军赛", "球星挑战赛", "常规挑战赛", "总决赛",
-                "世乒赛", "世界杯", "奥运会", "亚运会", "亚锦赛", "青少年赛", "其他");
+                "世乒赛", "世界杯", "奥运会", "亚运会", "亚洲杯", "亚锦赛", "青少年赛", "其他");
         compTypeBreakdown.sort(Comparator.comparingInt(t -> {
             int idx = typeOrder.indexOf(t.get("type"));
             return idx < 0 ? 999 : idx;
@@ -710,6 +710,7 @@ public class StatisticsController {
         if (name.contains("世界杯")) return "世界杯";
         if (name.contains("奥运")) return "奥运会";
         if (name.contains("亚运")) return "亚运会";
+        if (name.contains("亚洲杯")) return "亚洲杯";
         if (name.contains("亚锦赛")) return "亚锦赛";
         if (name.contains("亚洲")) return "亚锦赛";
         if (name.contains("青少年") || name.contains("青年")) return "青少年赛";
@@ -736,9 +737,9 @@ public class StatisticsController {
         }
 
         List<String> sortedTypes = new ArrayList<>(allTypes);
-        // Order: 大满贯赛, 冠军赛, 球星挑战赛, 常规挑战赛, 总决赛, 世乒赛, 世界杯, 奥运会, 亚运会, 亚锦赛, 青少年赛, 其他
+        // Order: 大满贯赛, 冠军赛, 球星挑战赛, 常规挑战赛, 总决赛, 世乒赛, 世界杯, 奥运会, 亚运会, 亚洲杯, 亚锦赛, 青少年赛, 其他
         List<String> typeOrder = Arrays.asList("大满贯赛", "冠军赛", "球星挑战赛", "常规挑战赛", "总决赛",
-                "世乒赛", "世界杯", "奥运会", "亚运会", "亚锦赛", "青少年赛", "其他");
+                "世乒赛", "世界杯", "奥运会", "亚运会", "亚洲杯", "亚锦赛", "青少年赛", "其他");
         sortedTypes.sort(Comparator.comparingInt(t -> {
             int idx = typeOrder.indexOf(t);
             return idx < 0 ? 999 : idx;
@@ -1096,7 +1097,7 @@ public class StatisticsController {
         Map<String, Integer> compTypeAgg = new LinkedHashMap<>();
         Map<String, int[]> typeOrderMap = new LinkedHashMap<>();
         List<String> typeOrder = Arrays.asList("大满贯赛", "冠军赛", "球星挑战赛", "常规挑战赛", "总决赛",
-                "世乒赛", "世界杯", "奥运会", "亚运会", "亚锦赛", "青少年赛", "其他");
+                "世乒赛", "世界杯", "奥运会", "亚运会", "亚洲杯", "亚锦赛", "青少年赛", "其他");
         typeOrder.forEach(t -> typeOrderMap.put(t, new int[]{typeOrder.indexOf(t)}));
 
         for (Competition comp : compMap.values()) {
