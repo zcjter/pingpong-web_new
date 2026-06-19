@@ -1946,6 +1946,156 @@
             color: #c62828;
         }
 
+        /* ===== 小组赛矩阵布局 ===== */
+        .group-matrix-wrap {
+            overflow-x: auto;
+            margin: 4px 0 8px;
+        }
+        .group-matrix {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+            min-width: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 6px rgba(0,0,0,.06);
+        }
+        .group-matrix th,
+        .group-matrix td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #e8e8e8;
+            border-right: 1px solid #e8e8e8;
+            vertical-align: middle;
+        }
+        .group-matrix thead th {
+            background: #0077b6;
+            color: #fff;
+            font-weight: 600;
+            font-size: 11px;
+            white-space: nowrap;
+            border-bottom: none;
+        }
+        .group-matrix thead th:last-child { border-right: none; }
+        .group-matrix tbody td:last-child { border-right: none; }
+        .group-matrix tbody tr:last-child td { border-bottom: none; }
+        .group-matrix .gm-side {
+            background: #eef4fa;
+            font-weight: 700;
+            color: #0d47a1;
+            white-space: nowrap;
+            text-align: right;
+            padding-right: 14px;
+            min-width: 80px;
+            font-size: 12px;
+            border-right: 2px solid #d0d8e0;
+        }
+        .group-matrix .gm-side .rt-flag img { width: 20px; height: 14px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+        .group-matrix thead th .rt-flag img { width: 18px; height: 12px; vertical-align: middle; margin-right: 3px; border-radius: 2px; }
+        .group-matrix .gm-corner {
+            background: #d4e3f0;
+            border-right: 2px solid #c0d0e0;
+        }
+        .gm-cell {
+            min-width: 70px;
+            padding: 8px 6px !important;
+            background: #fff;
+            transition: background 0.15s;
+        }
+        .gm-cell:hover {
+            background: #f5f9ff;
+        }
+        .gm-cell--win {
+            background: #f0faf0 !important;
+        }
+        .gm-cell--win:hover {
+            background: #e4f5e4 !important;
+        }
+        .gm-cell--lose {
+            background: #fff5f5 !important;
+        }
+        .gm-cell--lose:hover {
+            background: #ffe8e8 !important;
+        }
+        .gm-cell--draw {
+            background: #fffde7 !important;
+        }
+        .gm-cell--draw:hover {
+            background: #fff8e1 !important;
+        }
+        .gm-cell--empty {
+            color: #d0d0d0;
+            font-size: 15px;
+            background: #fafafa !important;
+        }
+        .gm-bigscore {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .gm-bigscore--win { color: #2e7d32; }
+        .gm-bigscore--lose { color: #c62828; }
+        .gm-bigscore--draw { color: #f57f17; }
+        /* Global detail section below matrix */
+        .gm-detail-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            margin: 4px 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0077b6;
+            background: #e8f4fd;
+            border: 1px solid #b8d8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .gm-detail-toggle:hover {
+            background: #d0ebfa;
+        }
+        .gm-detail-toggle.active {
+            background: #ffd54f;
+            color: #333;
+            border-color: #f0c030;
+        }
+        .gm-detail-area {
+            display: none;
+            margin: 6px 0 4px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fafcff;
+            overflow: hidden;
+        }
+        .gm-detail-area.open { display: block; }
+        .gm-detail-match {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            gap: 14px;
+        }
+        .gm-detail-match:last-child { border-bottom: none; }
+        .gm-detail-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+            min-width: 120px;
+            padding-top: 2px;
+        }
+        .gm-detail-label .rt-flag img { width: 18px; height: 12px; vertical-align: middle; margin-right: 3px; border-radius: 2px; }
+        .gm-detail-scores { flex: 1; min-width: 0; }
+        .gm-detail-venue {
+            font-size: 11px;
+            color: #0d47a1;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .gm-flag img { width: 18px; height: 12px; vertical-align: middle; border-radius: 2px; }
+
         /* ===== 可视化 & 图片上传 ===== */
         .chart-container { width:100%; height:340px; }
         .chart-container-sm { width:100%; height:280px; }
@@ -2956,7 +3106,186 @@
                     const isGroup = key.includes('组');
                     contentHtml += `<div class="round-section${isGroup ? ' is-group' : ''}">`;
                     contentHtml += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
-                    roundMatches.forEach(m => {
+                    if (isGroup) {
+                        // --- 小组赛：矩阵布局 ---
+                        const isTeamGroup = roundMatches.some(function(mx){ return mx.category && mx.category.indexOf('团') >= 0; });
+
+                        // Extract unique participants
+                        var participants = [];
+                        if (isTeamGroup) {
+                            var countrySet = {};
+                            roundMatches.forEach(function(mx){
+                                if (mx.player1Country) countrySet[mx.player1Country] = true;
+                                if (mx.player2Country) countrySet[mx.player2Country] = true;
+                            });
+                            participants = Object.keys(countrySet);
+                        } else {
+                            var nameSet = {};
+                            roundMatches.forEach(function(mx){
+                                if (mx.player1Name) nameSet[mx.player1Name] = true;
+                                if (mx.player2Name) nameSet[mx.player2Name] = true;
+                            });
+                            participants = Object.keys(nameSet);
+                        }
+                        participants.sort();
+
+                        // Build participant -> matches lookup
+                        var matchLookup = {};
+                        var allMatchDetails = []; // collect all matches for bottom detail section
+                        roundMatches.forEach(function(mx){
+                            var a = isTeamGroup ? (mx.player1Country||'') : (mx.player1Name||'');
+                            var b = isTeamGroup ? (mx.player2Country||'') : (mx.player2Name||'');
+                            if (!a || !b) return;
+                            var key = [a, b].sort().join('|||');
+                            matchLookup[key] = mx;
+                            allMatchDetails.push({ p1: a, p2: b, match: mx });
+                        });
+
+                        // Aggregate all athletes per country across ALL group matches
+                        var countryAthletes = {};
+                        if (isTeamGroup) {
+                            roundMatches.forEach(function(mx){
+                                if (!mx.teamScores) return;
+                                try {
+                                    var ts = JSON.parse(mx.teamScores);
+                                    ts.forEach(function(sub){
+                                        if (sub.p1 && sub.p1Country) {
+                                            if (!countryAthletes[sub.p1Country]) countryAthletes[sub.p1Country] = [];
+                                            if (countryAthletes[sub.p1Country].indexOf(sub.p1) < 0) countryAthletes[sub.p1Country].push(sub.p1);
+                                        }
+                                        if (sub.p2 && sub.p2Country) {
+                                            if (!countryAthletes[sub.p2Country]) countryAthletes[sub.p2Country] = [];
+                                            if (countryAthletes[sub.p2Country].indexOf(sub.p2) < 0) countryAthletes[sub.p2Country].push(sub.p2);
+                                        }
+                                    });
+                                } catch(e) {}
+                            });
+                        }
+
+                        function gmDisplay(p){
+                            return isTeamGroup ? (getFlagForMatch(p) + p) : p;
+                        }
+
+                        var matrixHtml = '<div class="group-matrix-wrap"><table class="group-matrix"><thead><tr>';
+                        matrixHtml += '<th class="gm-corner"></th>';
+                        participants.forEach(function(p){
+                            matrixHtml += '<th>' + gmDisplay(p) + '</th>';
+                        });
+                        matrixHtml += '</tr></thead><tbody>';
+
+                        participants.forEach(function(p1, i){
+                            matrixHtml += '<tr>';
+                            matrixHtml += '<td class="gm-side">' + gmDisplay(p1) + '</td>';
+                            participants.forEach(function(p2, j){
+                                if (i === j) {
+                                    matrixHtml += '<td class="gm-cell gm-cell--empty">-</td>';
+                                } else {
+                                    var key = [p1, p2].sort().join('|||');
+                                    var match = matchLookup[key];
+                                    if (match) {
+                                        var mp1Total = 0, mp2Total = 0;
+                                        try { if (match.scores) { var ms = JSON.parse(match.scores); ms.forEach(function(s){ if (s.p1 > s.p2) mp1Total++; else if (s.p2 > s.p1) mp2Total++; }); } } catch(e) {}
+                                        if (mp1Total === 0 && mp2Total === 0 && match.teamScores && match.player1Total != null) {
+                                            mp1Total = match.player1Total; mp2Total = match.player2Total;
+                                        }
+                                        // Determine which participant in this cell maps to the row/column
+                                        // For cell (i,j): row player = p1, col player = p2
+                                        // We need to check if the match's actual p1 equals the row's p1
+                                        var actualP1 = isTeamGroup ? (match.player1Country||'') : (match.player1Name||'');
+                                        var actualP2 = isTeamGroup ? (match.player2Country||'') : (match.player2Name||'');
+                                        // Scores from row's perspective: rowScore:colScore
+                                        var displayScore;
+                                        if (actualP1 === p1) { displayScore = mp1Total + ':' + mp2Total; }
+                                        else { displayScore = mp2Total + ':' + mp1Total; }
+                                        var bigScore = (mp1Total > 0 || mp2Total > 0)
+                                            ? '<div style="font-size:17px;font-weight:800;letter-spacing:0.5px;color:#c62828;">' + displayScore + '</div>'
+                                            : '<div style="color:#bbb;font-size:11px;padding:4px 0;">未赛</div>';
+                                        matrixHtml += '<td class="gm-cell">' + bigScore + '</td>';
+                                    } else {
+                                        matrixHtml += '<td class="gm-cell gm-cell--empty">-</td>';
+                                    }
+                                }
+                            });
+                            matrixHtml += '</tr>';
+                        });
+                        matrixHtml += '</tbody></table></div>';
+
+                        // Global detail toggle button + hidden detail area
+                        var groupDetailId = 'gmAll_' + cat.replace(/[^a-zA-Z0-9]/g,'_') + '_' + key.replace(/[^a-zA-Z0-9]/g,'_');
+                        // Build all matches detail HTML
+                        var allDetailHtml = '';
+                        allMatchDetails.forEach(function(item, idx){
+                            var mx = item.match;
+                            var mp1D = item.p1, mp2D = item.p2;
+                            var mp1Total = 0, mp2Total = 0;
+                            try { if (mx.scores) { var ms = JSON.parse(mx.scores); ms.forEach(function(s){ if (s.p1 > s.p2) mp1Total++; else if (s.p2 > s.p1) mp2Total++; }); } } catch(e) {}
+                            if (mp1Total === 0 && mp2Total === 0 && mx.teamScores && mx.player1Total != null) { mp1Total = mx.player1Total; mp2Total = mx.player2Total; }
+                            var detailHtml = buildGroupDetailContent(mx);
+                            var bigScoreStr = (mp1Total > 0 || mp2Total > 0) ? mp1Total + ':' + mp2Total : '-';
+                            var p1Won = mp1Total > mp2Total;
+                            var mcVenueInfo = mx.venue ? '🏟️ ' + mx.venue : '';
+                            var mcDateStr = mx.matchDate ? new Date(mx.matchDate).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+                            var mp1Display = isTeamGroup ? (getFlagForMatch(mp1D) + mp1D) : (mx.player1Country ? getFlagForMatch(mx.player1Country) : '') + mp1D;
+                            var mp2Display = isTeamGroup ? (getFlagForMatch(mp2D) + mp2D) : (mx.player2Country ? getFlagForMatch(mx.player2Country) : '') + mp2D;
+                            // For team groups, append athlete names from aggregate
+                            if (isTeamGroup) {
+                                var t1List = countryAthletes[mp1D];
+                                var t2List = countryAthletes[mp2D];
+                                if (t1List && t1List.length > 0) mp1Display += ' (' + t1List.join(', ') + ')';
+                                if (t2List && t2List.length > 0) mp2Display += ' (' + t2List.join(', ') + ')';
+                            }
+                            // Format scores grid with big score (same as elimination)
+                            var scScoresGrid = '';
+                            var hasTeams = detailHtml.indexOf('border-top:1px') >= 0;
+                            var hasSingles = detailHtml.indexOf('match-scores-grid') >= 0;
+                            if (hasSingles || hasTeams) {
+                                if (hasTeams) {
+                                    // Team sub-matches layout: wrap in flex container (same as elimination)
+                                    scScoresGrid = '<div style="display:flex;align-items:stretch;gap:10px;">' +
+                                        '<div style="flex:1;min-width:0;padding:4px 0;">' + detailHtml + '</div>' +
+                                        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">' +
+                                        '<span class="gm-bigscore ' + (p1Won ? 'gm-bigscore--win' : 'gm-bigscore--lose') + '">' + bigScoreStr + '</span></div></div>';
+                                } else {
+                                    // Singles/doubles (same as elimination)
+                                    scScoresGrid = '<div style="display:flex;align-items:stretch;gap:10px;">' +
+                                        detailHtml +
+                                        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">' +
+                                        '<span class="gm-bigscore ' + (p1Won ? 'gm-bigscore--win' : 'gm-bigscore--lose') + '">' + bigScoreStr + '</span></div></div>';
+                                }
+                            } else {
+                                // No scores
+                                scScoresGrid = detailHtml;
+                            }
+                            allDetailHtml += '<div class="match-card">' +
+                                '<div class="match-card-top">' +
+                                    '<span class="match-card-venue">' + mcVenueInfo + '</span>' +
+                                '</div>' +
+                                '<div class="match-card-body">' +
+                                    '<div class="match-player-row">' +
+                                        '<span class="match-player-name ' + (p1Won ? 'match-player-name--win' : '') + '">' + mp1Display + '</span>' +
+                                        '<div style="display:flex;align-items:center;gap:10px;margin-left:auto;">' +
+                                            '<div class="match-card-actions">' +
+                                                '<button class="btn btn-warning btn-sm" onclick="event.stopPropagation();editMatch(' + mx.id + ')">编辑</button>' +
+                                                '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteMatch(' + mx.id + ')">删除</button>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    scScoresGrid +
+                                    '<div class="match-player-row">' +
+                                        '<span class="match-player-name ' + (!p1Won ? 'match-player-name--win' : '') + '">' + mp2Display + '</span>' +
+                                        (mcDateStr ? '<span class="match-player-time" style="margin-left:auto;">' + mcDateStr + '</span>' : '') +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>';
+                        });
+                        matrixHtml += '<div style="margin-top:2px;text-align:center;">' +
+                            '<button class="gm-detail-toggle" onclick="toggleGroupAllDetail(\'' + groupDetailId + '\',this)">📋 查看所有对局详细比分</button>' +
+                            '</div>' +
+                            '<div id="' + groupDetailId + '" class="gm-detail-area">' + allDetailHtml + '</div>';
+                        contentHtml += matrixHtml;
+                    } else {
+                        // --- 非小组赛：原有卡片样式 ---
+                        roundMatches.forEach(function(m) {
                         let scores = [];
                         let p1Total = 0, p2Total = 0;
                         try { if (m.scores) { scores = JSON.parse(m.scores); scores.forEach(s => { if (s.p1 > s.p2) p1Total++; else if (s.p2 > s.p1) p2Total++; }); } } catch (e) { }
@@ -3110,13 +3439,84 @@
                                 </div>
                             </div>
                         `;
-                    });
+                        }); // end roundMatches.forEach (non-group)
+                    } // end if/else isGroup
                     contentHtml += `</div>`;
                 });
                 contentHtml += `</div></div>`;
             });
 
             container.innerHTML = tabsHtml + contentHtml;
+        }
+
+        /** Helper: build detailed scores HTML for group detail area. */
+        function buildGroupDetailContent(match) {
+            var detailHtml = '';
+            var isTeamMatch = match.category && match.category.indexOf('团') >= 0;
+
+            if (!isTeamMatch) {
+                var scores = [];
+                try { if (match.scores) scores = JSON.parse(match.scores); } catch(e) {}
+                if (!scores || scores.length === 0) return '<span style="color:#999;font-size:11px;">暂无比分</span>';
+                scores = scores.filter(function(s){ return !(s.p1 === 0 && s.p2 === 0); });
+                if (scores.length === 0) return '<span style="color:#999;font-size:11px;">暂无比分</span>';
+
+                var p1Row = '', p2Row = '';
+                scores.forEach(function(s){
+                    var p1Win = s.p1 > s.p2;
+                    p1Row += '<span class="match-score-item ' + (p1Win ? 'match-score-item--win' : 'match-score-item--lose') + '">' + s.p1 + '</span>';
+                    p2Row += '<span class="match-score-item ' + (!p1Win ? 'match-score-item--win' : 'match-score-item--lose') + '">' + s.p2 + '</span>';
+                });
+                detailHtml = '<div class="match-scores-grid"><div class="match-scores-row">' + p1Row + '</div><div class="match-scores-row">' + p2Row + '</div></div>';
+            } else if (match.teamScores) {
+                try {
+                    var teamScores = JSON.parse(match.teamScores);
+                    var subHtml = '';
+                    teamScores.forEach(function(sub, si){
+                        if (!sub.p1 && !sub.p2) return;
+                        var subP1Won = sub.p1Total > sub.p2Total;
+                        var rawScores = sub.scores || [];
+                        var lastNonZero = rawScores.length - 1;
+                        while (lastNonZero >= 0 && rawScores[lastNonZero].p1 === 0 && rawScores[lastNonZero].p2 === 0) lastNonZero--;
+                        var subScores = rawScores.slice(0, lastNonZero + 1);
+                        var subScoresHtml = '';
+                        if (subScores.length > 0) {
+                            var sP1Row = '', sP2Row = '';
+                            subScores.forEach(function(s){
+                                var win = s.p1 > s.p2;
+                                sP1Row += '<span class="match-score-item ' + (win ? 'match-score-item--win' : 'match-score-item--lose') + '">' + s.p1 + '</span>';
+                                sP2Row += '<span class="match-score-item ' + (!win ? 'match-score-item--win' : 'match-score-item--lose') + '">' + s.p2 + '</span>';
+                            });
+                            subScoresHtml = '<div class="match-scores-grid" style="margin-top:4px;"><div class="match-scores-row">' + sP1Row + '</div><div class="match-scores-row">' + sP2Row + '</div></div>';
+                        }
+                        var subResult = '<span style="color:#d4a017;font-weight:700;font-size:13px;">' + sub.p1Total + ':' + sub.p2Total + '</span>';
+                        var p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
+                        var p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
+                        subHtml += '<div style="border-top:1px solid #eee;padding:6px 0;' + (si === 0 ? 'border-top:none;' : '') + '">' +
+                            '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">' +
+                            '<span style="' + (subP1Won ? 'color:#2e7d32;' : 'color:#333;') + '">' + p1Flag + (sub.p1||'?') + '</span>' +
+                            '<span style="color:#999;font-weight:400;">vs</span>' +
+                            '<span style="' + (!subP1Won ? 'color:#2e7d32;' : 'color:#333;') + '">' + p2Flag + (sub.p2||'?') + '</span>' +
+                            '<span style="margin-left:auto;">' + subResult + '</span></div>' +
+                            (subScoresHtml ? '<div style="padding-left:4px;">' + subScoresHtml + '</div>' : '') + '</div>';
+                    });
+                    detailHtml = subHtml;
+                } catch(e) {
+                    detailHtml = '<span style="color:#999;font-size:11px;">暂无比分</span>';
+                }
+            } else {
+                detailHtml = '<span style="color:#999;font-size:11px;">暂无比分</span>';
+            }
+            return detailHtml;
+        }
+
+        /** Toggle global group detail area. */
+        function toggleGroupAllDetail(detailId, btn) {
+            var el = document.getElementById(detailId);
+            if (!el) return;
+            el.classList.toggle('open');
+            btn.classList.toggle('active');
+            btn.innerHTML = el.classList.contains('open') ? '📋 收起所有详细比分' : '📋 查看所有对局详细比分';
         }
 
         function switchDetailCategory(cat, btn) {
