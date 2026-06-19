@@ -2371,6 +2371,7 @@
                     <div id="detail-rounds-content"></div>
                     <div id="bracket-view" style="display:none;">
                         <div class="bracket-toggle-btns" id="bracket-categories"></div>
+                        <div class="bracket-toggle-btns" id="bracket-phases"></div>
                         <div class="bracket-container" id="bracket-container"></div>
                     </div>
                 </div>
@@ -3056,7 +3057,7 @@
 
         function renderDetailRounds(container, matches) {
             const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
-            const roundOrder = ['小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
+            const roundOrder = ['资格赛', '小组赛', '第一轮', '第二轮', '第三轮', '第四轮', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一决赛', '四分之一', '半决', '半决赛', '决赛', '铜牌', '冠军', '亚军'];
             const grouped = {};
             matches.forEach(m => {
                 const cat = m.category || '其他';
@@ -3530,6 +3531,7 @@
         // ========== 对阵图视图切换 ==========
         let currentMatchView = 'table';
         let currentBracketCategory = '';
+        let currentBracketPhase = 'main'; // 'qualify' or 'main'
 
         function switchMatchView(view) {
             currentMatchView = view;
@@ -3557,6 +3559,7 @@
             if (availableCategories.length === 0) {
                 document.getElementById('bracket-container').innerHTML = '<div class="bracket-no-data">暂无淘汰赛数据</div>';
                 document.getElementById('bracket-categories').innerHTML = '';
+                document.getElementById('bracket-phases').innerHTML = '';
                 return;
             }
 
@@ -3564,6 +3567,15 @@
                 currentBracketCategory = availableCategories[0];
             }
 
+            // Render phase tabs
+            let phaseHtml = '';
+            var hasQualify = categoryMatches[currentBracketCategory] && categoryMatches[currentBracketCategory].some(function(m){ return String(m.roundNumber||'').includes('资格'); });
+            if (!hasQualify && currentBracketPhase === 'qualify') currentBracketPhase = 'main';
+            phaseHtml += '<button class="bracket-category-tab ' + (currentBracketPhase === 'main' ? 'active' : '') + '" onclick="selectBracketPhase(\'main\')">正赛</button>';
+            phaseHtml += '<button class="bracket-category-tab ' + (currentBracketPhase === 'qualify' ? 'active' : '') + '" onclick="selectBracketPhase(\'qualify\')" style="' + (!hasQualify ? 'display:none;' : '') + '">资格赛</button>';
+            document.getElementById('bracket-phases').innerHTML = phaseHtml;
+
+            // Render category tabs
             let tabsHtml = '';
             availableCategories.forEach(cat => {
                 tabsHtml += `<button class="bracket-category-tab ${cat === currentBracketCategory ? 'active' : ''}" onclick="selectBracketCategory('${cat}')">${cat}</button>`;
@@ -3575,7 +3587,7 @@
 
         function selectBracketCategory(category) {
             currentBracketCategory = category;
-            document.querySelectorAll('.bracket-category-tab').forEach(btn => {
+            document.querySelectorAll('#bracket-categories .bracket-category-tab').forEach(btn => {
                 btn.classList.toggle('active', btn.textContent === category);
             });
             const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
@@ -3585,7 +3597,33 @@
                 if (!categoryMatches[cat]) categoryMatches[cat] = [];
                 categoryMatches[cat].push(m);
             });
+            // Update phase tab visibility for new category
+            var hasQualify = categoryMatches[category] && categoryMatches[category].some(function(m){ return String(m.roundNumber||'').includes('资格'); });
+            var qualBtn = document.querySelector('#bracket-phases .bracket-category-tab:last-child');
+            if (qualBtn) qualBtn.style.display = hasQualify ? '' : 'none';
+            if (!hasQualify && currentBracketPhase === 'qualify') {
+                currentBracketPhase = 'main';
+                document.querySelectorAll('#bracket-phases .bracket-category-tab').forEach(function(btn){
+                    btn.classList.toggle('active', btn.textContent === '正赛');
+                });
+            }
             renderBracket(categoryMatches[category], category);
+        }
+
+        function selectBracketPhase(phase) {
+            currentBracketPhase = phase;
+            document.querySelectorAll('#bracket-phases .bracket-category-tab').forEach(function(btn){
+                var isActive = btn.textContent === (phase === 'main' ? '正赛' : '资格赛');
+                btn.classList.toggle('active', isActive);
+            });
+            const categories = ['u11男单', 'u11女单', 'u13男单', 'u13女单', 'u15男单', 'u15女单', 'u15男双', 'u15女双', 'u15混双', 'u15男团', 'u15女团', 'u17男单', 'u17女单', 'u17男双', 'u17女双', 'u17混双', 'u19男单', 'u19女单', 'u19男双', 'u19女双', 'u19混双', 'u19男团', 'u19女团', '男单', '女单', '男双', '女双', '混双', '男团', '女团'];
+            const categoryMatches = {};
+            currentCompetitionMatches.forEach(m => {
+                const cat = m.category || '其他';
+                if (!categoryMatches[cat]) categoryMatches[cat] = [];
+                categoryMatches[cat].push(m);
+            });
+            renderBracket(categoryMatches[currentBracketCategory], currentBracketCategory);
         }
 
         function renderBracket(matches, category) {
@@ -3597,11 +3635,12 @@
             const isTeamCategory = category && category.includes('团');
             const eliminationRounds = matches.filter(m => {
                 const rn = String(m.roundNumber || '');
-                if (!rn || rn.trim() === '') return true;
+                if (!rn || rn.trim() === '') return currentBracketPhase === 'main';
                 if (rn.includes('小组')) return false;
                 if (rn.includes('组')) return false;
-                if (rn.includes('资格')) return false;
-                return true;
+                var isQualify = rn.includes('资格');
+                if (currentBracketPhase === 'qualify') return isQualify;
+                return !isQualify;
             });
 
             if (eliminationRounds.length === 0) {
@@ -3609,7 +3648,7 @@
                 return;
             }
 
-            const roundOrder = ['1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
+            const roundOrder = ['资格赛决赛', '资格赛', '1/128', '1/64', '1/32', '1/16', '1/8', '1/4', '四分之一', '半决', '半决赛'];
             eliminationRounds.sort((a, b) => {
                 const ra = String(a.roundNumber || '');
                 const rb = String(b.roundNumber || '');
