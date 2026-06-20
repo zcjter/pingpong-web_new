@@ -3142,24 +3142,55 @@
                             allMatchDetails.push({ p1: a, p2: b, match: mx });
                         });
 
+                        // Helper: extract athlete names from team roster string
+                        // Format: "张禹珍，安宰贤，林钟勋，朴康贤，李尚洙" or "张三,李四"
+                        function extractTeamRoster(str) {
+                            if (!str) return null;
+                            var parts = null;
+                            if (str.indexOf('，') >= 0) parts = str.split('，');
+                            else if (str.indexOf(',') >= 0) parts = str.split(',');
+                            if (!parts || parts.length < 2) return null;
+                            var result = [];
+                            for (var ei = 0; ei < parts.length; ei++) {
+                                var name = parts[ei].trim();
+                                if (name) result.push(name);
+                            }
+                            return result.length > 0 ? result : null;
+                        }
+
                         // Aggregate all athletes per country across ALL group matches
                         var countryAthletes = {};
                         if (isTeamGroup) {
                             roundMatches.forEach(function(mx){
-                                if (!mx.teamScores) return;
-                                try {
-                                    var ts = JSON.parse(mx.teamScores);
-                                    ts.forEach(function(sub){
-                                        if (sub.p1 && sub.p1Country) {
-                                            if (!countryAthletes[sub.p1Country]) countryAthletes[sub.p1Country] = [];
-                                            if (countryAthletes[sub.p1Country].indexOf(sub.p1) < 0) countryAthletes[sub.p1Country].push(sub.p1);
-                                        }
-                                        if (sub.p2 && sub.p2Country) {
-                                            if (!countryAthletes[sub.p2Country]) countryAthletes[sub.p2Country] = [];
-                                            if (countryAthletes[sub.p2Country].indexOf(sub.p2) < 0) countryAthletes[sub.p2Country].push(sub.p2);
-                                        }
-                                    });
-                                } catch(e) {}
+                                // Primary: parse teamScores sub-match data
+                                if (mx.teamScores) {
+                                    try {
+                                        var ts = JSON.parse(mx.teamScores);
+                                        ts.forEach(function(sub){
+                                            if (sub.p1 && sub.p1Country) {
+                                                if (!countryAthletes[sub.p1Country]) countryAthletes[sub.p1Country] = [];
+                                                if (countryAthletes[sub.p1Country].indexOf(sub.p1) < 0) countryAthletes[sub.p1Country].push(sub.p1);
+                                            }
+                                            if (sub.p2 && sub.p2Country) {
+                                                if (!countryAthletes[sub.p2Country]) countryAthletes[sub.p2Country] = [];
+                                                if (countryAthletes[sub.p2Country].indexOf(sub.p2) < 0) countryAthletes[sub.p2Country].push(sub.p2);
+                                            }
+                                        });
+                                    } catch(e) {}
+                                }
+                                // Fallback: try to extract roster from player1Name/player2Name
+                                var c1 = mx.player1Country ? mx.player1Country.trim() : '';
+                                var c2 = mx.player2Country ? mx.player2Country.trim() : '';
+                                var r1 = extractTeamRoster(mx.player1Name);
+                                var r2 = extractTeamRoster(mx.player2Name);
+                                if (r1 && c1) {
+                                    if (!countryAthletes[c1]) countryAthletes[c1] = [];
+                                    r1.forEach(function(n){ if (countryAthletes[c1].indexOf(n) < 0) countryAthletes[c1].push(n); });
+                                }
+                                if (r2 && c2) {
+                                    if (!countryAthletes[c2]) countryAthletes[c2] = [];
+                                    r2.forEach(function(n){ if (countryAthletes[c2].indexOf(n) < 0) countryAthletes[c2].push(n); });
+                                }
                             });
                         }
 
@@ -3217,11 +3248,34 @@
                         var allDetailHtml = '';
                         allMatchDetails.forEach(function(item, idx){
                             var mx = item.match;
-                            var mp1D = item.p1, mp2D = item.p2;
+                            var mp1D = item.p1.trim(), mp2D = item.p2.trim();
                             var mp1Total = 0, mp2Total = 0;
                             try { if (mx.scores) { var ms = JSON.parse(mx.scores); ms.forEach(function(s){ if (s.p1 > s.p2) mp1Total++; else if (s.p2 > s.p1) mp2Total++; }); } } catch(e) {}
                             if (mp1Total === 0 && mp2Total === 0 && mx.teamScores && mx.player1Total != null) { mp1Total = mx.player1Total; mp2Total = mx.player2Total; }
                             var detailHtml = buildGroupDetailContent(mx);
+                            // For team groups: if no detail scores, generate fallback matchups from athlete lists
+                            if (isTeamGroup && (!detailHtml || detailHtml.indexOf('暂无比分') >= 0)) {
+                                var t1 = countryAthletes[mp1D] || [];
+                                var t2 = countryAthletes[mp2D] || [];
+                                // Debug: check if player1Name has roster data
+                                if (t1.length === 0 && t2.length === 0) {
+                                    console.log('No countryAthletes for', mp1D, mp2D, 'player1Name=', mx.player1Name, 'player2Name=', mx.player2Name, 'teamScores=', mx.teamScores);
+                                }
+                                if (t1.length > 0 || t2.length > 0) {
+                                    var fbHtml = '';
+                                    var maxLen = Math.max(t1.length, t2.length);
+                                    for (var fi = 0; fi < maxLen; fi++) {
+                                        var fp1 = t1[fi] || '待定';
+                                        var fp2 = t2[fi] || '待定';
+                                        fbHtml += '<div style="border-top:1px solid #eee;padding:6px 0;">' +
+                                            '<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#444;margin-bottom:4px;">' +
+                                            '<span style="color:#333;">' + (mp1D ? getFlagForMatch(mp1D) : '') + fp1 + '</span>' +
+                                            '<span style="color:#999;font-weight:400;">vs</span>' +
+                                            '<span style="color:#333;">' + (mp2D ? getFlagForMatch(mp2D) : '') + fp2 + '</span></div></div>';
+                                    }
+                                    detailHtml = fbHtml;
+                                }
+                            }
                             var bigScoreStr = (mp1Total > 0 || mp2Total > 0) ? mp1Total + ':' + mp2Total : '-';
                             var p1Won = mp1Total > mp2Total;
                             var mcVenueInfo = mx.venue ? '🏟️ ' + mx.venue : '';
@@ -3490,7 +3544,9 @@
                             });
                             subScoresHtml = '<div class="match-scores-grid" style="margin-top:4px;"><div class="match-scores-row">' + sP1Row + '</div><div class="match-scores-row">' + sP2Row + '</div></div>';
                         }
-                        var subResult = '<span style="color:#d4a017;font-weight:700;font-size:13px;">' + sub.p1Total + ':' + sub.p2Total + '</span>';
+                        var subResult = (sub.p1Total > 0 || sub.p2Total > 0)
+                            ? '<span style="color:#d4a017;font-weight:700;font-size:13px;">' + sub.p1Total + ':' + sub.p2Total + '</span>'
+                            : '';
                         var p1Flag = sub.p1Country ? getFlagForMatch(sub.p1Country) : '';
                         var p2Flag = sub.p2Country ? getFlagForMatch(sub.p2Country) : '';
                         subHtml += '<div style="border-top:1px solid #eee;padding:6px 0;' + (si === 0 ? 'border-top:none;' : '') + '">' +
