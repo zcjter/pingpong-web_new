@@ -3083,6 +3083,7 @@
             tabsHtml += `</div>`;
 
             let contentHtml = '';
+            var globalDetailIdx = 0;
             availableCategories.forEach((cat, i) => {
                 const catData = grouped[cat];
                 const roundKeys = Object.keys(catData).sort((a, b) => {
@@ -3243,7 +3244,7 @@
                         matrixHtml += '</tbody></table></div>';
 
                         // Global detail toggle button + hidden detail area
-                        var groupDetailId = 'gmAll_' + cat.replace(/[^a-zA-Z0-9]/g,'_') + '_' + key.replace(/[^a-zA-Z0-9]/g,'_');
+                        var groupDetailId = 'gmAll_' + (globalDetailIdx++);
                         // Build all matches detail HTML
                         var allDetailHtml = '';
                         allMatchDetails.forEach(function(item, idx){
@@ -3334,9 +3335,9 @@
                             '</div>';
                         });
                         matrixHtml += '<div style="margin-top:2px;text-align:center;">' +
-                            '<button class="gm-detail-toggle" onclick="toggleGroupAllDetail(\'' + groupDetailId + '\',this)">📋 查看所有对局详细比分</button>' +
-                            '</div>' +
-                            '<div id="' + groupDetailId + '" class="gm-detail-area">' + allDetailHtml + '</div>';
+                                '<button class="gm-detail-toggle" onclick="toggleGroupAllDetail(\'' + groupDetailId + '\',this)">📋 查看所有对局详细比分</button>' +
+                                '</div>' +
+                                '<div id="' + groupDetailId + '" class="gm-detail-area">' + (allDetailHtml || '<div style="padding:16px;text-align:center;color:#999;font-size:13px;">暂无详细比分数据</div>') + '</div>';
                         contentHtml += matrixHtml;
                     } else {
                         // --- 非小组赛：原有卡片样式 ---

@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS matches (
     player2_name VARCHAR(100),
     player2_country VARCHAR(50),
     scores JSON,
+    team_scores TEXT,
     player1_total INT,
     player2_total INT,
     venue VARCHAR(200),
@@ -49,7 +50,6 @@ CREATE TABLE IF NOT EXISTS matches (
     remark TEXT,
     round_number VARCHAR(50),
     category VARCHAR(50),
-    qualification TINYINT(1) DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (competition_id) REFERENCES competitions(id)

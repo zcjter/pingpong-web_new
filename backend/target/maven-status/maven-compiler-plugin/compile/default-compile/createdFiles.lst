@@ -1,11 +1,13 @@
 com\pingpong\controller\PlayerRankingController.class
 com\pingpong\entity\Match.class
 com\pingpong\controller\CompetitionController.class
+com\pingpong\controller\FileUploadController.class
 com\pingpong\service\PlayerRankingService.class
 com\pingpong\entity\Player.class
 com\pingpong\mapper\PlayerRankingRepository.class
 com\pingpong\mapper\MatchRepository.class
 com\pingpong\controller\MatchController.class
+com\pingpong\mapper\ImageAttachmentRepository.class
 com\pingpong\entity\Announcement.class
 com\pingpong\service\CompetitionService.class
 com\pingpong\controller\PlayerController.class
@@ -18,5 +20,7 @@ com\pingpong\config\WebConfig.class
 com\pingpong\entity\Competition.class
 com\pingpong\service\AnnouncementService.class
 com\pingpong\mapper\PlayerRepository.class
+com\pingpong\controller\StatisticsController.class
 com\pingpong\mapper\CompetitionRepository.class
+com\pingpong\entity\ImageAttachment.class
 com\pingpong\PingPongApplication.class
