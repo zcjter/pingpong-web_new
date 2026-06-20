@@ -3295,17 +3295,17 @@
                             var hasSingles = detailHtml.indexOf('match-scores-grid') >= 0;
                             if (hasSingles || hasTeams) {
                                 if (hasTeams) {
-                                    // Team sub-matches layout: wrap in flex container (same as elimination)
+                                    // Team sub-matches layout: wrap in flex container
                                     scScoresGrid = '<div style="display:flex;align-items:stretch;gap:10px;">' +
                                         '<div style="flex:1;min-width:0;padding:4px 0;">' + detailHtml + '</div>' +
                                         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">' +
-                                        '<span class="gm-bigscore ' + (p1Won ? 'gm-bigscore--win' : 'gm-bigscore--lose') + '">' + bigScoreStr + '</span></div></div>';
+                                        '<span class="gm-bigscore gm-bigscore--win">' + bigScoreStr + '</span></div></div>';
                                 } else {
-                                    // Singles/doubles (same as elimination)
+                                    // Singles/doubles
                                     scScoresGrid = '<div style="display:flex;align-items:stretch;gap:10px;">' +
                                         detailHtml +
                                         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;">' +
-                                        '<span class="gm-bigscore ' + (p1Won ? 'gm-bigscore--win' : 'gm-bigscore--lose') + '">' + bigScoreStr + '</span></div></div>';
+                                        '<span class="gm-bigscore gm-bigscore--win">' + bigScoreStr + '</span></div></div>';
                                 }
                             } else {
                                 // No scores
