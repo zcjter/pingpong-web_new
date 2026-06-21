@@ -3073,7 +3073,16 @@
                 return;
             }
 
-            const defaultCat = currentDetailCategory && grouped[currentDetailCategory] ? currentDetailCategory : availableCategories[0];
+            // Reset phase to 淘汰赛 on each render
+            currentDetailPhase = 'elim';
+
+            // Default category: prefer 男单 > 男团 > first available
+            var defaultCat = availableCategories[0];
+            var msPref = availableCategories.filter(function(c){ return c.indexOf('男单') >= 0; });
+            var mtPref = availableCategories.filter(function(c){ return c.indexOf('男团') >= 0; });
+            if (msPref.length > 0) defaultCat = msPref[0];
+            else if (mtPref.length > 0) defaultCat = mtPref[0];
+            if (currentDetailCategory && grouped[currentDetailCategory]) defaultCat = currentDetailCategory;
             currentDetailCategory = defaultCat;
 
             let tabsHtml = '';
