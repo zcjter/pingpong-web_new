@@ -3089,24 +3089,24 @@
                 });
             });
 
-            // Phase tabs row
-            tabsHtml += `<div class="bracket-toggle-btns" style="margin-bottom:6px;">`;
-            if (hasGroup) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'group' ? 'active' : ''}" onclick="switchDetailPhase('group', this)">小组赛</button>`;
-            if (hasQualify) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'qualify' ? 'active' : ''}" onclick="switchDetailPhase('qualify', this)">资格赛</button>`;
-            if (hasElim) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'elim' ? 'active' : ''}" onclick="switchDetailPhase('elim', this)">淘汰赛</button>`;
+            // Category tabs row (top)
+            tabsHtml += `<div class="bracket-toggle-btns" style="margin-bottom:8px;">`;
+            availableCategories.forEach((cat, i) => {
+                tabsHtml += `<button class="bracket-category-tab ${cat === defaultCat ? 'active' : ''}" onclick="switchDetailCategory('${cat}', this)">${cat}</button>`;
+            });
             tabsHtml += `</div>`;
+
+            // Phase tabs row (below category tabs, same style)
             // Auto-switch phase if current has no data
             if ((currentDetailPhase === 'group' && !hasGroup) ||
                 (currentDetailPhase === 'qualify' && !hasQualify) ||
                 (currentDetailPhase === 'elim' && !hasElim)) {
-                currentDetailPhase = hasGroup ? 'group' : (hasQualify ? 'qualify' : 'elim');
+                currentDetailPhase = hasElim ? 'elim' : (hasGroup ? 'group' : 'qualify');
             }
-
-            // Category tabs row
             tabsHtml += `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
-            availableCategories.forEach((cat, i) => {
-                tabsHtml += `<button class="bracket-category-tab ${cat === defaultCat ? 'active' : ''}" onclick="switchDetailCategory('${cat}', this)">${cat}</button>`;
-            });
+            if (hasElim) tabsHtml += `<button class="detail-phase-tab bracket-category-tab ${currentDetailPhase === 'elim' ? 'active' : ''}" onclick="switchDetailPhase('elim', this)">淘汰赛</button>`;
+            if (hasGroup) tabsHtml += `<button class="detail-phase-tab bracket-category-tab ${currentDetailPhase === 'group' ? 'active' : ''}" onclick="switchDetailPhase('group', this)">小组赛</button>`;
+            if (hasQualify) tabsHtml += `<button class="detail-phase-tab bracket-category-tab ${currentDetailPhase === 'qualify' ? 'active' : ''}" onclick="switchDetailPhase('qualify', this)">资格赛</button>`;
             tabsHtml += `</div>`;
 
             let contentHtml = '';
@@ -3609,7 +3609,7 @@
         }
 
         // Phase tabs for detail rounds: group/qualify/elim
-        let currentDetailPhase = 'group';
+        let currentDetailPhase = 'elim';
 
         function switchDetailPhase(phase, btn) {
             currentDetailPhase = phase;
