@@ -3076,7 +3076,34 @@
             const defaultCat = currentDetailCategory && grouped[currentDetailCategory] ? currentDetailCategory : availableCategories[0];
             currentDetailCategory = defaultCat;
 
-            let tabsHtml = `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
+            let tabsHtml = '';
+
+            // Determine which phases have data
+            var hasGroup = false, hasQualify = false, hasElim = false;
+            availableCategories.forEach(function(cat){
+                var catData = grouped[cat];
+                Object.keys(catData).forEach(function(k){
+                    if (k.includes('组')) hasGroup = true;
+                    else if (k.includes('资格')) hasQualify = true;
+                    else hasElim = true;
+                });
+            });
+
+            // Phase tabs row
+            tabsHtml += `<div class="bracket-toggle-btns" style="margin-bottom:6px;">`;
+            if (hasGroup) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'group' ? 'active' : ''}" onclick="switchDetailPhase('group', this)">小组赛</button>`;
+            if (hasQualify) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'qualify' ? 'active' : ''}" onclick="switchDetailPhase('qualify', this)">资格赛</button>`;
+            if (hasElim) tabsHtml += `<button class="detail-phase-tab ${currentDetailPhase === 'elim' ? 'active' : ''}" onclick="switchDetailPhase('elim', this)">淘汰赛</button>`;
+            tabsHtml += `</div>`;
+            // Auto-switch phase if current has no data
+            if ((currentDetailPhase === 'group' && !hasGroup) ||
+                (currentDetailPhase === 'qualify' && !hasQualify) ||
+                (currentDetailPhase === 'elim' && !hasElim)) {
+                currentDetailPhase = hasGroup ? 'group' : (hasQualify ? 'qualify' : 'elim');
+            }
+
+            // Category tabs row
+            tabsHtml += `<div class="bracket-toggle-btns" style="margin-bottom:12px;">`;
             availableCategories.forEach((cat, i) => {
                 tabsHtml += `<button class="bracket-category-tab ${cat === defaultCat ? 'active' : ''}" onclick="switchDetailCategory('${cat}', this)">${cat}</button>`;
             });
@@ -3106,7 +3133,10 @@
                 roundKeys.forEach(key => {
                     const roundMatches = catData[key];
                     const isGroup = key.includes('组');
-                    contentHtml += `<div class="round-section${isGroup ? ' is-group' : ''}">`;
+                    var roundPhase = 'elim';
+                    if (key.includes('组')) roundPhase = 'group';
+                    else if (key.includes('资格')) roundPhase = 'qualify';
+                    contentHtml += `<div class="round-section${isGroup ? ' is-group' : ''}" data-phase="${roundPhase}">`;
                     contentHtml += `<div class="round-header"><span class="round-header-dot"></span>${key}</div>`;
                     if (isGroup) {
                         // --- 小组赛：矩阵布局 ---
@@ -3503,6 +3533,7 @@
             });
 
             container.innerHTML = tabsHtml + contentHtml;
+            applyDetailPhaseFilter();
         }
 
         /** Helper: build detailed scores HTML for group detail area. */
@@ -3577,12 +3608,30 @@
             btn.innerHTML = el.classList.contains('open') ? '📋 收起所有详细比分' : '📋 查看所有对局详细比分';
         }
 
+        // Phase tabs for detail rounds: group/qualify/elim
+        let currentDetailPhase = 'group';
+
+        function switchDetailPhase(phase, btn) {
+            currentDetailPhase = phase;
+            document.querySelectorAll('.detail-phase-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyDetailPhaseFilter();
+        }
+
+        function applyDetailPhaseFilter() {
+            document.querySelectorAll('.round-section').forEach(el => {
+                el.style.display = el.dataset.phase === currentDetailPhase ? '' : 'none';
+            });
+        }
+
         function switchDetailCategory(cat, btn) {
             currentDetailCategory = cat;
             document.querySelectorAll('.detail-category-content').forEach(el => el.style.display = 'none');
-            document.getElementById('detail-cat-' + cat).style.display = 'block';
+            var catEl = document.getElementById('detail-cat-' + cat);
+            if (catEl) catEl.style.display = 'block';
             document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            applyDetailPhaseFilter();
         }
 
         // ========== 对阵图视图切换 ==========
