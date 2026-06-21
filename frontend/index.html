@@ -3640,6 +3640,11 @@
             if (catEl) catEl.style.display = 'block';
             document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            // Reset phase to 淘汰赛 on category switch
+            currentDetailPhase = 'elim';
+            document.querySelectorAll('.detail-phase-tab').forEach(function(b){
+                b.classList.toggle('active', b.textContent.trim() === '淘汰赛');
+            });
             applyDetailPhaseFilter();
         }
 
