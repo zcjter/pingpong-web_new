@@ -3640,11 +3640,6 @@
             if (catEl) catEl.style.display = 'block';
             document.querySelectorAll('.bracket-toggle-btns .bracket-category-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            // Reset phase to 淘汰赛 on category switch
-            currentDetailPhase = 'elim';
-            document.querySelectorAll('.detail-phase-tab').forEach(function(b){
-                b.classList.toggle('active', b.textContent.trim() === '淘汰赛');
-            });
             applyDetailPhaseFilter();
         }
 
@@ -4890,12 +4885,20 @@
             closeModal('match-modal');
             if (currentCompetitionId) {
                 const savedCategory = document.getElementById('match-category').value;
+                const savedRound = document.getElementById('match-round').value || '';
+                // Determine phase from round number
+                var savedPhase = 'elim';
+                if (savedRound.indexOf('组') >= 0) savedPhase = 'group';
+                else if (savedRound.indexOf('资格') >= 0) savedPhase = 'qualify';
                 await showCompetitionDetail(currentCompetitionId);
                 if (savedCategory && currentDetailCategory) {
                     setTimeout(() => {
                         const btn = document.querySelector(`#detail-rounds-content .bracket-category-tab[onclick*="${savedCategory}"]`);
                         if (btn) {
                             switchDetailCategory(savedCategory, btn);
+                            // Also switch to the matching phase tab
+                            var phaseBtn = document.querySelector(`.detail-phase-tab[onclick*="${savedPhase}"]`);
+                            if (phaseBtn) switchDetailPhase(savedPhase, phaseBtn);
                         }
                     }, 100);
                 }
