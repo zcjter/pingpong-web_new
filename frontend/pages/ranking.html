@@ -1,0 +1,45 @@
+        <div id="page-ranking-manage" style="display:none;">
+            <div class="card">
+                <div class="actions">
+                    <div class="card-title">📊 排名管理</div>
+                    <button class="btn btn-primary" onclick="showRankingModal()">+ 添加排名</button>
+                </div>
+                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                    <select id="ranking-year-select" class="form-control" style="width: 150px; display: inline-block;" onchange="loadRankingsByFilter()">
+                        <option value="">选择年份</option>
+                    </select>
+                    <select id="ranking-category-select" onchange="loadRankingsByFilter()"
+                        style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="">全部项目</option>
+                        <option value="u11男单">u11男单</option>
+                        <option value="u11女单">u11女单</option>
+                        <option value="u13男单">u13男单</option>
+                        <option value="u13女单">u13女单</option>
+                        <option value="u15男单">u15男单</option>
+                        <option value="u15女单">u15女单</option>
+                        <option value="u15男双">u15男双</option>
+                        <option value="u15女双">u15女双</option>
+                        <option value="u15混双">u15混双</option>
+                        <option value="u17男单">u17男单</option>
+                        <option value="u17女单">u17女单</option>
+                        <option value="u17男双">u17男双</option>
+                        <option value="u17女双">u17女双</option>
+                        <option value="u17混双">u17混双</option>
+                        <option value="u19男单">u19男单</option>
+                        <option value="u19女单">u19女单</option>
+                        <option value="u19男双">u19男双</option>
+                        <option value="u19女双">u19女双</option>
+                        <option value="u19混双">u19混双</option>
+                        <option value="男单">男单</option>
+                        <option value="女单">女单</option>
+                        <option value="男双">男双</option>
+                        <option value="女双">女双</option>
+                        <option value="混双">混双</option>
+                        <option value="男团">男团</option>
+                        <option value="女团">女团</option>
+                    </select>
+                </div>
+            </div>
+            <div id="ranking-by-year"></div>
+        </div>
+

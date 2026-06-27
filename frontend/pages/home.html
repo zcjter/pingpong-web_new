@@ -1,0 +1,32 @@
+        <!-- 首页 -->
+        <div id="page-home">
+            <div class="card">
+                <div class="actions">
+                    <div class="card-title">?? 最新公告</div>
+                    <button class="btn btn-primary" onclick="showAnnouncementModal()">+ 添加公告</button>
+                </div>
+                <div id="announcements-list"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">?? 实时排名 TOP 3</div>
+                <div id="home-ranking"></div>
+            </div>
+        </div>
+
+        <!-- 公告详情 -->
+        <div id="page-announcement" style="display:none;">
+            <span class="back-btn" onclick="showHome()">← 返回首页</span>
+            <div class="card">
+                <div class="announcement-detail">
+                    <h2 id="ann-title"></h2>
+                    <div class="announcement-meta">
+                        <span id="ann-type"></span> | <span id="ann-date"></span>
+                    </div>
+                    <div class="announcement-content" id="ann-content"></div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-warning" onclick="editAnnouncement(currentAnnouncementId)">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteAnnouncement(currentAnnouncementId)">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>

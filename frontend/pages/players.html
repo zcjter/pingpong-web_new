@@ -1,0 +1,53 @@
+        <div id="page-players" style="display:none;">
+            <div id="players-list-view">
+                <div class="card">
+                    <div class="actions">
+                        <div class="card-title">👥 著名运动员列�?/div>
+                        <button class="btn btn-primary" onclick="showPlayerModal()">+ 添加运动�?/button>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="player-search" placeholder="搜索运动�?.."
+                            onkeyup="searchPlayers(this.value)">
+                    </div>
+                    <div id="players-grid"></div>
+                </div>
+            </div>
+            <div id="player-detail-view" style="display:none;">
+                <span class="back-btn" onclick="showPlayersList()">�?返回列表</span>
+                <div class="card">
+                    <div class="player-detail">
+                        <div class="player-detail-header">
+                            <div class="player-detail-avatar" id="detail-avatar"></div>
+                            <div class="player-detail-info">
+                                <h2 id="detail-name"></h2>
+                                <p id="detail-country"></p>
+                                <p id="detail-intro"></p>
+                            </div>
+                        </div>
+                        <div class="player-stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="detail-age">-</div>
+                                <div class="stat-label">年龄</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="detail-gender">-</div>
+                                <div class="stat-label">性别</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="detail-points">0</div>
+                                <div class="stat-label">积分</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="detail-rank">-</div>
+                                <div class="stat-label">排名</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-warning" onclick="editPlayer(currentPlayerId)">编辑</button>
+                            <button class="btn btn-danger" onclick="deletePlayer(currentPlayerId)">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+

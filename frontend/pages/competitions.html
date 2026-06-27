@@ -1,0 +1,62 @@
+        <div id="page-competitions" style="display:none;">
+            <div id="competitions-list-view">
+                <div class="card">
+                    <div class="actions">
+                        <div class="card-title">🏆 赛事列表</div>
+                        <button class="btn btn-primary" onclick="showCompetitionModal()">+ 添加赛事</button>
+                    </div>
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <select id="competition-year-select" onchange="filterCompetitions()"
+                            style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">全部年份</option>
+                        </select>
+                        <select id="competition-month-select" onchange="filterCompetitions()"
+                            style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">全部月份</option>
+                            <option value="1">1�?/option>
+                            <option value="2">2�?/option>
+                            <option value="3">3�?/option>
+                            <option value="4">4�?/option>
+                            <option value="5">5�?/option>
+                            <option value="6">6�?/option>
+                            <option value="7">7�?/option>
+                            <option value="8">8�?/option>
+                            <option value="9">9�?/option>
+                            <option value="10">10�?/option>
+                            <option value="11">11�?/option>
+                            <option value="12">12�?/option>
+                        </select>
+                    </div>
+                    <div id="competitions-list"></div>
+                </div>
+            </div>
+            <div id="competition-detail-view" style="display:none;">
+                <span class="back-btn" onclick="showCompetitionsList()">�?返回赛事列表</span>
+                <div class="card" style="margin-bottom:16px;">
+                    <div class="actions">
+                        <div class="card-title" id="competition-title"></div>
+                        <div class="action-btns">
+                            <button class="btn btn-primary" onclick="showMatchModal()">+ 添加比赛</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="actions">
+                        <div class="card-title">📋 比赛信息</div>
+                        <div class="action-btns">
+                            <button class="btn btn-outline active" id="btn-view-table"
+                                onclick="switchMatchView('table')">📊 列表</button>
+                            <button class="btn btn-outline" id="btn-view-bracket"
+                                onclick="switchMatchView('bracket')">🌳 对阵�?/button>
+                        </div>
+                    </div>
+                    <div id="detail-rounds-content"></div>
+                    <div id="bracket-view" style="display:none;">
+                        <div class="bracket-toggle-btns" id="bracket-categories"></div>
+                        <div class="bracket-toggle-btns" id="bracket-phases"></div>
+                        <div class="bracket-container" id="bracket-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
