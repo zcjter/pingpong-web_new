@@ -1,0 +1,37 @@
+/* ===== Champions ===== */
+.champion-card {
+    background: linear-gradient(135deg, #fff8e1, #fffde7);
+    border: 1px solid #ffd54f;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.champion-card h4 {
+    font-size: 14px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.champion-medal {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    margin: 2px 0;
+}
+
+.champion-medal .medal-icon {
+    font-size: 16px;
+}
+
+.champion-medal .rt-flag img {
+    width: 16px;
+    height: 11px;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+.champion-gold { color: #f57f17; font-weight: 700; }
+.champion-silver { color: #757575; font-weight: 600; }
+.champion-bronze { color: #8d6e63; font-weight: 600; }
