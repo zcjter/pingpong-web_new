@@ -7,16 +7,13 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏓</text></svg>">
     <title>乒乓球比赛管理系统?v=6</title>
-
-    <!-- CDN resources -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Lato:wght@300;400;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-
-    <!-- Page CSS (loaded per module) -->
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/players.css">
@@ -26,6 +23,7 @@
     <link rel="stylesheet" href="css/visualization.css">
 </head>
 
+</head>
 <body>
     <div class="header">
         <h1>🏓 乒乓球比赛管理系统</h1>
@@ -40,14 +38,11 @@
         <span class="nav-item" data-page="visualization">📊 数据</span>
     </div>
 
-    <!-- Page content container (injected by JS from pages/*.html) -->
-    <div class="container" id="page-container"></div>
-
-    <!-- ===== 数据可视化页面 (outside .container, injected by JS) ===== -->
-    <div id="page-visualization" style="display:none;"></div>
-
-    <!-- ===== Modals ===== -->
-
+    <div class="container">
+        <!-- 首页 -->
+    <div class="container" id="container">
+        <!-- Pages loaded dynamically by common.js -->
+    </div>
     <!-- 运动员模态框 -->
     <div id="player-modal" class="modal">
         <div class="modal-content">
@@ -148,7 +143,7 @@
                 </div>
                 <div id="match-regular-score-section">
                 <div class="form-group">
-                    <label>局数(5局3胜或7局4胜)</label>
+                    <label>局数 (5局3胜或7局4胜)</label>
                     <select id="match-games" onchange="renderScoreInputs()">
                         <option value="3">3局2胜</option>
                         <option value="5" selected>5局3胜</option>
@@ -227,15 +222,15 @@
                     <div class="form-group">
                         <label>团体赛场次数</label>
                         <select id="team-match-count" onchange="renderTeamSubMatches()">
-                            <option value="3">3场制</option>
-                            <option value="5" selected>5场制</option>
+                            <option value="3">3场2胜</option>
+                            <option value="5" selected>5场3胜</option>
                         </select>
                     </div>
                     <div id="team-sub-matches-container"></div>
                 </div>
                 <div class="form-group">
                     <label>轮次</label>
-                    <input type="text" id="match-round" placeholder="如 1/4决赛、半决赛、决赛">
+                    <input type="text" id="match-round" placeholder="如: 1/4决赛、半决赛、决赛">
                 </div>
                 <div class="form-group">
                     <label>备注</label>
@@ -354,7 +349,8 @@
         </div>
     </div>
 
-    <!-- Page loader: injects page HTML fragments on startup -->
+    <script src="https://unpkg.com/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <script src="js/common.js"></script>
     <script src="js/home.js"></script>
     <script src="js/players.js"></script>
@@ -362,6 +358,7 @@
     <script src="js/ranking.js"></script>
     <script src="js/champions.js"></script>
     <script src="js/visualization.js"></script>
+    </script>
 </body>
 
 </html>

@@ -1,29 +1,28 @@
-    <div id="page-visualization" style="display:none;">
+<div id="page-visualization" style="display:none;">
         <div class="card">
             <div class="sub-tabs">
-                <div class="sub-tab active" data-sub="player" onclick="switchVizSub('player',this)">👤 运动员分�?/div>
+                <div class="sub-tab active" data-sub="player" onclick="switchVizSub('player',this)">👤 运动员分析</div>
                 <div class="sub-tab" data-sub="overview" onclick="switchVizSub('overview',this)">📊 总体分析</div>
             </div>
 
-            <!-- 子标签：运动员分�?-->
+            <!-- 子标签：运动员分析 -->
             <div id="viz-player" class="sub-content active">
                 <div class="viz-controls" style="position:relative;">
-                    <input id="v-player-search" type="text" placeholder="🔍 输入运动员名�?.." oninput="filterPlayerAutocomplete()" style="min-width:220px;padding:7px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;">
+                    <input id="v-player-search" type="text" placeholder="🔍 输入运动员名称..." oninput="filterPlayerAutocomplete()" style="min-width:220px;padding:7px 10px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;">
                     <select id="v-player-select" onchange="loadVizPlayerDetailed()" style="display:none;">
-                        <option value="">-- 选择运动�?--</option>
+                        <option value="">-- 选择运动员 --</option>
                     </select>
                     <div id="v-player-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:1000;background:#fff;border:1px solid #ddd;border-radius:8px;max-height:300px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.1);"></div>
-                    <span id="v-player-loading" style="display:none;"><span class="loading-spinner"></span>加载�?..</span>
+                    <span id="v-player-loading" style="display:none;"><span class="loading-spinner"></span>加载中...</span>
                 </div>
-                <div id="v-player-content" class="empty-state" style="padding:20px;">请选择运动员查看完整数据分�?/div>
+                <div id="v-player-content" class="empty-state" style="padding:20px;">请选择运动员查看完整数据分析</div>
             </div>
 
             <!-- 子标签：总体分析 -->
             <div id="viz-overview" class="sub-content">
                 <div id="v-overview-content" style="padding:4px 0;"></div>
-                <div id="v-overview-loading" style="display:none;text-align:center;padding:20px;"><span class="loading-spinner"></span>加载�?..</div>
+                <div id="v-overview-loading" style="display:none;text-align:center;padding:20px;"><span class="loading-spinner"></span>加载中...</div>
             </div>
 
         </div>
     </div>
-

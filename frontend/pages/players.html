@@ -1,19 +1,19 @@
-        <div id="page-players" style="display:none;">
+<div id="page-players" style="display:none;">
             <div id="players-list-view">
                 <div class="card">
                     <div class="actions">
-                        <div class="card-title">👥 著名运动员列�?/div>
-                        <button class="btn btn-primary" onclick="showPlayerModal()">+ 添加运动�?/button>
+                        <div class="card-title">👥 著名运动员列表</div>
+                        <button class="btn btn-primary" onclick="showPlayerModal()">+ 添加运动员</button>
                     </div>
                     <div class="search-box">
-                        <input type="text" id="player-search" placeholder="搜索运动�?.."
+                        <input type="text" id="player-search" placeholder="搜索运动员..."
                             onkeyup="searchPlayers(this.value)">
                     </div>
                     <div id="players-grid"></div>
                 </div>
             </div>
             <div id="player-detail-view" style="display:none;">
-                <span class="back-btn" onclick="showPlayersList()">�?返回列表</span>
+                <span class="back-btn" onclick="showPlayersList()">← 返回列表</span>
                 <div class="card">
                     <div class="player-detail">
                         <div class="player-detail-header">
@@ -50,4 +50,3 @@
                 </div>
             </div>
         </div>
-
