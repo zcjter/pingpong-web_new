@@ -1,75 +1,74 @@
-/* ===== Ranking ===== */
-.ranking-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
+        /* =====================================================
+           HOME RANKING (with flags)
+           ===================================================== */
+        .home-ranking-cat {
+            margin-bottom: 20px;
+        }
 
-.ranking-card h3 {
-    font-size: 16px;
-    color: #1a1a2e;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #ffd700;
-    display: inline-block;
-}
+        .home-ranking-cat-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0077b6;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-.ranking-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
+        .ranking-table--clean {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e8e8e8;
+        }
 
-.ranking-table th {
-    padding: 8px 10px;
-    text-align: left;
-    font-weight: 700;
-    color: #555;
-    border-bottom: 2px solid #eee;
-    font-size: 12px;
-    text-transform: uppercase;
-}
+        .ranking-table--clean thead th {
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 9px 14px;
+            text-align: center;
+        }
 
-.ranking-table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #f0f0f0;
-}
+        .ranking-table--clean tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #333;
+            text-align: center;
+            vertical-align: middle;
+        }
 
-.ranking-table tr:hover td {
-    background: #f8f9fb;
-}
+        .ranking-table--clean tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-.ranking-table .winner {
-    color: #43a047 !important;
-    background: transparent !important;
-    font-weight: 600;
-}
+        .ranking-table--clean tbody tr:nth-child(even) td {
+            background: #fafafa;
+        }
 
-.ranking-num {
-    font-weight: 700;
-    color: #888;
-    width: 30px;
-}
+        .ranking-table--clean .rank-1 td {
+            background: #fffde7 !important;
+        }
 
-.ranking-num--1 { color: #ffd700; }
-.ranking-num--2 { color: #c0c0c0; }
-.ranking-num--3 { color: #cd7f32; }
+        .ranking-table--clean .rank-2 td {
+            background: #f5f5f5 !important;
+        }
 
-.ranking-player {
-    font-weight: 600;
-    color: #333;
-}
+        .ranking-table--clean .rank-3 td {
+            background: #fff3e0 !important;
+        }
 
-.ranking-points {
-    font-weight: 700;
-    color: #0077b6;
-}
+        .player-flag {
+            font-size: 15px;
+            margin-right: 4px;
+        }
 
-.ranking-country img {
-    width: 18px;
-    height: 12px;
-    vertical-align: middle;
-    border-radius: 2px;
-}
+        .player-flag img {
+            background: #e3f2fd;
+            padding: 1px;
+        }
+
+        .country-cell {
+            color: #888;
+            font-size: 12px;
+        }

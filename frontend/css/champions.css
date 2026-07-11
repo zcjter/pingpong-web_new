@@ -1,37 +1,71 @@
-/* ===== Champions ===== */
-.champion-card {
-    background: linear-gradient(135deg, #fff8e1, #fffde7);
-    border: 1px solid #ffd54f;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-}
+        /* =====================================================
+           CHAMPION PODIUM STYLES
+           ===================================================== */
+        .champion-podium {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
 
-.champion-card h4 {
-    font-size: 14px;
-    color: #1a1a2e;
-    margin-bottom: 8px;
-}
+        .champion-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 20px 16px;
+            border-radius: 12px;
+            min-width: 110px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-.champion-medal {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    margin: 2px 0;
-}
+        .champion-slot:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
+        }
 
-.champion-medal .medal-icon {
-    font-size: 16px;
-}
+        .champion-slots-wrapper {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 12px;
+        }
 
-.champion-medal .rt-flag img {
-    width: 16px;
-    height: 11px;
-    vertical-align: middle;
-    border-radius: 2px;
-}
+        .champion-medal {
+            font-size: 36px;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
 
-.champion-gold { color: #f57f17; font-weight: 700; }
-.champion-silver { color: #757575; font-weight: 600; }
-.champion-bronze { color: #8d6e63; font-weight: 600; }
+        .champion-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-align: center;
+            word-break: keep-all;
+            margin-bottom: 3px;
+        }
+
+        .champion-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-align: center;
+        }
+
+        .champion-cat-section {
+            margin-bottom: 24px;
+        }
+
+        .champion-cat-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0e0e0;
+            display: inline-block;
+        }
